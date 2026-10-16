@@ -19,8 +19,8 @@ Barra fixa no topo: estado da conexão e latência, **Grand Master**, **Blackout
 ## Servidor: QLC+ com a API Cockpit
 
 O QLC+ oficial não expõe fixtures, steps nem push de DMX. Por isso existe o fork em
-`../qlcplus-cockpit` (branch `cockpit-api`), que adiciona `/api/*.json` e comandos WebSocket extras.
-Veja `COCKPIT_API.md` no fork.
+`../qlcplus` deste monorepo, que adiciona `/api/*.json` e comandos WebSocket extras.
+Veja `../qlcplus/COCKPIT_API.md`.
 
 - Com o fork, o app detecta a API (`getApiVersion` → `cockpit-1`) e libera tudo.
 - Com o QLC+ 5 oficial, o app entra em **modo compatível**: Funções, Console e Mesa DMX (por polling) continuam funcionando; Fixtures, steps, seek e blackout ficam indisponíveis.

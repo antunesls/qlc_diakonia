@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="VC">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>5.3.1 GIT</Version>
+  <Author>antunesls</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Internal" BPM="120"/>
+   <NetworkServer Type="Native" AutoStart="True" Name="" Password=""/>
+   <Universe Name="Universe 1" ID="0">
+    <Output Plugin="E1.31" Name="127.0.0.1" UID="" Line="1">
+     <PluginParameters UniverseChannels="12" multicast="0" ucastIP="127.0.0.1" ucastPort="5999"/>
+    </Output>
+   </Universe>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>0</ID>
+   <Name>PAR 1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>1</ID>
+   <Name>PAR 2</Name>
+   <Universe>0</Universe>
+   <Address>3</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>2</ID>
+   <Name>PAR 3</Name>
+   <Universe>0</Universe>
+   <Address>6</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>3</ID>
+   <Name>PAR 4</Name>
+   <Universe>0</Universe>
+   <Address>9</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <FixtureGroup ID="0">
+   <Name>PARs</Name>
+   <Size X="4" Y="1"/>
+   <Head X="0" Y="0" Fixture="0">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="2" Y="0" Fixture="2">0</Head>
+   <Head X="3" Y="0" Fixture="3">0</Head>
+  </FixtureGroup>
+  <Function ID="0" Type="Scene" Name="Vermelho" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,204,1,102,2,0</FixtureVal>
+   <FixtureVal ID="1">0,204,1,102,2,0</FixtureVal>
+   <FixtureVal ID="2">0,204,1,102,2,0</FixtureVal>
+   <FixtureVal ID="3">0,204,1,102,2,0</FixtureVal>
+  </Function>
+  <Function ID="1" Type="Scene" Name="Azul" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="2" Type="Scene" Name="Verde" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,153,2,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,153,2,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,153,2,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,153,2,0</FixtureVal>
+  </Function>
+  <Function ID="3" Type="Chaser" Name="Ciclo de cores">
+   <Speed FadeIn="300" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="300" Hold="700" FadeOut="0">0</Step>
+   <Step Number="1" FadeIn="300" Hold="700" FadeOut="0">1</Step>
+   <Step Number="2" FadeIn="300" Hold="700" FadeOut="0">2</Step>
+  </Function>
+  <Monitor DisplayMode="0" ShowLabels="0">
+   <Font>Arial,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   <ChannelStyle>0</ChannelStyle>
+   <ValueStyle>0</ValueStyle>
+   <Grid Width="5" Height="3" Depth="5" Units="0"/>
+   <StageItem>0</StageItem>
+  </Monitor>
+ </Engine>
+ <VirtualConsole>
+  <Frame Caption="Page 1" ID="0">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <Slider Caption="Dimmer" ID="5" WidgetStyle="Slider" InvertedAppearance="false">
+    <WindowState Visible="True" X="390" Y="10" Width="70" Height="220"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+    </Appearance>
+    <SliderMode ValueDisplayStyle="Exact">Level</SliderMode>
+    <Level LowLimit="0" HighLimit="255" Value="0">
+     <Channel Fixture="0">0</Channel>
+     <Channel Fixture="1">0</Channel>
+     <Channel Fixture="2">0</Channel>
+     <Channel Fixture="3">0</Channel>
+    </Level>
+   </Slider>
+   <CueList Caption="Ciclo" ID="6">
+    <WindowState Visible="True" X="470" Y="10" Width="340" Height="260"/>
+    <Chaser>3</Chaser>
+   </CueList>
+   <Frame Caption="Cores" ID="1">
+    <WindowState Visible="True" X="10" Y="10" Width="370" Height="125"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Verde" ID="4">
+     <WindowState Visible="True" X="250" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="2"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Vermelho" ID="2">
+     <WindowState Visible="True" X="10" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="0"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul Royal" ID="3">
+     <WindowState Visible="True" X="130" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="1"/>
+     <Action>Toggle</Action>
+    </Button>
+   </Frame>
+  </Frame>
+  <Frame Caption="Efeitos" ID="7">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <SpeedDial Caption="Velocidade" ID="9">
+    <WindowState Visible="True" X="130" Y="10" Width="210" Height="190"/>
+    <Visibility>644</Visibility>
+    <Time>1000</Time>
+    <AbsoluteValue Minimum="0" Maximum="10000"/>
+    <Function FadeIn="0" FadeOut="0" Duration="6">3</Function>
+   </SpeedDial>
+   <Button Caption="Blackout" ID="8">
+    <WindowState Visible="True" X="10" Y="10" Width="110" Height="70"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+    </Appearance>
+    <Function ID="4294967295"/>
+    <Action>Blackout</Action>
+   </Button>
+  </Frame>
+ </VirtualConsole>
+</Workspace>

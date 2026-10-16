@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="VC">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>5.3.1 GIT</Version>
+  <Author>antunesls</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Internal" BPM="120"/>
+   <NetworkServer Type="Native" AutoStart="True" Name="" Password=""/>
+   <Universe Name="Universe 1" ID="0">
+    <Output Plugin="E1.31" Name="127.0.0.1" UID="" Line="1">
+     <PluginParameters UniverseChannels="32" multicast="0" ucastIP="127.0.0.1" ucastPort="5999"/>
+    </Output>
+   </Universe>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>0</ID>
+   <Name>PAR LED 1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>1</ID>
+   <Name>PAR LED 2</Name>
+   <Universe>0</Universe>
+   <Address>4</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>2</ID>
+   <Name>PAR LED 3</Name>
+   <Universe>0</Universe>
+   <Address>8</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>3</ID>
+   <Name>PAR LED 4</Name>
+   <Universe>0</Universe>
+   <Address>12</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>4</ID>
+   <Name>PAR LED 5</Name>
+   <Universe>0</Universe>
+   <Address>16</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>5</ID>
+   <Name>PAR LED 6</Name>
+   <Universe>0</Universe>
+   <Address>20</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>6</ID>
+   <Name>PAR LED 7</Name>
+   <Universe>0</Universe>
+   <Address>24</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGBW</Model>
+   <Mode>RGBW</Mode>
+   <ID>7</ID>
+   <Name>PAR LED 8</Name>
+   <Universe>0</Universe>
+   <Address>28</Address>
+   <Channels>4</Channels>
+  </Fixture>
+  <FixtureGroup ID="0">
+   <Name>PARs</Name>
+   <Size X="8" Y="1"/>
+   <Head X="0" Y="0" Fixture="0">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="2" Y="0" Fixture="2">0</Head>
+   <Head X="3" Y="0" Fixture="3">0</Head>
+   <Head X="4" Y="0" Fixture="4">0</Head>
+   <Head X="5" Y="0" Fixture="5">0</Head>
+   <Head X="6" Y="0" Fixture="6">0</Head>
+   <Head X="7" Y="0" Fixture="7">0</Head>
+  </FixtureGroup>
+  <Function ID="0" Type="Scene" Name="Vermelho" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0</FixtureVal>
+  </Function>
+  <Function ID="1" Type="Scene" Name="Azul" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="2" Type="Scene" Name="Verde" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,255,2,0</FixtureVal>
+  </Function>
+  <Function ID="3" Type="Scene" Name="Âmbar" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,191,2,0</FixtureVal>
+  </Function>
+  <Function ID="4" Type="Scene" Name="Branco" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">3,255</FixtureVal>
+   <FixtureVal ID="1">3,255</FixtureVal>
+   <FixtureVal ID="2">3,255</FixtureVal>
+   <FixtureVal ID="3">3,255</FixtureVal>
+   <FixtureVal ID="4">3,255</FixtureVal>
+   <FixtureVal ID="5">3,255</FixtureVal>
+   <FixtureVal ID="6">3,255</FixtureVal>
+   <FixtureVal ID="7">3,255</FixtureVal>
+  </Function>
+  <Function ID="5" Type="Scene" Name="Roxo" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="1">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="2">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="3">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="4">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="5">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="6">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="7">0,128,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="6" Type="Scene" Name="Ciano" Path="Cores">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="2">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="3">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="4">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="5">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="6">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="7">0,0,1,255,2,255</FixtureVal>
+  </Function>
+  <Function ID="7" Type="Scene" Name="Arco-íris" Path="Looks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="6">0,128,1,0,2,255</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="8" Type="Scene" Name="Alternado" Path="Looks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="9" Type="Scene" Name="Centro" Path="Looks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">0,255,1,216,2,168,3,255</FixtureVal>
+   <FixtureVal ID="4">0,255,1,216,2,168,3,255</FixtureVal>
+  </Function>
+  <Function ID="10" Type="Scene" Name="Laterais" Path="Looks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255</FixtureVal>
+  </Function>
+  <Function ID="11" Type="Scene" Name="Degradê quente" Path="Looks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,64,2,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,64,2,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,191,2,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,191,2,0</FixtureVal>
+  </Function>
+  <Function ID="12" Type="Chaser" Name="Ciclo de cores" Path="Efeitos">
+   <Speed FadeIn="800" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="800" Hold="2000" FadeOut="0">0</Step>
+   <Step Number="1" FadeIn="800" Hold="2000" FadeOut="0">3</Step>
+   <Step Number="2" FadeIn="800" Hold="2000" FadeOut="0">2</Step>
+   <Step Number="3" FadeIn="800" Hold="2000" FadeOut="0">6</Step>
+   <Step Number="4" FadeIn="800" Hold="2000" FadeOut="0">1</Step>
+   <Step Number="5" FadeIn="800" Hold="2000" FadeOut="0">5</Step>
+  </Function>
+  <Function ID="13" Type="RGBMatrix" Name="Arco-íris correndo" Path="Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="150"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Gradient</Algorithm>
+   <Color Index="0">4294901760</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="14" Type="RGBMatrix" Name="Ondas azuis" Path="Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="120"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Waves</Algorithm>
+   <Color Index="0">4278190335</Color>
+   <Color Index="1">4278255615</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="15" Type="RGBMatrix" Name="Fogo" Path="Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="80"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Fire</Algorithm>
+   <Color Index="0">4294901760</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="16" Type="RGBMatrix" Name="Vai e vem" Path="Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="60"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Sinelon</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Monitor DisplayMode="0" ShowLabels="0">
+   <Font>Arial,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   <ChannelStyle>0</ChannelStyle>
+   <ValueStyle>0</ValueStyle>
+   <Grid Width="5" Height="3" Depth="5" Units="0"/>
+   <StageItem>0</StageItem>
+   <FxItem ID="0" XPos="313" YPos="2700" ZPos="2500"/>
+   <FxItem ID="1" XPos="938" YPos="2700" ZPos="2500"/>
+   <FxItem ID="2" XPos="1563" YPos="2700" ZPos="2500"/>
+   <FxItem ID="3" XPos="2188" YPos="2700" ZPos="2500"/>
+   <FxItem ID="4" XPos="2813" YPos="2700" ZPos="2500"/>
+   <FxItem ID="5" XPos="3438" YPos="2700" ZPos="2500"/>
+   <FxItem ID="6" XPos="4063" YPos="2700" ZPos="2500"/>
+   <FxItem ID="7" XPos="4688" YPos="2700" ZPos="2500"/>
+  </Monitor>
+ </Engine>
+ <VirtualConsole>
+  <Frame Caption="Page 1" ID="0">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <SoloFrame Caption="Cenas" ID="8">
+    <WindowState Visible="True" X="10" Y="10" Width="730" Height="205"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Branco" ID="13">
+     <WindowState Visible="True" X="490" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="4"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Alternado" ID="17">
+     <WindowState Visible="True" X="250" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="8"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul" ID="10">
+     <WindowState Visible="True" X="130" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="1"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ciano" ID="15">
+     <WindowState Visible="True" X="10" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="6"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Verde" ID="11">
+     <WindowState Visible="True" X="250" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="2"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Vermelho" ID="9">
+     <WindowState Visible="True" X="10" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="0"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Âmbar" ID="12">
+     <WindowState Visible="True" X="370" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="3"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Roxo" ID="14">
+     <WindowState Visible="True" X="610" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="5"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Arco-íris" ID="16">
+     <WindowState Visible="True" X="130" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="7"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Centro" ID="18">
+     <WindowState Visible="True" X="370" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="9"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Laterais" ID="19">
+     <WindowState Visible="True" X="490" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="10"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Degradê quente" ID="20">
+     <WindowState Visible="True" X="610" Y="125" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="11"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+   <Slider Caption="Master" ID="27" WidgetStyle="Slider" InvertedAppearance="false">
+    <WindowState Visible="True" X="630" Y="225" Width="70" Height="220"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+    </Appearance>
+    <SliderMode ValueDisplayStyle="Exact">GrandMaster</SliderMode>
+    <Level LowLimit="0" HighLimit="255" Value="255"/>
+   </Slider>
+   <Button Caption="Parar tudo" ID="29">
+    <WindowState Visible="True" X="830" Y="225" Width="110" Height="70"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+    </Appearance>
+    <Function ID="4294967295"/>
+    <Action>StopAll</Action>
+   </Button>
+   <Button Caption="Blackout" ID="28">
+    <WindowState Visible="True" X="710" Y="225" Width="110" Height="70"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+    </Appearance>
+    <Function ID="4294967295"/>
+    <Action>Blackout</Action>
+   </Button>
+   <SoloFrame Caption="Efeitos" ID="21">
+    <WindowState Visible="True" X="10" Y="225" Width="610" Height="125"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Arco-íris correndo" ID="23">
+     <WindowState Visible="True" X="130" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="13"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Vai e vem" ID="26">
+     <WindowState Visible="True" X="490" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="16"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ciclo de cores" ID="22">
+     <WindowState Visible="True" X="10" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="12"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Fogo" ID="25">
+     <WindowState Visible="True" X="370" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="15"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ondas azuis" ID="24">
+     <WindowState Visible="True" X="250" Y="45" Width="110" Height="70"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <Function ID="14"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+  </Frame>
+  <Frame Caption="Page 2" ID="7">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+  </Frame>
+ </VirtualConsole>
+</Workspace>
