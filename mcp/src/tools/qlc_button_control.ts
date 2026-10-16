@@ -9,13 +9,13 @@ export function createButtonPressTool(): ToolDefinition {
   return {
     name: "qlc_button_press",
     description:
-      "Press a QLC+ 5 Virtual Console button identified by one complete exact caption. Matching ignores case only: internal spaces, accents, punctuation, underscores and hyphens are significant. Legacy oscPath is unsupported.",
+      "Press a QLC+ 5 Virtual Console button identified by one complete exact caption, or by widgetId. Matching ignores case only: internal spaces, accents, punctuation, underscores and hyphens are significant. Legacy oscPath is unsupported.",
     schema: ButtonPressInputSchema,
     cb: async (input: any) => {
       logger.debug("Tool: qlc_button_press", input);
 
-      const { widgetName, oscPath } = input;
-      if (!widgetName) {
+      const { widgetName, widgetId, oscPath } = input;
+      if (!widgetName && widgetId === undefined) {
         return error(
           oscPath
             ? "oscPath is no longer supported; provide the QLC+ button caption in widgetName."
@@ -27,7 +27,10 @@ export function createButtonPressTool(): ToolDefinition {
       if (!client) return error("QLC+ native client is not initialized.");
 
       try {
-        const widget = await client.pressButton(widgetName);
+        const widget =
+          widgetId !== undefined
+            ? await client.pressButtonById(widgetId)
+            : await client.pressButton(widgetName);
         return text(`Button press sent: ${widget.caption}`);
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);

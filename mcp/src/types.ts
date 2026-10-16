@@ -16,6 +16,9 @@ export const ButtonPressInputSchema = z.object({
   widgetName: optionalString().describe(
     "Complete exact QLC+ button caption. Matching is case-insensitive only; spaces, accents, punctuation, underscores and hyphens remain significant.",
   ),
+  widgetId: optionalInt(z.number().int().nonnegative()).describe(
+    "Widget ID from qlc_vc_tree or qlc_list_widgets. Use it when several buttons share a caption.",
+  ),
   oscPath: optionalString().describe(
     "Deprecated compatibility field. OSC control is not supported.",
   ),

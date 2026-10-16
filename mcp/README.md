@@ -2,7 +2,9 @@
 
 QLCPlus-MCP is a TypeScript Model Context Protocol server for controlling **QLC+ 5 through its native network protocol**.
 
-The server connects to the QLC+ Native Server, authenticates, downloads the active project, builds an in-memory Virtual Console inventory, and exposes safe MCP tools for discovery and button control.
+The server connects to the QLC+ Native Server, authenticates, downloads the active project and keeps a complete model of it (universes, fixtures, groups, functions, shows and the Virtual Console). On top of that model it exposes MCP tools to **build and edit the whole project** — patch fixtures, write scenes from looks ("red at 60%"), chasers, sequences, EFX, RGB matrices, collections, scripts and shows, and lay out a Virtual Console from a declarative description — plus live show control.
+
+Every edit is sent as QLC+ native editing actions, then the project is reloaded from QLC+ and checked, so the agent is told about anything QLC+ did not apply.
 
 OSC, WebSocket, `/vc.json`, static `widgets.json` runtime mappings and QLC+ 4 control are not part of the supported runtime.
 
@@ -13,6 +15,11 @@ OSC, WebSocket, `/vc.json`, static `widgets.json` runtime mappings and QLC+ 4 co
 - Automatic reconnect and fresh inventory after QLC+ restarts.
 - Runtime discovery of Virtual Console buttons and sliders.
 - Exact button-caption execution with case-insensitive matching only.
+- Full project editing: fixtures, fixture groups, universes, every function type, Show Manager timelines and the Virtual Console.
+- Fixture-aware scene writing: colors, dimmer, pan/tilt, strobe, gobos and raw channels resolved from the QLC+ fixture definitions.
+- Declarative Virtual Console building with automatic layout.
+- In-place updates that keep IDs and repair the references QLC+ drops when a function is recreated.
+- Optional extended API of the QLC+ fork: save/load/new/upload project, server-side fixture library, I/O patching, page and group management.
 - MCP over local STDIO or Streamable HTTP.
 - Optional HTTP bearer authentication.
 - Native connection/status reporting.
@@ -26,6 +33,31 @@ For implementation details, see [ARCHITECTURE.md](ARCHITECTURE.md).
 - npm.
 - QLC+ 5 with Native Server enabled.
 - A QLC+ build compatible with upstream commit `984f0e7` or a release containing equivalent grouped native Virtual Console action behavior.
+- For project management, I/O patching and page/group deletion: the QLC+ fork with the extended native API (branch `feat/native-api-ext`). Everything else works with stock QLC+ 5, except that stock QLC+ 5 ignores Virtual Console widgets created into a page after a project was loaded (fixed in the fork).
+
+### Building the QLC+ fork on Windows
+
+With [MSYS2](https://www.msys2.org/) installed in `C:\msys64`, from a **UCRT64** shell:
+
+```bash
+pacman -S --needed mingw-w64-ucrt-x86_64-{gcc,cmake,ninja,pkgconf,libmad,libsndfile,flac,fftw,libusb} \
+  mingw-w64-ucrt-x86_64-qt6-{base,declarative,3d,multimedia,websockets,serialport,imageformats,svg,tools,shadertools,5compat}
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dqmlui=ON
+cmake --build build && cmake --install build          # installs to C:\qlcplus
+cd /c/qlcplus && windeployqt6 --qmldir <qlcplus source>/qmlui/qml qlcplus5.exe qlcplusengine.dll plugins/dmxusb.dll
+```
+
+Then copy the MSYS2 DLLs the install depends on (`ldd` on every `.dll`/`.exe` under `C:\qlcplus`, copying anything resolved from `/ucrt64/bin`), and add `C:\qlcplus\qt.conf` so the deployed QML modules are found:
+
+```ini
+[Paths]
+Prefix = .
+Plugins = .
+QmlImports = qml
+```
+
+The FTDI D2XX SDK in `C:\projects\D2XXSDK` is optional; without it the DMX USB plugin uses its serial-port backend. Start QLC+ with `qlcplus5.exe -o project.qxw`, or with `--openlast` to reopen the most recent project (the last file opened or saved with a path, including through `qlc_project_load` and `qlc_project_save`). `--server-allow-all` starts the native server and grants every native client full access without the authorization dialog (development only).
+- Grant the client every access right in the QLC+ authorization dialog (fixture, function, VC and show editing, I/O and, on the fork, project management).
 
 ## Quick Start
 
@@ -129,6 +161,43 @@ Executes one complete Virtual Console button caption.
 - no substring/fuzzy substitution.
 
 Flash buttons are sent as press/release; normal toggle-style buttons are press-only.
+
+### Editing tools
+
+Enabled by default (`QLC_TOOLSET=full`). `QLC_TOOLSET=control` restores the four-tool control inventory above.
+
+| Area | Tools |
+| --- | --- |
+| Project | `qlc_project_summary`, `qlc_project_export_xml`, `qlc_project_save`¹, `qlc_project_new`¹, `qlc_project_load`¹, `qlc_project_upload_xml`¹ |
+| Fixtures | `qlc_fixture_library_search`, `qlc_fixture_definition`, `qlc_fixture_list`, `qlc_fixture_add`, `qlc_fixture_update`, `qlc_fixture_position`, `qlc_fixture_remove`, `qlc_fixture_group_create`, `qlc_fixture_group_delete`¹, `qlc_universe_add`, `qlc_io_list`¹, `qlc_io_patch`¹ |
+| Functions | `qlc_function_list`, `qlc_function_get`, `qlc_function_update`, `qlc_function_delete`, `qlc_scene_set`, `qlc_chaser_set`, `qlc_sequence_set`, `qlc_efx_set`, `qlc_rgbmatrix_set`, `qlc_rgbmatrix_algorithms`, `qlc_collection_set`, `qlc_script_set`, `qlc_show_set`, `qlc_media_set` |
+| Virtual Console | `qlc_vc_tree`, `qlc_vc_build`, `qlc_vc_widget_update`, `qlc_vc_widget_move`, `qlc_vc_widget_delete`, `qlc_vc_page_rename`, `qlc_vc_page_add`¹, `qlc_vc_page_remove`¹ |
+| Live | `qlc_function_start`, `qlc_function_stop`, `qlc_slider_set`, `qlc_cuelist_control`, `qlc_speeddial_set`, `qlc_xypad_set`, `qlc_simpledesk_set` |
+
+¹ Needs the QLC+ fork; `qlc_get_state` and `qlc_project_summary` report the features the connected server supports.
+
+Objects are referenced by numeric ID or by exact name (case-insensitive). The `*_set` tools create a function, or overwrite the one named in `replace` while keeping its ID: scenes are edited value by value, other types are recreated and their uses in chasers, collections, cue lists, buttons and sliders are restored.
+
+Example `qlc_vc_build` input:
+
+```json
+{
+  "page": 0,
+  "widgets": [
+    {
+      "type": "frame", "caption": "Colors", "columns": 4,
+      "children": [
+        { "type": "button", "caption": "Red", "function": "Wash Red", "backgroundColor": "red" },
+        { "type": "button", "caption": "Blue", "function": "Wash Blue", "backgroundColor": "blue" },
+        { "type": "slider", "caption": "Pars", "fixtures": ["PAR 1", "PAR 2"] }
+      ]
+    },
+    { "type": "cuelist", "caption": "Song 1", "chaser": "Song 1 cues" }
+  ]
+}
+```
+
+Scene looks resolve colors and intensities through the fixture definitions. On stock QLC+ the definitions are read from the local QLC+ fixture directories (`QLC_FIXTURE_DIRS` overrides them); on the fork they come from QLC+ itself.
 
 ### `get_agent_prompt`
 
@@ -293,6 +362,10 @@ QLC_NATIVE_RECONNECT_MS=2000
 QLC_NATIVE_CONNECT_TIMEOUT_MS=10000
 QLC_NATIVE_MAX_PROJECT_SIZE=16777216
 QLC_NATIVE_CLIENT_NAME=QLCPlus-MCP
+QLC_REQUEST_TIMEOUT_MS=15000
+
+QLC_TOOLSET=full|control
+QLC_FIXTURE_DIRS=C:QLC+Fixtures;C:UsersmeQLC+Fixtures
 
 QLC_DRY_RUN=false
 MCP_PROMPT_FILE=/optional/custom/PROMPT.md

@@ -22,6 +22,18 @@ export interface NativeInventory {
   buttons: Map<string, NativeWidget>;
   sliders: Map<string, NativeWidget>;
   widgets: NativeWidget[];
+  /** Captions shared by several widgets; they must be addressed by widget ID */
+  ambiguous?: Set<string>;
+}
+
+export interface InventoryOptions {
+  /**
+   * Strict mode (default) rejects the whole project on duplicate captions or
+   * invalid slider ranges. The editing client uses tolerant mode, where
+   * duplicates are recorded as ambiguous and bad ranges are ignored, because a
+   * project being edited must never become unusable.
+   */
+  strict?: boolean;
 }
 
 /**
@@ -73,7 +85,10 @@ function textValue(value: unknown): string | undefined {
 export async function parseNativeProjectInventory(
   xml: Buffer,
   maximumSize = 16 * 1024 * 1024,
+  options: InventoryOptions = {},
 ): Promise<NativeInventory> {
+  const strict = options.strict ?? true;
+  const ambiguous = new Set<string>();
   if (xml.length > maximumSize) {
     throw new Error("QLC+ project exceeds native inventory limit");
   }
@@ -140,11 +155,13 @@ export async function parseNativeProjectInventory(
           if (id === undefined || !caption) continue;
 
           const exactKey = exactNativeCaptionKey(caption);
-          if (buttons.has(exactKey) || sliders.has(exactKey)) {
+          const duplicate = buttons.has(exactKey) || sliders.has(exactKey);
+          if (duplicate && strict) {
             throw new Error(
               `Duplicate case-insensitive QLC+ widget caption: ${caption}`,
             );
           }
+          if (duplicate) ambiguous.add(exactKey);
 
           const widget: NativeWidget = {
             id,
@@ -189,10 +206,13 @@ export async function parseNativeProjectInventory(
                 const high = Number(nestedAttrs.HighLimit ?? nestedAttrs.High);
                 if (Number.isFinite(low) && Number.isFinite(high)) {
                   if (low >= high) {
-                    throw new Error(`Invalid QLC+ slider range: ${caption}`);
+                    if (strict) {
+                      throw new Error(`Invalid QLC+ slider range: ${caption}`);
+                    }
+                  } else {
+                    widget.low = low;
+                    widget.high = high;
                   }
-                  widget.low = low;
-                  widget.high = high;
                 }
               }
             }
@@ -208,7 +228,7 @@ export async function parseNativeProjectInventory(
           }
 
           const map = tag === "button" ? buttons : sliders;
-          map.set(exactKey, widget);
+          if (!map.has(exactKey)) map.set(exactKey, widget);
           widgets.push(widget);
           continue;
         }
@@ -219,5 +239,5 @@ export async function parseNativeProjectInventory(
   };
 
   visit(parsed, false);
-  return { buttons, sliders, widgets };
+  return { buttons, sliders, widgets, ambiguous };
 }

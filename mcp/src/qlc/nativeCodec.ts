@@ -1,21 +1,13 @@
 import { createHash, randomBytes } from "node:crypto";
 import { deflateSync, inflateSync } from "node:zlib";
 
+export * from "./nativeTypes.js";
+
 export const NATIVE_PROTOCOL_ID = Buffer.from([0xe6, 0x86]);
 export const NATIVE_HEADER_LENGTH = 7;
 export const NATIVE_DEFAULT_KEY = 0x5131632b4e33744bn;
 export const MAX_NATIVE_ENCRYPTED_PAYLOAD = 0xffff;
 export const MAX_NATIVE_DECRYPTED_PAYLOAD = 1024 * 1024;
-
-export const NativeSectionType = {
-  Boolean: 0,
-  Integer: 1,
-  Float: 2,
-  String: 3,
-  ByteArray: 4,
-} as const;
-
-export type NativeSection = boolean | number | string | Buffer;
 
 export interface NativeFrame {
   opcode: number;
@@ -142,37 +134,6 @@ export function decryptNativePayload(
   return Buffer.from(payload);
 }
 
-export function nativeInt(value: number): Buffer {
-  const section = Buffer.allocUnsafe(5);
-  section[0] = NativeSectionType.Integer;
-  section.writeUInt32BE(value >>> 0, 1);
-  return section;
-}
-
-export function nativeBoolean(value: boolean): Buffer {
-  return Buffer.from([NativeSectionType.Boolean, value ? 1 : 0]);
-}
-
-export function nativeString(value: string): Buffer {
-  return nativeVariableSection(
-    NativeSectionType.String,
-    Buffer.from(value, "utf8"),
-  );
-}
-
-export function nativeByteArray(value: Buffer): Buffer {
-  return nativeVariableSection(NativeSectionType.ByteArray, value);
-}
-
-function nativeVariableSection(type: number, value: Buffer): Buffer {
-  if (value.length > 0xffff)
-    throw new Error("QLC+ section exceeds protocol limit");
-  const header = Buffer.allocUnsafe(3);
-  header[0] = type;
-  header.writeUInt16BE(value.length, 1);
-  return Buffer.concat([header, value]);
-}
-
 export function makeNativePacket(
   opcode: number,
   key: bigint,
@@ -189,59 +150,6 @@ export function makeNativePacket(
   header[4] = sections.length;
   header.writeUInt16BE(encrypted.length, 5);
   return Buffer.concat([header, encrypted]);
-}
-
-export function parseNativeSections(
-  payload: Buffer,
-  count: number,
-  requiredPrefixOnly = false,
-): NativeSection[] {
-  const result: NativeSection[] = [];
-  let position = 0;
-  for (let index = 0; index < count; index += 1) {
-    if (position >= payload.length)
-      throw new Error("Truncated QLC+ section header");
-    const type = payload[position++];
-    if (type === NativeSectionType.Boolean) {
-      if (position >= payload.length || payload[position] > 1) {
-        throw new Error("Invalid QLC+ boolean section");
-      }
-      result.push(payload[position++] === 1);
-    } else if (type === NativeSectionType.Integer) {
-      if (payload.length - position < 4)
-        throw new Error("Truncated QLC+ integer section");
-      result.push(payload.readUInt32BE(position));
-      position += 4;
-    } else if (type === NativeSectionType.Float) {
-      if (payload.length - position < 4)
-        throw new Error("Truncated QLC+ float section");
-      result.push(payload.readFloatLE(position));
-      position += 4;
-    } else if (
-      type === NativeSectionType.String ||
-      type === NativeSectionType.ByteArray
-    ) {
-      if (payload.length - position < 2)
-        throw new Error("Truncated QLC+ variable section");
-      const length = payload.readUInt16BE(position);
-      position += 2;
-      if (payload.length - position < length)
-        throw new Error("Truncated QLC+ section payload");
-      const value = payload.subarray(position, position + length);
-      position += length;
-      result.push(
-        type === NativeSectionType.String
-          ? new TextDecoder("utf-8", { fatal: true }).decode(value)
-          : Buffer.from(value),
-      );
-    } else {
-      throw new Error(`Unsupported QLC+ section type ${type}`);
-    }
-  }
-  if (!requiredPrefixOnly && position !== payload.length) {
-    throw new Error("QLC+ packet contains trailing section data");
-  }
-  return result;
 }
 
 export class NativeFrameDecoder {

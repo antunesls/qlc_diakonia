@@ -225,8 +225,8 @@ describe("QLC Local deterministic gateway", () => {
 });
 
 describe("gateway tool inventory", () => {
-  it("keeps cloud/ordinary inventory unchanged when gateway is disabled", () => {
-    const names = createRuntimeTools({}).map((tool) => tool.name);
+  it("keeps the control inventory unchanged when gateway is disabled", () => {
+    const names = createRuntimeTools({QLC_TOOLSET: "control"}).map((tool) => tool.name);
     expect(names).toEqual([
       "get_agent_prompt",
       "qlc_get_state",
@@ -236,11 +236,33 @@ describe("gateway tool inventory", () => {
   });
 
   it("adds exactly two reserved tools when gateway is enabled", () => {
-    const names = createRuntimeTools({LSA_LOCAL_COMMAND_GATEWAY: "1"}).map(
-      (tool) => tool.name,
-    );
+    const names = createRuntimeTools({
+      LSA_LOCAL_COMMAND_GATEWAY: "1",
+      QLC_TOOLSET: "control",
+    }).map((tool) => tool.name);
     expect(names).toContain("lsa_local_analyze_command");
     expect(names).toContain("lsa_local_execute_command");
     expect(names).toHaveLength(6);
+  });
+
+  it("exposes the full editing toolset by default, after the control tools", () => {
+    const names = createRuntimeTools({}).map((tool) => tool.name);
+    expect(names.slice(0, 4)).toEqual([
+      "get_agent_prompt",
+      "qlc_get_state",
+      "qlc_list_widgets",
+      "qlc_button_press",
+    ]);
+    for (const name of [
+      "qlc_project_summary",
+      "qlc_fixture_add",
+      "qlc_scene_set",
+      "qlc_chaser_set",
+      "qlc_vc_build",
+      "qlc_function_start",
+    ]) {
+      expect(names).toContain(name);
+    }
+    expect(new Set(names).size).toBe(names.length);
   });
 });

@@ -31,6 +31,11 @@ export const ConfigSchema = z
       .max(128 * 1024 * 1024)
       .default(16 * 1024 * 1024),
     qlcNativeClientName: z.string().min(1).max(100).default("QLCPlus-MCP"),
+    qlcRequestTimeoutMs: z.number().int().min(500).max(120_000).default(15_000),
+
+    // Directories holding QLC+ fixture definitions (.qxf). Empty means the
+    // platform defaults where QLC+ installs its library and user fixtures.
+    qlcFixtureDirs: z.array(z.string().min(1)).default([]),
 
     qlcDryRun: z.boolean().default(false),
 
@@ -97,6 +102,11 @@ export function loadConfig(): Config {
       process.env.QLC_NATIVE_MAX_PROJECT_SIZE,
     ),
     qlcNativeClientName: optionalString(process.env.QLC_NATIVE_CLIENT_NAME),
+    qlcRequestTimeoutMs: optionalInteger(process.env.QLC_REQUEST_TIMEOUT_MS),
+    qlcFixtureDirs: optionalString(process.env.QLC_FIXTURE_DIRS)
+      ?.split(";")
+      .map((dir) => dir.trim())
+      .filter(Boolean),
     qlcDryRun: optionalBoolean(process.env.QLC_DRY_RUN),
     logLevel: optionalString(process.env.LOG_LEVEL),
     nodeEnv: optionalString(process.env.NODE_ENV),

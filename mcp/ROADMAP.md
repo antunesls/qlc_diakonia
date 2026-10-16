@@ -198,6 +198,25 @@ Implemented:
 
 This hardening does not change caption identity. Names such as `blue speed` remain supported exactly as before.
 
+## Milestone 6 — Full Project Editing
+
+Status: **implemented and live-accepted on 2026-10-16 against the fork built on Windows (MSYS2 UCRT64, Qt 6.11, QLC+ 5.3.1 GIT)**
+
+- Complete project model and typed native sections.
+- Editing tools for fixtures, groups, universes, all function types, shows and the Virtual Console, with verification after every commit.
+- Fixture-aware scene composition and declarative Virtual Console building.
+- QLC+ fork (`feat/native-api-ext`): extended native API for project management, fixture library, I/O, fixture group deletion and VC pages; in-memory project served on authorization.
+- `QLC_TOOLSET=control` keeps the original control-only inventory.
+
+Live acceptance gate: build the fork, connect, create a rig, scenes, a chaser and a console through an MCP client, check them in the QLC+ UI and the DMX monitor, save and reopen the project.
+
+Live acceptance results (MCP over STDIO, QLC+ started with `--server-allow-all`):
+
+- 4 Generic RGB fixtures auto-addressed (1, 4, 7, 10), a fixture group, three color scenes, a chaser, and a console with a frame of three buttons, a level slider and a cue list.
+- Universe 1 patched to E1.31 unicast through `qlc_io_patch`, and the sACN output read back: buttons, `qlc_function_start`, the slider (50% → 128) and the cue list crossfade produced the expected DMX values.
+- Scene replace kept the chaser steps; page add, building into the new page, widget update, fixture group create/delete, save → new → load and `qlc_project_upload_xml` all verified.
+- Found and fixed in the fork: after a workspace load QLC+ dropped the Virtual Console pages from its widget map, so `VCWidgetCreate` into a page was silently ignored. With an unmodified QLC+ 5, building into a page fails after a project load; the MCP reports it through its post-edit verification.
+
 ## Future Native-Only Work
 
 Candidates after the native button-control release is stable:

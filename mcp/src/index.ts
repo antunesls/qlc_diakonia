@@ -4,6 +4,7 @@ import path from "node:path";
 import { loadConfig } from "./config.js";
 import { initLogger, getLogger } from "./logger.js";
 import { initNativeClient, stopNativeClient } from "./qlc/nativeClient.js";
+import { configureFixtureDirectories } from "./qlc/libraryProvider.js";
 import { startStdioServer } from "./transports/stdio.js";
 import { startHttpServer } from "./transports/http.js";
 import { createRuntimeTools } from "./tools/runtimeTools.js";
@@ -69,7 +70,9 @@ async function main(): Promise<void> {
       maximumProjectSize: config.qlcNativeMaximumProjectSize,
       clientName: config.qlcNativeClientName,
       dryRun: config.qlcDryRun,
+      requestTimeoutMs: config.qlcRequestTimeoutMs,
     });
+    configureFixtureDirectories(config.qlcFixtureDirs);
 
     const tools = createRuntimeTools();
     logger.info(`Registered ${tools.length} MCP tools`);

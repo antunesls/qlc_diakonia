@@ -215,6 +215,56 @@ On disconnect:
 
 TCP keepalive is enabled. QLC+ `NetPoll`/`NetPollReply` are not relied upon.
 
+## Project Editing
+
+QLC+ 5 accepts editing actions from authorized native clients (`Tardis` action codes, gated by `NetworkManager::requiredAccessMask`). Creation actions carry XML fragments in the workspace format and are applied by `Tardis::processBufferedAction`; property actions carry typed values. QLC+ applies both silently: an invalid fragment or an ID clash only shows in its log.
+
+```text
+tool input
+  -> resolve names/IDs against the project model
+  -> build XML fragments / typed values
+  -> EditSession: send actions in order
+  -> NetProjectRequest: QLC+ dumps its in-memory project
+  -> parse the new model, run verifiers
+  -> report success, or every problem found
+```
+
+### Modules
+
+- `src/qlc/actionCodes.ts`: mirror of `Tardis::ActionCodes`, including the extended codes of the fork.
+- `src/qlc/nativeTypes.ts`: every section type of `NetworkPacketizer` (Vector3D, RectF, PointF, Color, Font, SceneValue and the pair types), encoded and decoded byte for byte.
+- `src/qlc/projectModel.ts`: full workspace model, lookups by ID or name, ID allocation, free DMX ranges, reverse references.
+- `src/qlc/xml/`: fragment builders for fixtures, groups, universes, every function type and every Virtual Console widget, checked against the qmlui/engine `loadXML` code. All text goes through one escaping function.
+- `src/qlc/fixtureLibrary.ts`, `src/qlc/libraryProvider.ts`: `.qxf` parsing, channel role classification (presets, legacy groups, colours), local library index or the fork's library.
+- `src/qlc/sceneComposer.ts`: looks (color, dimmer, pan/tilt, strobe, gobo, raw channels) to channel values for a given fixture mode.
+- `src/qlc/vcLayout.ts`: automatic flow/grid layout and frame sizing.
+- `src/qlc/editSession.ts`: ordered action queue, fragment size limit (one ByteArray section, < 64 KiB), commit and verification.
+- `src/qlc/functionOps.ts`: in-place scene updates and function replacement with reference repair.
+
+### Protocol constraints handled by the client
+
+- Deleting a function makes QLC+ drop it from chasers, collections and cue lists. Replacing a function therefore records those references and restores them (`ChaserAddStep`, `CollectionAddFunction`, `VCCueListSetChaserID`, button/slider rebinding). Scenes are never recreated: they may be bound to sequences.
+- `SceneUnsetChannelValue` cannot work over the network (it needs the old value QLC+ keeps locally). A fixture losing channels is removed from the scene and its remaining values are set again.
+- `FixtureGroupDelete` has no handler in stock QLC+; the fork provides `NetFixtureGroupDelete`.
+- A section is at most 65535 bytes: large Virtual Console trees are split into a frame shell plus one fragment per child.
+- On authorization stock QLC+ sends the project *file*, stale or empty for a modified/unsaved project. The client requests the in-memory project once after the first transfer, and when a transfer announces size 0.
+- Edits made in QLC+ itself or by another client arrive as Tardis actions; the client resynchronizes after a short debounce.
+- Tool refreshes keep the previous inventory usable while the requested transfer is in flight; unsolicited transfers still invalidate it at once.
+
+### Extended API (QLC+ fork)
+
+Requests: opcode, `[Int requestId, String jsonArguments]`. Answers: `NetCommandResult` packets `[Int requestId, Bool success, Int chunkIndex, Int chunkCount, String payload]`, payloads split in 20000-character chunks. `NetApiInfo` is answered by the fork only, which is how features are detected; stock QLC+ drops the request as an unauthorized action.
+
+| Code | Request | Access right |
+| --- | --- | --- |
+| 0xFF10 | NetApiInfo | any authorized session |
+| 0xFF11 | NetCommandResult (answer) | — |
+| 0xFF12–0xFF15 | NetProjectSave / New / LoadFile / Upload | `AC_ProjectManagement` (new) |
+| 0xFF16 | NetFixtureLibraryQuery | `AC_FixtureEditing` |
+| 0xFF17–0xFF18 | NetIOQuery / NetIOPatch | `AC_InputOutput` |
+| 0xFF19 | NetFixtureGroupDelete | `AC_FixtureEditing` |
+| 0xFF1A–0xFF1B | NetVCPageAdd / Remove | `AC_VCEditing` |
+
 ## Button Execution
 
 `qlc_button_press` calls `QlcNativeClient.pressButton()`.
