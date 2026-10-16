@@ -75,6 +75,21 @@ attempt() {
     return $rc
 }
 
+# Impede dois builds simultâneos do mesmo projeto (ninja/gradle travam os arquivos)
+# Chamar dentro de 'attempt' (subshell): o trap libera a trava ao sair.
+HELD_LOCKS=()
+release_locks() { local d; for d in "${HELD_LOCKS[@]}"; do rm -rf "$d"; done; }
+lock() {
+    local dir="$ROOT/.locks/$1" d
+    for d in "${HELD_LOCKS[@]}"; do [[ "$d" == "$dir" ]] && return 0; done
+    mkdir -p "$ROOT/.locks"
+    if ! mkdir "$dir" 2>/dev/null; then
+        die "Já existe um build de '$1' em andamento (se não houver, apague $dir)"
+    fi
+    HELD_LOCKS+=("$dir")
+    trap release_locks EXIT
+}
+
 in_ucrt64() { [[ "${MSYSTEM:-}" == UCRT64 ]]; }
 
 # Executa uma função interna deste script dentro do MSYS2 UCRT64
@@ -152,6 +167,11 @@ _pacman_nsis() { pacman -S --needed --noconfirm mingw-w64-ucrt-x86_64-nsis; }
 # ------------------------------------------------------------------ build
 
 build_qlcplus() {
+    lock qlcplus
+    if tasklist //FI "IMAGENAME eq qlcplus5.exe" 2>/dev/null | grep -qi qlcplus5.exe; then
+        warn "O QLC+ está aberto: a instalação em $QLC_INSTALL vai falhar ao sobrescrever os arquivos."
+        confirm "Feche o QLC+ e confirme para continuar" s || return 1
+    fi
     step "QLC+: compilando (MSYS2 UCRT64, Release, qmlui)"
     msys _qlc_build
     step "QLC+: instalando em $QLC_INSTALL"
@@ -162,6 +182,7 @@ build_qlcplus() {
 }
 
 build_mcp() {
+    lock mcp
     step "MCP: dependências"
     cd "$MCP_DIR"
     if [[ ! -d node_modules || package-lock.json -nt node_modules ]]; then
@@ -188,6 +209,7 @@ gradle() {
 
 build_app() {
     local type="${1:-debug}"
+    lock app
     step "App: assemble ${type^}"
     gradle "assemble${type^}"
     ok "APK: $APP_DIR/app/build/outputs/apk/$type/app-$type.apk"
