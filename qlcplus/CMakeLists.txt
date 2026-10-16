@@ -142,14 +142,24 @@ add_custom_target(lcov
 )
 
 # Translations
+# On Windows cmd.exe opens .sh files through the file association (e.g. an
+# editor) instead of running them, so call the script through sh explicitly
+set(TRANSLATE_CMD ./translate.sh)
+if (WIN32)
+  find_program(SH_EXECUTABLE sh)
+  if (SH_EXECUTABLE)
+    set(TRANSLATE_CMD ${SH_EXECUTABLE} ./translate.sh)
+  endif()
+endif()
+
 if (qmlui)
   add_custom_target(translations ALL
-    COMMAND ./translate.sh release qmlui
+    COMMAND ${TRANSLATE_CMD} release qmlui
     COMMENT "Translating qmlui translations..."
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 else ()
   add_custom_target(translations ALL
-    COMMAND ./translate.sh release ui
+    COMMAND ${TRANSLATE_CMD} release ui
     COMMENT "Translating ui translations..."
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
