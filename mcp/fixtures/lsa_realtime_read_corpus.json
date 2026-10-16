@@ -1,0 +1,29 @@
+{
+  "cases": [
+    {
+      "id": "read-native-state",
+      "text": "Quel est l'état actuel du contrôleur lumière ?",
+      "expect": {
+        "min_tool_calls": 1,
+        "max_tool_calls": 1,
+        "required_tools": ["qlc_get_state"],
+        "require_answer": true,
+        "max_latency_ms": 3500,
+        "max_cost_usd": 0.04
+      }
+    },
+    {
+      "id": "discover-widget-by-name",
+      "text": "Cherche le contrôle nommé blue speed sans l'exécuter.",
+      "expect": {
+        "min_tool_calls": 1,
+        "max_tool_calls": 1,
+        "required_tools": ["qlc_list_widgets"],
+        "forbidden_tools": ["qlc_button_press"],
+        "require_answer": true,
+        "max_latency_ms": 3500,
+        "max_cost_usd": 0.04
+      }
+    }
+  ]
+}

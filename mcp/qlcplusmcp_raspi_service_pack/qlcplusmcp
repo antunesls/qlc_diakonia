@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SERVICE="qlcplusmcp.service"
+ENV_FILE="/etc/qlcplusmcp.env"
+HTTP_PORT="8788"
+HTTP_PATH="/mcp"
+PUBLIC_BASE_URL="https://raspberrypi-1.tail70348.ts.net/qlc"
+
+if [ -r "$ENV_FILE" ]; then
+  configured_port="$(grep -E '^HTTP_PORT=' "$ENV_FILE" | tail -n 1 | cut -d= -f2- || true)"
+  configured_path="$(grep -E '^HTTP_MCP_PATH=' "$ENV_FILE" | tail -n 1 | cut -d= -f2- || true)"
+  [ -n "$configured_port" ] && HTTP_PORT="$configured_port"
+  [ -n "$configured_path" ] && HTTP_PATH="$configured_path"
+fi
+
+HEALTH_URL="http://127.0.0.1:${HTTP_PORT}/health"
+MCP_URL="http://127.0.0.1:${HTTP_PORT}${HTTP_PATH}"
+cmd="${1:-}"
+
+case "$cmd" in
+  start) sudo systemctl start "$SERVICE" ;;
+  stop) sudo systemctl stop "$SERVICE" ;;
+  restart) sudo systemctl restart "$SERVICE" ;;
+  status) systemctl status "$SERVICE" --no-pager ;;
+  logs) journalctl -u "$SERVICE" -f ;;
+  auto)
+    sudo systemctl enable "$SERVICE"
+    sudo systemctl start "$SERVICE"
+    echo "QLCPlus-MCP auto-start enabled and service started."
+    ;;
+  noauto)
+    sudo systemctl disable "$SERVICE"
+    echo "QLCPlus-MCP auto-start disabled."
+    ;;
+  last-state)
+    echo "Enabled: $(systemctl is-enabled "$SERVICE" 2>/dev/null || true)"
+    echo "Active : $(systemctl is-active "$SERVICE" 2>/dev/null || true)"
+    ;;
+  health)
+    curl -fsS "$HEALTH_URL"
+    echo
+    ;;
+  endpoint)
+    echo "Local : $MCP_URL"
+    echo "Public: ${PUBLIC_BASE_URL}${HTTP_PATH}"
+    ;;
+  test-remote)
+    echo "Local health : $HEALTH_URL"
+    echo "Public health: ${PUBLIC_BASE_URL}/health"
+    curl -fsS "${PUBLIC_BASE_URL}/health"
+    echo
+    ;;
+  config)
+    sudo nano "$ENV_FILE"
+    ;;
+  *)
+    echo "Usage: qlcplusmcp {start|stop|restart|status|logs|auto|noauto|last-state|health|endpoint|test-remote|config}"
+    exit 1
+    ;;
+esac

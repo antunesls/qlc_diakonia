@@ -1,0 +1,24 @@
+services:
+  qlcplus-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qlcplus-mcp
+    environment:
+      MCP_TRANSPORT: http
+      HTTP_HOST: 0.0.0.0
+      HTTP_PORT: ${HTTP_PORT:-8788}
+      HTTP_MCP_PATH: ${HTTP_MCP_PATH:-/mcp}
+      MCP_AUTH_MODE: ${MCP_AUTH_MODE:-none}
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:-}
+      QLC_NATIVE_HOST: ${QLC_NATIVE_HOST:-host.docker.internal}
+      QLC_NATIVE_PORT: ${QLC_NATIVE_PORT:-9998}
+      QLC_NATIVE_ENCRYPTION_KEY: ${QLC_NATIVE_ENCRYPTION_KEY:-}
+      QLC_DRY_RUN: ${QLC_DRY_RUN:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      NODE_ENV: production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${HTTP_PORT:-8788}:${HTTP_PORT:-8788}/tcp"
+    restart: unless-stopped

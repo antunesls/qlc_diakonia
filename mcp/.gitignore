@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+config/.env
+.DS_Store
+.mcp-use/
+resources/
+npm-debug.log*
+garbage.txt
