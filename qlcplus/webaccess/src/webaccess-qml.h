@@ -38,6 +38,7 @@ class VCAnimation;
 class VCSpeedDial;
 class VCXYPad;
 class Doc;
+class WebAccessCockpit;
 
 class QHttpRequest;
 class QHttpResponse;
@@ -96,6 +97,8 @@ protected slots:
     void slotClockTimeChanged(int time);
     void slotClockTimerRunningChanged(bool running);
     void slotGrandMasterValueChanged(uchar value);
+    void slotBlackoutChanged(bool state);
+    void slotCockpitBroadcast(const QString &message);
 
 protected:
     QString webFilePath(const QString &relativePath) const override;
@@ -114,6 +117,7 @@ protected:
 
 protected:
     QSet<quint32> m_connectedWidgets;
+    WebAccessCockpit *m_cockpit;
 };
 
 #endif // WEBACCESS_QML_H

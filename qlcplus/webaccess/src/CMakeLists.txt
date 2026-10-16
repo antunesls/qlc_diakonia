@@ -41,6 +41,7 @@ set(WEBACCESS_SOURCES
 if(qmlui)
     list(APPEND WEBACCESS_SOURCES
         webaccess-qml.cpp webaccess-qml.h
+        webaccesscockpit.cpp webaccesscockpit.h
     )
 else()
     list(APPEND WEBACCESS_SOURCES

@@ -28,6 +28,7 @@
 #include <qmath.h>
 
 #include "webaccess-qml.h"
+#include "webaccesscockpit.h"
 #include "webaccessauth.h"
 #include "webaccesssimpledesk.h"
 #include "webaccessnetwork.h"
@@ -427,6 +428,13 @@ WebAccessQml::WebAccessQml(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdI
 
     connect(m_vc, SIGNAL(selectedPageChanged(int)),
             this, SLOT(slotSelectedPageChanged(int)));
+
+    connect(m_doc->inputOutputMap(), SIGNAL(blackoutChanged(bool)),
+            this, SLOT(slotBlackoutChanged(bool)));
+
+    m_cockpit = new WebAccessCockpit(m_doc, m_sd, this);
+    connect(m_cockpit, SIGNAL(broadcast(QString)),
+            this, SLOT(slotCockpitBroadcast(QString)));
 }
 
 WebAccessQml::~WebAccessQml()
@@ -450,6 +458,22 @@ void WebAccessQml::slotHandleHTTPRequest(QHttpRequest *req, QHttpResponse *resp)
         if (!requireAuthLevel(resp, user, VC_ONLY_LEVEL))
             return;
         QByteArray json = getVCJson();
+        resp->setHeader("Content-Type", "application/json");
+        resp->setHeader("Content-Length", QString::number(json.size()));
+        resp->writeHead(200);
+        resp->end(json);
+        return;
+    }
+    else if (reqUrl.startsWith("/api/"))
+    {
+        if (!requireAuthLevel(resp, user, VC_ONLY_LEVEL))
+            return;
+        QByteArray json = m_cockpit->httpJson(reqUrl);
+        if (json.isNull())
+        {
+            sendNotFound(resp);
+            return;
+        }
         resp->setHeader("Content-Type", "application/json");
         resp->setHeader("Content-Length", QString::number(json.size()));
         resp->writeHead(200);
@@ -521,6 +545,10 @@ void WebAccessQml::slotHandleWebSocketRequest(QHttpConnection *conn, QString dat
             return;
 
         if (cmdList.count() < 2)
+            return;
+
+        bool canControlDMX = !(m_auth && user && user->level < SIMPLE_DESK_AND_VC_LEVEL);
+        if (m_cockpit->handleApiCommand(conn, cmdList, canControlDMX))
             return;
 
         QString apiCmd = cmdList[1];
@@ -1032,6 +1060,7 @@ void WebAccessQml::slotHandleWebSocketRequest(QHttpConnection *conn, QString dat
 void WebAccessQml::slotHandleWebSocketClose(QHttpConnection *conn)
 {
     qDebug() << "Websocket Connection closed";
+    m_cockpit->connectionClosed(conn);
     if (conn->userData)
     {
         WebAccessUser* user = static_cast<WebAccessUser*>(conn->userData);
@@ -1830,6 +1859,16 @@ void WebAccessQml::slotGrandMasterValueChanged(uchar value)
     QString gmDisplayValue = QString("%1%").arg(p, 2, 10, QChar('0'));
     QString wsMessage = QString("GM_VALUE|%1|%2").arg(value).arg(gmDisplayValue);
     sendWebSocketMessage(wsMessage);
+}
+
+void WebAccessQml::slotBlackoutChanged(bool state)
+{
+    sendWebSocketMessage(QString("BLACKOUT|%1").arg(state ? 1 : 0));
+}
+
+void WebAccessQml::slotCockpitBroadcast(const QString &message)
+{
+    sendWebSocketMessage(message);
 }
 
 void WebAccessQml::handleAutostartProject(const QString &path)
