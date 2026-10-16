@@ -63,6 +63,7 @@
 
 #include "tardis.h"
 #include "networkmanager.h"
+#include "nativeapi.h"
 #include "stagewizard.h"
 
 #include "qlcfixturedefcache.h"
@@ -211,17 +212,19 @@ void App::startup()
             this, &App::slotClientAccessRequest);
     connect(m_networkManager, &NetworkManager::clientAccessRequestCancelled,
             this, &App::slotClientAccessRequestCancelled);
-    connect(m_networkManager, &NetworkManager::clientAutoAuthorized, this,
-            [this](const QString &sessionId)
-    {
-        m_networkManager->sendWorkspaceToClient(sessionId, fileName());
-    });
+    /* Serve the in-memory project, not the file on disk: the latter is
+     * missing for a never saved project and stale for a modified one */
+    connect(m_networkManager, &NetworkManager::clientAutoAuthorized,
+            this, &App::slotClientProjectRequest);
     connect(m_networkManager, &NetworkManager::accessMaskChanged, this, &App::setAccessMask);
     connect(m_networkManager, &NetworkManager::requestProjectLoad, this, &App::slotLoadDocFromMemory);
     connect(m_networkManager, &NetworkManager::requestProjectClear, this, &App::slotClearDocFromNetwork);
     connect(m_networkManager, &NetworkManager::clientProjectRequest, this, &App::slotClientProjectRequest);
     connect(m_networkManager, &NetworkManager::storeAutostartProject,
             this, &App::slotSaveAutostart);
+
+    /* Extended native API: project, fixture library and I/O requests */
+    new NativeApi(this, m_networkManager);
 
     m_tardis = new Tardis(this, m_doc, m_networkManager, m_fixtureManager, m_functionManager,
                           m_contextManager, m_simpleDesk, m_showManager, m_virtualConsole);
@@ -422,7 +425,8 @@ void App::setAccessMask(int mask)
 int App::defaultMask() const
 {
     return AC_FixtureEditing | AC_FunctionEditing | AC_InputOutput |
-            AC_ShowManager | AC_SimpleDesk | AC_VCControl | AC_VCEditing;
+            AC_ShowManager | AC_SimpleDesk | AC_VCControl | AC_VCEditing |
+            AC_ProjectManagement;
 }
 
 void App::keyPressEvent(QKeyEvent *e)
@@ -601,6 +605,11 @@ void App::slotClientProjectRequest(QString sessionId)
 
     if (m_networkManager->sendWorkspaceToClient(sessionId, fileName) == false)
         qWarning() << Q_FUNC_INFO << "Failed to send the workspace to session" << sessionId;
+}
+
+void App::serveProjectToClient(QString sessionId)
+{
+    slotClientProjectRequest(sessionId);
 }
 
 void App::slotAccessMaskChanged(int mask)

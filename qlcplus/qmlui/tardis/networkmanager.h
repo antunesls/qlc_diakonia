@@ -249,6 +249,12 @@ public:
      *  when ready, so a busy or detached client is not forced to reload */
     void notifyProjectLoaded();
 
+    /** Answer an extended API request of $sessionId. $payload (JSON on
+     *  success, an error message otherwise) is split into as many
+     *  NetCommandResult packets as needed to fit the section size limit */
+    bool sendCommandResult(QString sessionId, quint32 requestId,
+                           bool success, const QString &payload);
+
     /** Return true if at least one server instance is running */
     bool serverStarted() const;
 
@@ -259,6 +265,14 @@ public:
 protected:
     NetworkHost *hostForSocket(const QTcpSocket *socket) const;
     int requiredAccessMask(int actionCode) const;
+
+    /** Access right needed by an extended API request: 0 when any
+     *  authenticated session may use it */
+    int extendedAccessMask(int actionCode) const;
+
+    /** Validate an extended API request and hand it over to NativeApi */
+    void processExtendedRequest(NetworkHost *session, int actionCode,
+                                const QVariantList &paramsList);
     void queueAccessRequest(NetworkHost *host);
 
     /** Return the key identifying $host in the session allow list */
@@ -283,6 +297,11 @@ signals:
     /** Emitted on a server when a client asks for the current workspace.
      *  The App answers it, since it owns the project file name */
     void clientProjectRequest(QString sessionId);
+
+    /** Emitted on a server for every authorized extended API request.
+     *  NativeApi answers it with sendCommandResult() */
+    void extendedRequest(QString sessionId, int actionCode, quint32 requestId,
+                         QVariantMap arguments, int accessMask);
 
 protected slots:
     /** Event raised when an incoming connection is requested on

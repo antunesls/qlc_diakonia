@@ -55,6 +55,7 @@ set(SRC_FILES
     scripteditor.cpp scripteditor.h
     showmanager.cpp showmanager.h
     simpledesk.cpp simpledesk.h
+    tardis/nativeapi.cpp tardis/nativeapi.h
     tardis/networkmanager.cpp tardis/networkmanager.h
     tardis/networkpacketizer.cpp tardis/networkpacketizer.h
     tardis/simplecrypt.cpp tardis/simplecrypt.h

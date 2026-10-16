@@ -161,9 +161,22 @@ CustomPopupDialog
             }
             RobotoText
             {
-                Layout.columnSpan: 3
                 height: UISettings.listItemHeight
                 label: qsTr("Input/Output")
+            }
+
+            CustomCheckBox
+            {
+                id: projectCheck
+                implicitHeight: UISettings.listItemHeight
+                implicitWidth: height
+                checked: true
+                autoExclusive: false
+            }
+            RobotoText
+            {
+                height: UISettings.listItemHeight
+                label: qsTr("Project management")
             }
 
             // row 6
@@ -223,12 +236,14 @@ CustomPopupDialog
                             access |= App.AC_ShowManager
                         if (ioCheck.checked)
                             access |= App.AC_InputOutput
+                        if (projectCheck.checked)
+                            access |= App.AC_ProjectManagement
 
                         var allowedSession = sessionId
                         deciding = true
                         popupRoot.close()
                         if (networkManager.setClientAccess(allowedSession, true, access, alwaysCheck.checked))
-                            networkManager.sendWorkspaceToClient(allowedSession, qlcplus.fileName())
+                            qlcplus.serveProjectToClient(allowedSession)
                     }
                 }
             }

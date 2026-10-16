@@ -272,7 +272,23 @@ public:
         NetProjectTransfer,
         NetProjectChanging,
         NetProjectLoaded,
-        NetProjectRequest
+        NetProjectRequest,
+
+        /* Extended native API. Requests carry a request ID and a JSON
+         * arguments string; the server answers each of them with one or
+         * more NetCommandResult packets (see NativeApi) */
+        NetApiInfo = 0xFF10,
+        NetCommandResult,
+        NetProjectSave,
+        NetProjectNew,
+        NetProjectLoadFile,
+        NetProjectUpload,
+        NetFixtureLibraryQuery,
+        NetIOQuery,
+        NetIOPatch,
+        NetFixtureGroupDelete,
+        NetVCPageAdd,
+        NetVCPageRemove
     };
 
     Q_ENUM(ActionCodes)

@@ -1,7 +1,9 @@
 project(windows)
 
 # Set paths
-if (DEFINED $ENV{MSYSTEM_CARCH} AND $ENV{MSYSTEM_CARCH} STREQUAL "i686")
+if (DEFINED ENV{MINGW_PREFIX})
+    set(SYS_LIBS_PATH $ENV{MINGW_PREFIX}/bin)
+elseif (DEFINED $ENV{MSYSTEM_CARCH} AND $ENV{MSYSTEM_CARCH} STREQUAL "i686")
     set(SYS_LIBS_PATH $ENV{SystemDrive}/msys64/mingw32/bin)
 else()
     set(SYS_LIBS_PATH $ENV{SystemDrive}/msys64/mingw64/bin)

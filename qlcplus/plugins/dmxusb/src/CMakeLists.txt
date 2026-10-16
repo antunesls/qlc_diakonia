@@ -29,6 +29,9 @@ add_library(${module_name}
 if(WIN32)
     target_link_libraries(${module_name} PRIVATE winmm)
     set(FTD2XXDIR "C:/projects/D2XXSDK")
+endif()
+
+if(WIN32 AND EXISTS ${FTD2XXDIR})
     if (DEFINED ENV{MSYSTEM_CARCH})
         set(SYSTEM_ARCH "$ENV{MSYSTEM_CARCH}")
         if (SYSTEM_ARCH STREQUAL "x86_64")

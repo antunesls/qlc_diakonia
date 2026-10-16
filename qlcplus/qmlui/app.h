@@ -157,7 +157,8 @@ public:
         AC_VCEditing       = (1 << 3),
         AC_SimpleDesk      = (1 << 4),
         AC_ShowManager     = (1 << 5),
-        AC_InputOutput     = (1 << 6)
+        AC_InputOutput     = (1 << 6),
+        AC_ProjectManagement = (1 << 7)
     };
     Q_ENUM(AccessControl)
 
@@ -327,6 +328,9 @@ public:
     /** Get/Set the name of the current workspace file */
     Q_INVOKABLE QString fileName() const;
     void setFileName(const QString& fileName);
+
+    /** Send the current (in-memory) workspace to a network client */
+    Q_INVOKABLE void serveProjectToClient(QString sessionId);
 
     /**
      * Get the autosave version of the name

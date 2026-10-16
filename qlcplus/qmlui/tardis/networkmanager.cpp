@@ -26,6 +26,8 @@
 #include <QTimer>
 #include <QFile>
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "networkmanager.h"
 #include "app.h"
@@ -41,6 +43,10 @@
 
 #define WORKSPACE_CHUNK_SIZE    8 * 1024
 #define ECHO_GUARD_WINDOW_MS    15000
+
+/* Characters per NetCommandResult chunk: even at 3 UTF-8 bytes per
+ * character a chunk stays below the 16 bit section length */
+#define COMMAND_RESULT_CHUNK_CHARS  20000
 
 #define SETTINGS_SERVER_KEY     QStringLiteral("network/serverkey")
 
@@ -852,6 +858,111 @@ int NetworkManager::requiredAccessMask(int actionCode) const
     return 0;
 }
 
+int NetworkManager::extendedAccessMask(int actionCode) const
+{
+    switch (actionCode)
+    {
+        case Tardis::NetProjectSave:
+        case Tardis::NetProjectNew:
+        case Tardis::NetProjectLoadFile:
+        case Tardis::NetProjectUpload:
+            return App::AC_ProjectManagement;
+
+        case Tardis::NetFixtureLibraryQuery:
+        case Tardis::NetFixtureGroupDelete:
+            return App::AC_FixtureEditing;
+
+        case Tardis::NetIOQuery:
+        case Tardis::NetIOPatch:
+            return App::AC_InputOutput;
+
+        case Tardis::NetVCPageAdd:
+        case Tardis::NetVCPageRemove:
+            return App::AC_VCEditing;
+
+        /* NetApiInfo: capabilities discovery, open to any session */
+        default:
+            return 0;
+    }
+}
+
+void NetworkManager::processExtendedRequest(NetworkHost *session, int actionCode,
+                                            const QVariantList &paramsList)
+{
+    if (session == nullptr || !session->isAuthenticated)
+    {
+        qWarning() << "[TCP] Dropping extended request from an unauthenticated native session";
+        return;
+    }
+
+    if (paramsList.count() < 2)
+    {
+        qWarning() << "[TCP] Dropping malformed extended request" << Tardis::actionToString(actionCode);
+        return;
+    }
+
+    quint32 requestId = paramsList.at(0).toUInt();
+    int required = extendedAccessMask(actionCode);
+    if (required != 0 && (session->accessMask & required) == 0)
+    {
+        qWarning() << "[TCP] Denied extended request" << Tardis::actionToString(actionCode)
+                   << "to session" << session->sessionId;
+        sendCommandResult(session->sessionId, requestId, false,
+                          QString("Access denied: this client was not granted the right to perform %1")
+                              .arg(Tardis::actionToString(actionCode)));
+        return;
+    }
+
+    QJsonParseError error;
+    QJsonDocument arguments = QJsonDocument::fromJson(paramsList.at(1).toString().toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError || !arguments.isObject())
+    {
+        sendCommandResult(session->sessionId, requestId, false,
+                          QString("Invalid JSON arguments: %1").arg(error.errorString()));
+        return;
+    }
+
+    emit extendedRequest(session->sessionId, actionCode, requestId,
+                         arguments.object().toVariantMap(), session->accessMask);
+}
+
+bool NetworkManager::sendCommandResult(QString sessionId, quint32 requestId,
+                                       bool success, const QString &payload)
+{
+    NetworkHost *host = m_hostsMap.value(sessionId, nullptr);
+    if (host == nullptr || host->tcpSocket.isNull() || !host->isAuthenticated)
+        return false;
+
+    QStringList chunks;
+    int pos = 0;
+    while (pos < payload.length())
+    {
+        int length = qMin(COMMAND_RESULT_CHUNK_CHARS, int(payload.length() - pos));
+        /* never split a surrogate pair: each chunk is decoded on its own */
+        if (pos + length < payload.length() && payload.at(pos + length - 1).isHighSurrogate())
+            length--;
+        chunks.append(payload.mid(pos, length));
+        pos += length;
+    }
+    if (chunks.isEmpty())
+        chunks.append(QString(""));
+
+    for (int i = 0; i < chunks.count(); i++)
+    {
+        QByteArray packet;
+        m_packetizer->initializePacket(packet, Tardis::NetCommandResult);
+        m_packetizer->addSection(packet, QVariant(requestId));
+        m_packetizer->addSection(packet, QVariant(success));
+        m_packetizer->addSection(packet, QVariant(i));
+        m_packetizer->addSection(packet, QVariant(int(chunks.count())));
+        m_packetizer->addSection(packet, QVariant(chunks.at(i)));
+        if (sendTCPPacket(host->tcpSocket, packet, m_encryptPackets) == false)
+            return false;
+    }
+
+    return true;
+}
+
 QString NetworkManager::allowListKey(const NetworkHost *host) const
 {
     if (host == nullptr)
@@ -1197,7 +1308,7 @@ void NetworkManager::slotProcessTCPPackets()
                     host->hostName = paramsList.at(1).toString();
                     if (m_allowAllNative)
                     {
-                        constexpr int fullAccessMask = 0x7f;
+                        constexpr int fullAccessMask = 0xff;
                         autoAuthorizeHost(host, fullAccessMask);
                     }
                     else if (m_allowedClients.contains(allowListKey(host)))
@@ -1278,6 +1389,23 @@ void NetworkManager::slotProcessTCPPackets()
                 emit clientProjectRequest(session->sessionId);
             }
             break;
+            case Tardis::NetApiInfo:
+            case Tardis::NetProjectSave:
+            case Tardis::NetProjectNew:
+            case Tardis::NetProjectLoadFile:
+            case Tardis::NetProjectUpload:
+            case Tardis::NetFixtureLibraryQuery:
+            case Tardis::NetIOQuery:
+            case Tardis::NetIOPatch:
+            case Tardis::NetFixtureGroupDelete:
+            case Tardis::NetVCPageAdd:
+            case Tardis::NetVCPageRemove:
+            {
+                if (m_hostType == ServerHostType)
+                    processExtendedRequest(session, actionCode, paramsList);
+            }
+            break;
+
             case Tardis::NetProjectTransfer:
             {
                 if (m_hostType != ClientHostType || paramsList.count() < 2)

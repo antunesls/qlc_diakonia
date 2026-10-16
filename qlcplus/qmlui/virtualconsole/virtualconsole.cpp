@@ -388,6 +388,9 @@ void VirtualConsole::addPage(int index)
     QQmlEngine::setObjectOwnership(page, QQmlEngine::CppOwnership);
     m_contextManager->registerContext(page->previewContext());
     m_pages.insert(index, page);
+    // pages are frames too: register them so that widgets
+    // can be created into them by ID (e.g. by network clients)
+    addWidgetToMap(page);
 
     emit pagesCountChanged();
 
@@ -408,6 +411,8 @@ void VirtualConsole::deletePage(int index)
 
     m_pages.at(index)->deleteChildren();
     VCPage *page = m_pages.takeAt(index);
+    if (m_widgetsMap.value(page->id(), nullptr) == page)
+        m_widgetsMap.remove(page->id());
     m_contextManager->unregisterContext(page->previewContext()->name());
     delete page;
 
@@ -570,7 +575,17 @@ VCWidget *VirtualConsole::widget(quint32 id) const
     if (id == VCWidget::invalidId())
         return nullptr;
 
-    return m_widgetsMap.value(id, nullptr);
+    VCWidget *widget = m_widgetsMap.value(id, nullptr);
+    if (widget != nullptr)
+        return widget;
+
+    /* after a workspace reset the pages are not in the map
+     * until postLoad() registers them again */
+    foreach (VCPage *page, m_pages)
+        if (page->id() == id)
+            return page;
+
+    return nullptr;
 }
 
 void VirtualConsole::setWidgetSelection(quint32 wID, QQuickItem *item, bool enable, bool multi)
@@ -1749,6 +1764,17 @@ void VirtualConsole::postLoad()
     QList<VCWidget *> invalidWidgetsList;
     QList<VCWidget *> widgetsList;
 
+    /** loading may have changed the page IDs: drop the pages from the
+     *  map here and register them again after their children */
+    for (auto it = m_widgetsMap.begin(); it != m_widgetsMap.end();)
+    {
+        VCPage *page = qobject_cast<VCPage *>(it.value());
+        if (page != nullptr && m_pages.contains(page))
+            it = m_widgetsMap.erase(it);
+        else
+            ++it;
+    }
+
     foreach (VCPage *page, m_pages)
         widgetsList.append(page->children(true));
 
@@ -1769,6 +1795,11 @@ void VirtualConsole::postLoad()
     }
     foreach (VCWidget *widget, invalidWidgetsList)
         addWidgetToMap(widget);
+
+    /** resetContents() cleared the map, pages included. Register them
+     *  again, after the children so that saved widget IDs are kept */
+    foreach (VCPage *page, m_pages)
+        addWidgetToMap(page);
 
     /** Now for each page, map the children widgets input
      *  sources, to look it up later when input signals start
