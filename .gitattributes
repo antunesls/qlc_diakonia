@@ -1,3 +1,5 @@
 # Root defaults; subprojects keep their own .gitattributes
 gradlew eol=lf
 *.sh eol=lf
+diakonia.sh eol=lf
+*.cmd eol=crlf
