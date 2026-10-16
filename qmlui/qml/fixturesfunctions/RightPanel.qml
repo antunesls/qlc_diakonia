@@ -1,0 +1,478 @@
+/*
+  Q Light Controller Plus
+  RightPanel.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Dialogs
+
+import org.qlcplus.classes 1.0
+import "."
+
+SidePanel
+{
+    id: rightSidePanel
+    objectName: "funcRightPanel"
+
+    property int selectedItemsCount: functionManager.selectedFunctionCount + functionManager.selectedFolderCount
+    property bool inShowManager: false
+
+    function confirmDeleteSelectedItems()
+    {
+        var selNames = functionManager.selectedItemNames()
+        deleteItemsPopup.message = qsTr("Are you sure you want to delete the following items?") + "\n" + selNames
+        deleteItemsPopup.open()
+    }
+
+    Connections
+    {
+        target: contextManager
+        function onRequestFunctionsDeletion()
+        {
+            confirmDeleteSelectedItems()
+        }
+    }
+
+    function createFunctionAndEditor(fType)
+    {
+        var i
+        // reset the currently loaded item first
+        if (fType !== QLCFunction.ShowType || mainView.currentContext !== "SHOWMGR")
+            loaderSource = ""
+
+        console.log("Requested to create function type " + fType)
+
+        if (fType === QLCFunction.AudioType)
+        {
+            var extList = functionManager.audioExtensions
+            var exts = qsTr("Audio files") + " ("
+            for (i = 0; i < extList.length; i++)
+                exts += extList[i] + " "
+            exts += ")"
+
+            openFileDialog.fType = fType
+            openFileDialog.nameFilters = [ exts, qsTr("All files") + " (*)" ]
+            openFileDialog.open()
+            return
+        }
+        else if (fType === QLCFunction.VideoType)
+        {
+            var videoExtList = functionManager.videoExtensions
+            var picExtList = functionManager.pictureExtensions
+            var vexts = qsTr("Video files") + " ("
+            for (i = 0; i < videoExtList.length; i++)
+                vexts += videoExtList[i] + " "
+            vexts += ")"
+            var pexts = qsTr("Picture files") + " ("
+            for (i = 0; i < picExtList.length; i++)
+                pexts += picExtList[i] + " "
+            pexts += ")"
+
+            openFileDialog.fType = fType
+            openFileDialog.nameFilters = [ vexts, pexts, qsTr("All files") + " (*)" ]
+            openFileDialog.open()
+            return
+        }
+
+        var newFuncID = functionManager.createFunction(fType, contextManager.selectedFixtureIDVariantList())
+        var fEditor = functionManager.getEditorResource(newFuncID)
+        functionManager.setEditorFunction(newFuncID, false, false)
+
+        if (fType === QLCFunction.ShowType)
+        {
+            showManager.currentShowID = newFuncID
+            mainView.switchToContext("SHOWMGR", fEditor)
+        }
+        else
+        {
+            itemID = newFuncID
+            loaderSource = fEditor
+            animatePanel(true)
+            addFunction.checked = false
+            funcManagerButton.checked = true
+        }
+    }
+
+    // Close the currently open function editor but keep the side panel open,
+    // going back to the function list (e.g. when the edited function gets
+    // deleted by an undo action)
+    function closeEditor()
+    {
+        if (!(qlcplus.accessMask & App.AC_FunctionEditing))
+            return
+
+        loaderSource = ""
+        itemID = -1
+        loaderSource = "qrc:/FunctionManager.qml"
+        funcManagerButton.checked = true
+    }
+
+    function requestEditor(funcID, funcType)
+    {
+        if (!(qlcplus.accessMask & App.AC_FunctionEditing))
+            return
+
+        // reset the currently loaded item first
+        loaderSource = ""
+        itemID = funcID
+
+        if (funcID === -1)
+        {
+            animatePanel(false)
+            funcManagerButton.checked = false
+        }
+        else
+        {
+            loaderSource = functionManager.getEditorResource(funcID)
+            animatePanel(true)
+        }
+    }
+
+    onContentLoaded: (item, ID) =>
+    {
+        if (item.hasOwnProperty("functionID"))
+            item.functionID = ID
+    }
+
+    FileDialog
+    {
+        id: openFileDialog
+        visible: false
+        fileMode: FileDialog.OpenFiles
+
+        property int fType
+
+        onAccepted:
+        {
+
+            var strArray = []
+            for (var i = 0; i < selectedFiles.length; i++)
+                strArray.push("" + selectedFiles[i])
+
+            console.log("File list: " + strArray)
+
+            if (strArray.length === 1)
+            {
+                itemID = functionManager.createAudioVideoFunction(fType, strArray)
+                functionManager.setEditorFunction(itemID, false, false)
+                loaderSource = functionManager.getEditorResource(itemID)
+            }
+            else
+            {
+                functionManager.createAudioVideoFunction(fType, strArray)
+                loaderSource = "qrc:/FunctionManager.qml"
+            }
+
+            animatePanel(true)
+            addFunction.checked = false
+            funcManagerButton.checked = true
+        }
+    }
+
+    CustomPopupDialog
+    {
+        id: fmGenericPopup
+        visible: false
+        title: qsTr("Error")
+        message: ""
+        onAccepted: {}
+    }
+
+
+    PopupRenameItems
+    {
+        id: textInputPopup
+
+        property bool isFolder: false
+
+        onAccepted:
+        {
+            var success
+
+            if (isFolder)
+            {
+                success = functionManager.createFolder(editText)
+            }
+            else
+            {
+                success = functionManager.renameSelectedItems(editText, numberingEnabled, startNumber, digits)
+            }
+            if (success === false)
+            {
+                fmGenericPopup.message = qsTr("An item with the same name already exists.\nPlease provide a different name.")
+                fmGenericPopup.open()
+            }
+        }
+    }
+
+    Rectangle
+    {
+        width: collapseWidth
+        height: parent.height
+        color: "transparent"
+        z: 2
+
+        ColumnLayout
+        {
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: parent.height
+            width: iconSize
+            spacing: 3
+
+            IconButton
+            {
+                id: funcManagerButton
+                z: 2
+                width: iconSize
+                height: iconSize
+                imgSource: "qrc:/functions.svg"
+                tooltip: qsTr("Function Manager")
+                checkable: true
+                onToggled:
+                {
+                    if (checked)
+                        loaderSource = "qrc:/FunctionManager.qml"
+                    else
+                    {
+                        functionManager.selectFunctionID(-1, false)
+                        functionManager.setEditorFunction(-1, false, false)
+                    }
+                    animatePanel(checked)
+                }
+            }
+            IconButton
+            {
+                id: timeToolButton
+                visible: inShowManager
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_stopwatch
+                faColor: "turquoise"
+                tooltip: qsTr("Timing Settings")
+                checkable: true
+                onToggled:
+                {
+                    if (checked)
+                        loaderSource = "qrc:/TimingUtils.qml"
+
+                    animatePanel(checked)
+                }
+            }
+
+            IconButton
+            {
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_hat_wizard
+                faColor: "yellow"
+                tooltip: qsTr("Show Wizard")
+                visible: qlcplus.accessMask & App.AC_FunctionEditing
+                onClicked: mainView.openShowWizard()
+            }
+
+            IconButton
+            {
+                id: addFunction
+                visible: qlcplus.accessMask & App.AC_FunctionEditing
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_plus
+                faColor: "limegreen"
+                tooltip: qsTr("Add a new function")
+                checkable: true
+
+                AddFunctionMenu
+                {
+                    visible: addFunction.checked
+                    x: -width
+
+                    function requestFolder()
+                    {
+                        textInputPopup.title = qsTr("Enter a unique name")
+                        textInputPopup.isFolder = true
+                        textInputPopup.editText = qsTr("New folder")
+                        textInputPopup.open()
+                    }
+
+                    onEntryClicked: function(fType)
+                    {
+                        close()
+                        createFunctionAndEditor(fType)
+                    }
+                    onClosed: addFunction.checked = false
+                }
+            }
+            IconButton
+            {
+                id: removeFunction
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_minus
+                faColor: "crimson"
+                tooltip: qsTr("Delete the selected functions")
+                counter: selectedItemsCount && !functionManager.isEditing
+                onClicked: confirmDeleteSelectedItems()
+
+                CustomPopupDialog
+                {
+                    id: deleteItemsPopup
+                    title: qsTr("Delete items")
+                    onAccepted:
+                    {
+                        var funcIdList = functionManager.selectedFunctionsID()
+
+                        // check if we're deleting the curennt show
+                        var showFuncId = showManager.currentShowID
+
+                        for (var i = 0; i < funcIdList.length; i++)
+                        {
+                            if (funcIdList[i] === showFuncId)
+                            {
+                                showManager.resetContents()
+                                break
+                            }
+                        }
+
+                        functionManager.deleteSelectedFolders()
+                        functionManager.deleteFunctions(funcIdList)
+                    }
+                }
+            }
+            IconButton
+            {
+                id: renameFunction
+                z: 2
+                width: iconSize
+                height: iconSize
+                imgSource: "qrc:/rename.svg"
+                tooltip: qsTr("Rename the selected items")
+                counter: selectedItemsCount && !functionManager.isEditing
+                onClicked:
+                {
+                    var selNames = functionManager.selectedItemNames()
+                    if (selNames.length === 0)
+                        return
+                    if (selNames.length > 1)
+                        textInputPopup.showNumbering = true
+                    textInputPopup.title = qsTr("Rename items")
+                    textInputPopup.isFolder = false
+                    textInputPopup.editText = selNames[0]
+                    textInputPopup.open()
+                }
+            }
+            IconButton
+            {
+                id: cloneFunction
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_clone
+                faColor: UISettings.fgMain
+                tooltip: qsTr("Clone the selected functions")
+                counter: functionManager.selectedFunctionCount && !functionManager.isEditing
+                onClicked: functionManager.cloneFunctions()
+            }
+
+            IconButton
+            {
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_sitemap
+                faColor: UISettings.fgLight
+                tooltip: qsTr("Show function usage")
+                counter: functionManager.selectedFunctionCount
+                onClicked:
+                {
+                    var idList = functionManager.selectedFunctionsID()
+                    loaderSource = ""
+                    itemID = idList[0]
+                    loaderSource = "qrc:/UsageList.qml"
+                }
+            }
+            IconButton
+            {
+                z: 2
+                width: iconSize
+                height: iconSize
+                imgSource: "qrc:/autostart.svg"
+                tooltip: qsTr("Set/Unset autostart function")
+                counter: functionManager.selectedFunctionCount
+                onClicked:
+                {
+                    var idList = functionManager.selectedFunctionsID()
+                    if (idList.length === 0)
+                        return
+                    functionManager.startupFunctionID = idList[0]
+                }
+            }
+
+            IconButton
+            {
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_play
+                faColor: UISettings.fgMain
+                tooltip: qsTr("Function Preview")
+                checkable: true
+                checked: functionManager.previewEnabled
+                counter: functionManager.selectedFunctionCount
+                onToggled: functionManager.previewEnabled = checked
+            }
+
+            /* filler object */
+            Rectangle
+            {
+                Layout.fillHeight: true
+                width: iconSize
+                color: "transparent"
+            }
+
+            IconButton
+            {
+                width: iconSize
+                height: iconSize
+                imgSource: "qrc:/multiple.svg"
+                tooltip: qsTr("Toggle multiple item selection")
+                visible: inShowManager
+                checkable: true
+                checked: showManager ? showManager.multipleSelection : false
+                onToggled:
+                {
+                    if (showManager)
+                        showManager.multipleSelection = checked
+                }
+            }
+
+            IconButton
+            {
+                z: 2
+                width: iconSize
+                height: iconSize
+                faSource: FontAwesome.fa_xmark
+                tooltip: qsTr("Reset dump channels") + " (CTRL+R)"
+                onClicked: contextManager.resetDumpValues()
+            }
+        }
+    }
+}

@@ -1,0 +1,1929 @@
+/*
+  Q Light Controller Plus
+  showmanager.cpp
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include <QQmlContext>
+#include <QtMath>
+#include <QVector>
+#include <algorithm>
+
+#include "waveformimageprovider.h"
+#include "showmanager.h"
+#include "sequence.h"
+#include "tardis.h"
+#include "chaser.h"
+#include "scene.h"
+#include "track.h"
+#include "show.h"
+#include "doc.h"
+#include "app.h"
+
+ShowManager::ShowManager(QQuickView *view, Doc *doc, QObject *parent)
+    : PreviewContext(view, doc, "SHOWMGR", parent)
+    , m_cursorMovedDuringPause(false)
+    , m_isPlaying(false)
+    , m_isPaused(false)
+    , m_currentShow(nullptr)
+    , m_stretchFunctions(false)
+    , m_gridEnabled(false)
+    , m_snapGuideX(-1.0)
+    , m_timeScale(5.0)
+    , m_currentTime(0)
+    , m_selectedTrackId(-1)
+    , m_itemsColor(Qt::gray)
+    , m_multipleSelection(false)
+{
+    view->rootContext()->setContextProperty("showManager", this);
+    qmlRegisterUncreatableType<Show>("org.qlcplus.classes", 1, 0, "Show", "Can't create a Show");
+    qmlRegisterType<Track>("org.qlcplus.classes", 1, 0, "Track");
+    qmlRegisterUncreatableType<ShowFunction>("org.qlcplus.classes", 1, 0, "ShowFunction", "Can't create a ShowFunction");
+
+    /* Create and register a Waveform image provider */
+    m_waveformProvider = new WaveformImageProvider(doc);
+    view->engine()->addImageProvider(QLatin1String("waveform"), m_waveformProvider);
+    view->rootContext()->setContextProperty("waveformProvider", m_waveformProvider);
+
+    /* Relay Function changes to the UI, so Show Items can update
+       their preview lines when the referenced Function is edited */
+    connect(m_doc, SIGNAL(functionChanged(quint32)),
+            this, SIGNAL(functionChanged(quint32)));
+
+    setContextResource("qrc:/ShowManager.qml");
+    setContextTitle(tr("Show Manager"));
+}
+
+void ShowManager::initialize()
+{
+    App *app = qobject_cast<App *>(m_view);
+    m_tickSize = app->pixelDensity() * 18;
+
+    if (m_waveformProvider)
+        m_waveformProvider->setPixelDensity(app->pixelDensity());
+
+    siComponent = new QQmlComponent(m_view->engine(), QUrl("qrc:/ShowItem.qml"));
+    if (siComponent->isError())
+        qDebug() << siComponent->errors();
+}
+
+int ShowManager::currentShowID() const
+{
+    if (m_currentShow == nullptr)
+        return Function::invalidId();
+
+    return m_currentShow->id();
+}
+
+Show *ShowManager::currentShow() const
+{
+    return m_currentShow;
+}
+
+bool ShowManager::isEditing() const
+{
+    return m_currentShow == nullptr ? false : true;
+}
+
+void ShowManager::setCurrentShowID(int currentShowID)
+{
+    if (m_currentShow != nullptr)
+    {
+        if (m_currentShow->id() == (quint32)currentShowID)
+            return;
+        disconnect(m_currentShow, SIGNAL(timeChanged(quint32)), this, SLOT(slotTimeChanged(quint32)));
+        disconnect(m_currentShow, SIGNAL(showFinished()), this, SLOT(slotShowFinished()));
+        disconnect(m_currentShow, SIGNAL(stopped(quint32)), this, SLOT(slotShowStopped()));
+    }
+
+    m_currentShow = qobject_cast<Show*>(m_doc->function(currentShowID));
+    m_cursorMovedDuringPause = false;
+    emit currentShowIDChanged(currentShowID);
+    emit isEditingChanged();
+
+    if (m_currentShow != nullptr)
+    {
+        connect(m_currentShow, SIGNAL(timeChanged(quint32)), this, SLOT(slotTimeChanged(quint32)));
+        connect(m_currentShow, SIGNAL(showFinished()), this, SLOT(slotShowFinished()));
+        connect(m_currentShow, SIGNAL(stopped(quint32)), this, SLOT(slotShowStopped()));
+        emit showDurationChanged(m_currentShow->totalDuration());
+        emit showNameChanged(m_currentShow->name());
+    }
+    else
+    {
+        emit showDurationChanged(0);
+        emit showNameChanged("");
+    }
+
+    /* Emit time/beat change in case the new Show differs */
+    emit timeDivisionChanged(timeDivision());
+    emit beatsDivisionChanged(beatsDivision());
+    m_timeScale = 0.0; // force setTimeScale() to recompute and notify
+    setTimeScale(timeDivision() == Show::Time ? 5.0 : 1.0);
+
+    emit tracksChanged();
+    setPlaybackState(m_currentShow != nullptr ? m_currentShow->isRunning() : false,
+                     m_currentShow != nullptr ? m_currentShow->isPaused() : false);
+}
+
+QString ShowManager::showName() const
+{
+    if (m_currentShow == nullptr)
+        return QString();
+
+    return m_currentShow->name();
+}
+
+void ShowManager::setShowName(QString showName)
+{
+    if (m_currentShow == nullptr || m_currentShow->name() == showName)
+        return;
+
+    Tardis::instance()->enqueueAction(Tardis::FunctionSetName, m_currentShow->id(), m_currentShow->name(), showName);
+
+    m_currentShow->setName(showName);
+    emit showNameChanged(showName);
+}
+
+bool ShowManager::stretchFunctions() const
+{
+    return m_stretchFunctions;
+}
+
+void ShowManager::setStretchFunctions(bool stretchFunctions)
+{
+    if (m_stretchFunctions == stretchFunctions)
+        return;
+
+    m_stretchFunctions = stretchFunctions;
+    emit stretchFunctionsChanged(stretchFunctions);
+}
+
+bool ShowManager::gridEnabled() const
+{
+    return m_gridEnabled;
+}
+
+void ShowManager::setGridEnabled(bool gridEnabled)
+{
+    if (m_gridEnabled == gridEnabled)
+        return;
+
+    m_gridEnabled = gridEnabled;
+    emit gridEnabledChanged(m_gridEnabled);
+}
+
+double ShowManager::snapGuideX() const
+{
+    return m_snapGuideX;
+}
+
+void ShowManager::setSnapGuideX(double snapGuideX)
+{
+    if (qFuzzyCompare(m_snapGuideX, snapGuideX))
+        return;
+
+    m_snapGuideX = snapGuideX;
+    emit snapGuideXChanged();
+}
+
+QVariantList ShowManager::getSnapEdges(quint32 excludeFuncId,
+                                       double viewportLeft, double viewportRight) const
+{
+    QVariantList edges;
+
+    if (m_currentShow == nullptr)
+        return edges;
+
+    int beatsDivision = m_currentShow->beatsDivision();
+
+    for (Track *track : m_currentShow->tracks())
+    {
+        for (ShowFunction *sf : track->showFunctions())
+        {
+            if (sf->functionID() == excludeFuncId)
+                continue;
+
+            double startX, endX;
+            quint32 endTime = sf->startTime() + sf->duration();
+
+            if (timeDivision() == Show::Time)
+            {
+                startX = ((double)sf->startTime() * m_tickSize) / (m_timeScale * 1000.0);
+                endX = ((double)endTime * m_tickSize) / (m_timeScale * 1000.0);
+            }
+            else
+            {
+                startX = (m_tickSize / beatsDivision) * ((double)sf->startTime() / 1000.0);
+                endX = (m_tickSize / beatsDivision) * ((double)endTime / 1000.0);
+            }
+
+            // filter: skip items entirely outside the visible viewport
+            if (viewportLeft >= 0 && viewportRight >= 0)
+            {
+                if (endX < viewportLeft || startX > viewportRight)
+                    continue;
+            }
+
+            edges.append(startX);
+            edges.append(endX);
+        }
+    }
+
+    return edges;
+}
+
+/*********************************************************************
+ * Time
+ ********************************************************************/
+
+Show::TimeDivision ShowManager::timeDivision() const
+{
+    if (m_currentShow == nullptr)
+        return Show::Time;
+
+    return m_currentShow->timeDivisionType();
+}
+
+bool ShowManager::hasBeatBasedItems() const
+{
+    if (m_currentShow == nullptr)
+        return false;
+
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            Function *func = m_doc->function(sf->functionID());
+            if (func != nullptr && func->tempoType() == Function::Beats)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void ShowManager::setTimeDivision(Show::TimeDivision division)
+{
+    if (m_currentShow == nullptr)
+        return;
+
+    if (division == m_currentShow->timeDivisionType())
+        return;
+
+    /* A beat tempo Function's items are always positioned in "beats as ms"
+       (1000 units per beat) regardless of the Show's own timeline
+       division, and are not affected by this switch. However, since they
+       can be freely dragged/resized in pixels while the Show is showing a
+       Time-based ruler, they may end up sitting at an arbitrary fractional
+       beat position instead of on a beat. When the user switches to a BPM
+       ruler, tidy those up by snapping them to the nearest whole beat (the
+       user is warned about this beforehand, see hasBeatBasedItems()) */
+    if (division != Show::Time && m_currentShow->timeDivisionType() == Show::Time)
+    {
+        foreach (Track *track, m_currentShow->tracks())
+        {
+            foreach (ShowFunction *sf, track->showFunctions())
+            {
+                Function *func = m_doc->function(sf->functionID());
+                if (func == nullptr || func->tempoType() != Function::Beats)
+                    continue;
+
+                quint32 startBeats = qRound((double)sf->startTime() / 1000.0);
+                quint32 durationBeats = qRound((double)sf->duration() / 1000.0);
+                if (durationBeats == 0)
+                    durationBeats = 1;
+
+                sf->setStartTime(startBeats * 1000);
+                sf->setDuration(durationBeats * 1000);
+            }
+        }
+    }
+
+    /* Set the division type first: setTimeScale needs it to
+       calculate the tick size against the new time division */
+    m_currentShow->setTimeDivisionType(division);
+
+    /* Notify the new beats division before any geometry-related signal.
+       setTimeScale emits tickSizeChanged/timeScaleChanged, which make the
+       UI recalculate the items geometry right away. If the beats division
+       is still the previous one, beat sizes are computed with a stale
+       (possibly zero) divider, messing up the whole timeline preview */
+    if (division != Show::Time)
+        emit beatsDivisionChanged(m_currentShow->beatsDivision());
+
+    if (division == Show::Time)
+    {
+        m_currentShow->setTempoType(Function::Time);
+        setTimeScale(5.0);
+    }
+    else
+    {
+        m_currentShow->setTempoType(Function::Beats);
+        setTimeScale(1.0);
+    }
+    emit timeDivisionChanged(division);
+}
+
+int ShowManager::beatsDivision() const
+{
+    if (m_currentShow == nullptr)
+        return 0;
+
+    return m_currentShow->beatsDivision();
+}
+
+float ShowManager::timeScale() const
+{
+    return m_timeScale;
+}
+
+void ShowManager::setTimeScale(float timeScale)
+{
+    if (m_timeScale == timeScale)
+        return;
+
+    m_timeScale = timeScale;
+    float tickScale = timeDivision() == Show::Time ? 1.0 : timeScale;
+
+    if (m_detached)
+    {
+        m_tickSize = pixelDensity() * (18 * tickScale);
+    }
+    else
+    {
+        App *app = qobject_cast<App *>(m_view);
+        m_tickSize = app->pixelDensity() * (18 * tickScale);
+    }
+
+    emit tickSizeChanged(m_tickSize);
+    emit timeScaleChanged(timeScale);
+}
+
+float ShowManager::tickSize() const
+{
+    return m_tickSize;
+}
+
+int ShowManager::currentTime() const
+{
+    return m_currentTime;
+}
+
+void ShowManager::setCurrentTime(int currentTime)
+{
+    if (m_currentTime == currentTime)
+        return;
+
+    if (m_currentShow != nullptr && m_currentShow->isPaused())
+        m_cursorMovedDuringPause = true;
+
+    m_currentTime = currentTime;
+    emit currentTimeChanged(currentTime);
+}
+
+/*********************************************************************
+ * Tracks
+ ********************************************************************/
+
+QVariant ShowManager::tracks() const
+{
+    if (m_currentShow)
+        return QVariant::fromValue(m_currentShow->tracks());
+
+    return QVariant();
+}
+
+int ShowManager::selectedTrackId() const
+{
+    return m_selectedTrackId;
+}
+
+void ShowManager::setSelectedTrackId(int id)
+{
+    if (m_selectedTrackId == id)
+        return;
+
+    m_selectedTrackId = id;
+    emit selectedTrackIdChanged(id);
+    emit itemClicked(App::TrackDragItem);
+}
+
+void ShowManager::setTrackSolo(int index, bool solo)
+{
+    QList<Track*> tracks = m_currentShow->tracks();
+
+    if (index < 0 || index >= tracks.count())
+        return;
+
+    for (int i = 0; i < tracks.count(); i++)
+    {
+        if (i == index)
+            tracks.at(i)->setMute(false);
+        else
+            tracks.at(i)->setMute(solo);
+    }
+}
+
+void ShowManager::moveTrack(int index, int direction)
+{
+    QList<Track*> tracks = m_currentShow->tracks();
+
+    if (index < 0 || index >= tracks.count())
+        return;
+
+    m_currentShow->moveTrack(tracks.at(index), direction);
+    m_doc->setModified();
+
+    emit tracksChanged();
+}
+
+void ShowManager::deleteSelectedTrack()
+{
+    if (m_currentShow == nullptr)
+        return;
+
+    Track *track = m_currentShow->track(selectedTrackId());
+    if (track == nullptr)
+        return;
+
+    qDebug() << "Deleting track" << track->id();
+
+    // serialize the track (and its Functions) before removing it, as
+    // the undo action needs to restore it from its XML representation
+    Tardis::instance()->enqueueAction(
+        Tardis::ShowManagerDeleteTrack, m_currentShow->id(),
+        Tardis::instance()->actionToByteArray(Tardis::ShowManagerDeleteTrack, m_currentShow->id(), track->id()),
+        QVariant());
+
+    // removeTrack() destroys the track ShowFunctions too, so drop every
+    // reference to them (items, selection, clipboard) beforehand
+    QList <ShowFunction *> sfList = track->showFunctions();
+    for (ShowFunction *sf : sfList)
+        deleteShowItem(sf);
+
+    m_currentShow->removeTrack(selectedTrackId());
+    m_doc->setModified();
+
+    QQuickItem *itemsArea = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject *>("showItemsArea"));
+    renderView(itemsArea);
+
+    emit tracksChanged();
+}
+
+/*********************************************************************
+  * Show Items
+  ********************************************************************/
+
+void ShowManager::addItems(QQuickItem *parent, int trackIdx, int startTime, QVariantList idsList,
+                           ShowFunction *sourceFunc)
+{
+    if (idsList.count() == 0)
+        return;
+
+    // if no show is selected, then create a new one
+    if (m_currentShow == nullptr)
+    {
+        QString defaultName = QString("%1 %2").arg(tr("New Show")).arg(m_doc->nextFunctionID());
+        m_currentShow = new Show(m_doc);
+        m_currentShow->setName(defaultName);
+        Function *f = qobject_cast<Function*>(m_currentShow);
+        if (m_doc->addFunction(f) == false)
+        {
+            qDebug() << "Error in creating a new Show!";
+            m_currentShow = nullptr;
+            return;
+        }
+
+        Tardis::instance()->enqueueAction(Tardis::FunctionCreate, m_currentShow->id(), QVariant(),
+                                          Tardis::instance()->actionToByteArray(Tardis::FunctionCreate, m_currentShow->id()));
+
+        connect(m_currentShow, SIGNAL(timeChanged(quint32)), this, SLOT(slotTimeChanged(quint32)));
+        connect(m_currentShow, SIGNAL(showFinished()), this, SLOT(slotShowFinished()));
+        connect(m_currentShow, SIGNAL(stopped(quint32)), this, SLOT(slotShowStopped()));
+        emit currentShowIDChanged(m_currentShow->id());
+        emit showNameChanged(m_currentShow->name());
+        emit isEditingChanged();
+        setPlaybackState(false, false);
+    }
+
+    Track *selectedTrack = nullptr;
+
+    // if no Track index is provided, then add a new one
+    if (trackIdx == -1)
+    {
+        selectedTrack = new Track(Function::invalidId(), m_currentShow);
+        selectedTrack->setName(tr("Track %1").arg(m_currentShow->tracks().count() + 1));
+        m_currentShow->addTrack(selectedTrack);
+
+        Tardis::instance()->enqueueAction(
+            Tardis::ShowManagerAddTrack, m_currentShow->id(), QVariant(),
+            Tardis::instance()->actionToByteArray(Tardis::ShowManagerAddTrack, m_currentShow->id(), selectedTrack->id()));
+
+        trackIdx = m_currentShow->tracks().count() - 1;
+        emit tracksChanged();
+    }
+    else
+    {
+        if (trackIdx >= m_currentShow->tracks().count())
+        {
+            qDebug() << "Track index out of bounds!" << trackIdx;
+            return;
+        }
+        selectedTrack = m_currentShow->tracks().at(trackIdx);
+    }
+
+    for (QVariant &vID : idsList) // C++11
+    {
+        quint32 functionID = vID.toUInt();
+        if (functionID == m_currentShow->id())
+        {
+            /* TODO: a popup displaying the user stupidity would be nice here... */
+            continue;
+        }
+
+        // and now create the actual ShowFunction and the QML item
+        Function *func = m_doc->function(functionID);
+        if (func == nullptr)
+            continue;
+
+        ShowFunction *showFunc = selectedTrack->createShowFunction(functionID);
+
+        /* A Function keeps its own tempo type when dropped on a track: a
+           Show can freely mix time-based and beat-based items regardless
+           of its own timeline division, so dropping a Function here must
+           not silently override a tempo type the user already chose for
+           it in its own editor */
+        if (func->tempoType() == Function::Time)
+        {
+            showFunc->setDuration(func->totalDuration() ? func->totalDuration() : 5000);
+        }
+        else
+        {
+            if (func->type() == Function::AudioType || func->type() == Function::VideoType)
+                func->setTotalDuration(func->duration());
+            showFunc->setDuration(func->totalDuration() ? func->totalDuration() : 4000);
+        }
+
+        /* startTime is the drop position translated by the caller using
+           the Show's own ruler (Time or BPM), i.e. it is only guaranteed
+           to be in the dropped Function's own unit when that Function's
+           tempo type matches the Show's current division. Since a
+           Function keeps its own tempo type regardless of the Show's
+           division, convert it to that Function's unit when they differ,
+           using the live BPM */
+        quint32 itemStartTime = (quint32)startTime;
+        bool showIsBeats = timeDivision() != Show::Time;
+        bool funcIsBeats = func->tempoType() == Function::Beats;
+
+        if (showIsBeats != funcIsBeats)
+        {
+            int bpm = m_doc->inputOutputMap()->bpmNumber();
+            int beatDuration = bpm > 0 ? (60000 / bpm) : 500;
+
+            itemStartTime = showIsBeats
+                    ? Function::beatsToTime(itemStartTime, beatDuration)  // Show is BPM, Function is Time
+                    : Function::timeToBeats(itemStartTime, beatDuration); // Show is Time, Function is Beats
+        }
+
+        showFunc->setStartTime(itemStartTime);
+        showFunc->setColor(ShowFunction::defaultColor(func->type()));
+
+        // when pasting, inherit the customized properties of the source item
+        if (sourceFunc != nullptr)
+        {
+            /* sourceFunc->duration() is expressed in the unit of ITS OWN
+               Function (which may not even be the same Function as the one
+               being pasted here, in a mixed selection), so it needs the
+               same unit conversion as startTime above, relative to the
+               Function this ShowFunction actually wraps */
+            quint32 pastedDuration = sourceFunc->duration();
+            Function *sourceOwnerFunc = m_doc->function(sourceFunc->functionID());
+            bool sourceIsBeats = (sourceOwnerFunc != nullptr) ?
+                        (sourceOwnerFunc->tempoType() == Function::Beats) : funcIsBeats;
+
+            if (sourceIsBeats != funcIsBeats)
+            {
+                int bpm = m_doc->inputOutputMap()->bpmNumber();
+                int beatDuration = bpm > 0 ? (60000 / bpm) : 500;
+
+                pastedDuration = funcIsBeats
+                        ? Function::timeToBeats(pastedDuration, beatDuration)
+                        : Function::beatsToTime(pastedDuration, beatDuration);
+            }
+
+            showFunc->setDuration(pastedDuration);
+            showFunc->setColor(sourceFunc->color());
+            showFunc->setLocked(sourceFunc->isLocked());
+        }
+
+        Tardis::instance()->enqueueAction(
+            Tardis::ShowManagerAddFunction, m_currentShow->id(), QVariant(),
+            Tardis::instance()->actionToByteArray(Tardis::ShowManagerAddFunction, m_currentShow->id(), showFunc->id()));
+
+        QQuickItem *newItem = qobject_cast<QQuickItem*>(siComponent->create());
+
+        newItem->setParentItem(parent);
+        newItem->setProperty("trackIndex", trackIdx);
+        newItem->setProperty("sfRef", QVariant::fromValue(showFunc));
+        newItem->setProperty("funcRef", QVariant::fromValue(func));
+
+        m_itemsMap[showFunc->id()] = newItem;
+        startTime += showFunc->duration();
+    }
+
+    emit showDurationChanged(m_currentShow->totalDuration());
+}
+
+void ShowManager::addShowItem(ShowFunction *sf, quint32 trackId)
+{
+    if (m_currentShow == nullptr || sf == nullptr)
+        return;
+
+    // items are parented to the same item used by renderView()
+    QQuickItem *parent = contextItem();
+    if (parent == nullptr)
+        return;
+
+    Function *func = m_doc->function(sf->functionID());
+    if (func == nullptr)
+        return;
+
+    // ShowItem places itself vertically by track *index*, not by track ID
+    int trackIndex = m_currentShow->tracks().indexOf(m_currentShow->track(trackId));
+    if (trackIndex < 0)
+        return;
+
+    QQuickItem *newItem = qobject_cast<QQuickItem*>(siComponent->create());
+
+    newItem->setParentItem(parent);
+    newItem->setProperty("trackIndex", trackIndex);
+    newItem->setProperty("sfRef", QVariant::fromValue(sf));
+    newItem->setProperty("funcRef", QVariant::fromValue(func));
+    m_itemsMap[sf->id()] = newItem;
+}
+
+void ShowManager::deleteShowItems(QVariantList data)
+{
+    Q_UNUSED(data);
+
+    if (m_currentShow == nullptr)
+        return;
+
+    int clipboardCount = m_clipboard.count();
+
+    foreach (SelectedShowItem ssi, m_selectedItems)
+    {
+        quint32 trackIndex = ssi.m_trackIndex;
+        qDebug() << "Selected item has track index:" << trackIndex;
+
+        ShowFunction *showFunc = ssi.m_showFunc.data();
+        if (showFunc == nullptr)
+            continue;
+
+        // drop any clipboard reference to the item being deleted to
+        // avoid dangling pointers when pasting later
+        for (int i = m_clipboard.count() - 1; i >= 0; i--)
+        {
+            if (m_clipboard.at(i).m_showFunc == showFunc)
+                m_clipboard.removeAt(i);
+        }
+
+        if (trackIndex >= quint32(m_currentShow->tracks().count()))
+            continue;
+
+        Track *track = m_currentShow->tracks().at(trackIndex);
+        quint32 sfId = showFunc->id();
+
+        // serialize the item before removing it, as the undo action
+        // needs to restore it from its XML representation
+        Tardis::instance()->enqueueAction(
+            Tardis::ShowManagerDeleteFunction, m_currentShow->id(),
+            Tardis::instance()->actionToByteArray(Tardis::ShowManagerDeleteFunction, m_currentShow->id(), sfId),
+            QVariant());
+
+        track->removeShowFunction(showFunc, true);
+        m_itemsMap.remove(sfId);
+        if (ssi.m_item != nullptr)
+            delete ssi.m_item.data();
+    }
+
+    m_selectedItems.clear();
+    emit selectedItemsCountChanged(0);
+
+    if (m_clipboard.count() != clipboardCount)
+        emit clipboardItemsCountChanged(m_clipboard.count());
+}
+
+void ShowManager::refreshView()
+{
+    if (contextItem() != nullptr)
+        renderView(contextItem());
+
+    emit tracksChanged();
+    if (m_currentShow != nullptr)
+        emit showDurationChanged(m_currentShow->totalDuration());
+}
+
+void ShowManager::deleteShowItem(ShowFunction *sf)
+{
+    if (sf == nullptr)
+        return;
+
+    // the caller deletes the ShowFunction right after this, so drop
+    // every reference to it before it becomes dangling
+    int selectedCount = m_selectedItems.count();
+    for (int i = m_selectedItems.count() - 1; i >= 0; i--)
+    {
+        if (m_selectedItems.at(i).m_showFunc == sf)
+            m_selectedItems.removeAt(i);
+    }
+    if (m_selectedItems.count() != selectedCount)
+        emit selectedItemsCountChanged(m_selectedItems.count());
+
+    int clipboardCount = m_clipboard.count();
+    for (int i = m_clipboard.count() - 1; i >= 0; i--)
+    {
+        if (m_clipboard.at(i).m_showFunc == sf)
+            m_clipboard.removeAt(i);
+    }
+    if (m_clipboard.count() != clipboardCount)
+        emit clipboardItemsCountChanged(m_clipboard.count());
+
+    quint32 sfId = sf->id();
+    QQuickItem *item = m_itemsMap.value(sfId, nullptr);
+    if (item != nullptr)
+    {
+        m_itemsMap.remove(sfId);
+        delete item;
+    }
+}
+
+bool ShowManager::checkAndMoveItem(ShowFunction *sf, int originalTrackIdx, int newTrackIdx, int newStartTime)
+{
+    if (m_currentShow == nullptr || sf == nullptr)
+        return false;
+
+    //qDebug() << Q_FUNC_INFO << "origIdx:" << originalTrackIdx << "newIdx:" << newTrackIdx << "time:" << newStartTime;
+
+    Track *dstTrack = nullptr;
+
+    // check if it's moving on a new track or an existing one
+    if (newTrackIdx >= m_currentShow->tracks().count())
+    {
+        // create a new track here
+        dstTrack = new Track(Function::invalidId(), m_currentShow);
+        dstTrack->setName(tr("Track %1").arg(m_currentShow->tracks().count() + 1));
+        m_currentShow->addTrack(dstTrack);
+
+        Tardis::instance()->enqueueAction(
+            Tardis::ShowManagerAddTrack, m_currentShow->id(), QVariant(),
+            Tardis::instance()->actionToByteArray(Tardis::ShowManagerAddTrack, m_currentShow->id(), dstTrack->id()));
+
+        // the item is going to be moved on the newly created Track
+        newTrackIdx = m_currentShow->tracks().count() - 1;
+        emit tracksChanged();
+    }
+    else
+    {
+        dstTrack = m_currentShow->tracks().at(newTrackIdx);
+
+        bool overlapping = checkOverlapping(dstTrack, sf, newStartTime, sf->duration());
+        if (overlapping == true)
+            return false;
+    }
+
+    Tardis::instance()->enqueueAction(Tardis::ShowManagerItemSetStartTime, sf->id(), sf->startTime(), newStartTime);
+    sf->setStartTime(newStartTime);
+
+    // check if we need to move the ShowFunction to a different Track
+    if (newTrackIdx != originalTrackIdx)
+    {
+        Track *srcTrack = m_currentShow->tracks().at(originalTrackIdx);
+        srcTrack->removeShowFunction(sf, false);
+        dstTrack->addShowFunction(sf);
+
+        Tardis::instance()->enqueueAction(Tardis::ShowManagerItemSetTrack, sf->id(),
+                                          originalTrackIdx, newTrackIdx);
+    }
+
+    m_doc->setModified();
+
+    return true;
+}
+
+bool ShowManager::moveShowItemToTrack(ShowFunction *sf, int trackIdx)
+{
+    if (m_currentShow == nullptr || sf == nullptr)
+        return false;
+
+    if (trackIdx < 0 || trackIdx >= m_currentShow->tracks().count())
+        return false;
+
+    Track *dstTrack = m_currentShow->tracks().at(trackIdx);
+    Track *srcTrack = m_currentShow->getTrackFromShowFunctionID(sf->id());
+
+    if (dstTrack == nullptr || srcTrack == dstTrack)
+        return false;
+
+    if (srcTrack != nullptr)
+        srcTrack->removeShowFunction(sf, false);
+
+    dstTrack->addShowFunction(sf);
+
+    m_doc->setModified();
+
+    // the item didn't move through the UI, so the view has to be rebuilt
+    refreshView();
+
+    return true;
+}
+
+bool ShowManager::setShowItemStartTime(ShowFunction *sf, int startTime)
+{
+    if (sf == nullptr)
+        return false;
+
+    Track *track = m_currentShow->getTrackFromShowFunctionID(sf->id());
+    if (track == nullptr)
+        return false;
+
+    bool overlapping = checkOverlapping(track, sf, startTime, sf->duration());
+    if (overlapping)
+        return false;
+
+    Tardis::instance()->enqueueAction(Tardis::ShowManagerItemSetStartTime, sf->id(), sf->startTime(), startTime);
+    sf->setStartTime(startTime);
+
+    return true;
+}
+
+bool ShowManager::setShowItemDuration(ShowFunction *sf, int duration)
+{
+    if (sf == nullptr)
+        return false;
+
+    Track *track = m_currentShow->getTrackFromShowFunctionID(sf->id());
+    if (track == nullptr)
+        return false;
+
+    bool overlapping = checkOverlapping(track, sf, sf->startTime(), duration);
+    if (overlapping)
+        return false;
+
+    Tardis::instance()->enqueueAction(Tardis::ShowManagerItemSetDuration, sf->id(), sf->duration(), duration);
+    sf->setDuration(duration);
+
+    return true;
+}
+
+int ShowManager::minimumTimelineDuration(Show::TimeDivision division) const
+{
+    return division == Show::Time ? 1 : 125;
+}
+
+quint32 ShowManager::itemRelativeTimeFromCursor(const ShowFunction *sf, int cursorTime) const
+{
+    if (sf == nullptr)
+        return 0;
+
+    const quint32 currentTimeValue = quint32(qMax(0, cursorTime));
+    if (currentTimeValue <= sf->startTime())
+        return 0;
+
+    return qMin(sf->duration(), currentTimeValue - sf->startTime());
+}
+
+quint32 ShowManager::mapCursorToChaserTime(const ShowFunction *sf, Chaser *chaser, int cursorTime) const
+{
+    if (sf == nullptr || chaser == nullptr)
+        return 0;
+
+    quint32 itemRelativeTime = itemRelativeTimeFromCursor(sf, cursorTime);
+    quint32 chaserRelativeTime = itemRelativeTime;
+    quint32 chaserTotal = chaser->totalDuration();
+    if (sf->duration() > 0 && chaserTotal > 0)
+    {
+        chaserRelativeTime = quint32(qRound((double(itemRelativeTime) * double(chaserTotal))
+                                            / double(sf->duration())));
+    }
+
+    return chaserRelativeTime;
+}
+
+quint32 ShowManager::chaserStepDuration(Chaser *chaser, int index) const
+{
+    if (chaser == nullptr || index < 0 || index >= chaser->stepsCount())
+        return 0;
+
+    if (chaser->durationMode() == Chaser::Common)
+        return chaser->duration();
+
+    ChaserStep *step = chaser->stepAt(index);
+    return step ? step->duration : 0;
+}
+
+int ShowManager::chaserStepIndexFromTime(Chaser *chaser, quint32 timeValue) const
+{
+    if (chaser == nullptr || chaser->stepsCount() == 0)
+        return -1;
+
+    quint32 elapsed = 0;
+    for (int i = 0; i < chaser->stepsCount(); ++i)
+    {
+        quint32 stepDuration = chaserStepDuration(chaser, i);
+        if (stepDuration == 0)
+            stepDuration = 1;
+
+        if (timeValue < elapsed + stepDuration)
+            return i;
+
+        elapsed += stepDuration;
+    }
+
+    return chaser->stepsCount() - 1;
+}
+
+bool ShowManager::setChaserStepDurationWithUndo(Chaser *chaser, int stepIndex, quint32 newDuration)
+{
+    if (chaser == nullptr || stepIndex < 0 || stepIndex >= chaser->stepsCount())
+        return false;
+
+    ChaserStep *stepRef = chaser->stepAt(stepIndex);
+    if (stepRef == nullptr)
+        return false;
+
+    ChaserStep step = *stepRef;
+    newDuration = qMax(quint32(1), newDuration);
+    if (step.duration == newDuration)
+        return true;
+
+    UIntPair oldDuration(stepIndex, step.duration);
+    UIntPair oldHold(stepIndex, step.hold);
+
+    step.duration = newDuration;
+    step.hold = Function::speedSubtract(step.duration, step.fadeIn);
+
+    Tardis::instance()->enqueueAction(Tardis::ChaserSetStepDuration, chaser->id(),
+                                      QVariant::fromValue(oldDuration),
+                                      QVariant::fromValue(UIntPair(stepIndex, step.duration)));
+    Tardis::instance()->enqueueAction(Tardis::ChaserSetStepHold, chaser->id(),
+                                      QVariant::fromValue(oldHold),
+                                      QVariant::fromValue(UIntPair(stepIndex, step.hold)));
+    chaser->replaceStep(step, stepIndex);
+    return true;
+}
+
+void ShowManager::convertChaserCommonToPerStep(Chaser *chaser)
+{
+    if (chaser == nullptr || chaser->durationMode() != Chaser::Common)
+        return;
+
+    quint32 commonDuration = qMax(quint32(1), chaser->duration());
+    chaser->setDurationMode(Chaser::PerStep);
+    for (int i = 0; i < chaser->stepsCount(); ++i)
+    {
+        ChaserStep *stepRef = chaser->stepAt(i);
+        if (stepRef == nullptr)
+            continue;
+
+        setChaserStepDurationWithUndo(chaser, i, commonDuration);
+    }
+}
+
+void ShowManager::setShowItemDurationWithUndo(ShowFunction *sf, int newDuration)
+{
+    if (sf == nullptr)
+        return;
+
+    Tardis::instance()->enqueueAction(Tardis::ShowManagerItemSetDuration, sf->id(), sf->duration(), newDuration);
+    sf->setDuration(newDuration);
+}
+
+bool ShowManager::moveAllItemsAfterCursor(int cursorTime, int delta)
+{
+    if (m_currentShow == nullptr || delta == 0)
+        return true;
+
+    QList<ShowFunction *> itemsToMove;
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            if (sf == nullptr)
+                continue;
+
+            if (int(sf->startTime()) <= cursorTime)
+                continue;
+
+            itemsToMove.append(sf);
+        }
+    }
+
+    std::sort(itemsToMove.begin(), itemsToMove.end(),
+              [delta](ShowFunction *a, ShowFunction *b)
+              {
+                  if (delta > 0)
+                      return a->startTime() > b->startTime();
+                  return a->startTime() < b->startTime();
+              });
+
+    for (ShowFunction *sf : itemsToMove)
+    {
+        int newStart = int(sf->startTime()) + delta;
+        if (newStart < 0)
+            newStart = 0;
+
+        if (setShowItemStartTime(sf, newStart) == false)
+            return false;
+    }
+
+    return true;
+}
+
+bool ShowManager::insertShowItemTime(ShowFunction *sf, int length)
+{
+    return insertShowItemTimeAt(sf, length, m_currentTime);
+}
+
+bool ShowManager::insertShowItemTimeAt(ShowFunction *sf, int length, int cursorTime)
+{
+    if (m_currentShow == nullptr || sf == nullptr || length <= 0)
+        return false;
+
+    Function *func = m_doc->function(sf->functionID());
+    if (func == nullptr)
+        return false;
+
+    Track *track = m_currentShow->getTrackFromShowFunctionID(sf->id());
+    if (track == nullptr)
+        return false;
+
+    int minDuration = minimumTimelineDuration(timeDivision());
+
+    switch (func->type())
+    {
+        case Function::AudioType:
+        case Function::VideoType:
+        {
+            if (func->runOrder() != Function::Loop)
+                return false;
+        }
+        Q_FALLTHROUGH();
+        case Function::SceneType:
+        case Function::CollectionType:
+        case Function::EFXType:
+        case Function::RGBMatrixType:
+        {
+            int newDuration = sf->duration() + length;
+            if (newDuration < minDuration)
+                newDuration = minDuration;
+
+            if (checkOverlapping(track, sf, sf->startTime(), newDuration))
+                return false;
+
+            setShowItemDurationWithUndo(sf, newDuration);
+            m_doc->setModified();
+            return true;
+        }
+        case Function::ChaserType:
+        case Function::SequenceType:
+        {
+            Chaser *chaser = qobject_cast<Chaser *>(func);
+            if (chaser == nullptr)
+                return false;
+
+            int stepsCount = chaser->stepsCount();
+            if (stepsCount == 0 && func->type() != Function::SequenceType)
+                return false;
+
+            int newItemDuration = int(sf->duration()) + length;
+            if (newItemDuration < minDuration)
+                newItemDuration = minDuration;
+            if (checkOverlapping(track, sf, sf->startTime(), newItemDuration))
+                return false;
+
+            quint32 chaserRelativeTime = mapCursorToChaserTime(sf, chaser, cursorTime);
+
+            int insertIndex = chaserStepIndexFromTime(chaser, chaserRelativeTime);
+            if (insertIndex < 0)
+                return false;
+
+            // In Common mode, all steps share one duration: switch to PerStep first
+            // so we can stretch only the step covering the cursor.
+            convertChaserCommonToPerStep(chaser);
+
+            ChaserStep *targetStepRef = chaser->stepAt(insertIndex);
+            if (targetStepRef == nullptr)
+                return false;
+
+            quint32 targetDuration = targetStepRef->duration + quint32(length);
+            if (setChaserStepDurationWithUndo(chaser, insertIndex, targetDuration) == false)
+                return false;
+
+            setShowItemDurationWithUndo(sf, newItemDuration);
+            m_doc->setModified();
+            return true;
+        }
+        default:
+        break;
+    }
+
+    return false;
+}
+
+bool ShowManager::cutShowItemTime(ShowFunction *sf, int length)
+{
+    return cutShowItemTimeAt(sf, length, m_currentTime);
+}
+
+bool ShowManager::cutShowItemTimeAt(ShowFunction *sf, int length, int cursorTime)
+{
+    if (m_currentShow == nullptr || sf == nullptr || length <= 0)
+        return false;
+
+    Function *func = m_doc->function(sf->functionID());
+    if (func == nullptr)
+        return false;
+
+    int minDuration = minimumTimelineDuration(timeDivision());
+    int maxCutDuration = int(sf->duration()) - minDuration;
+    if (maxCutDuration <= 0)
+        return false;
+
+    int targetCutDuration = qMin(length, maxCutDuration);
+
+    switch (func->type())
+    {
+        case Function::AudioType:
+        case Function::VideoType:
+        {
+            if (func->runOrder() != Function::Loop)
+                return false;
+        }
+        Q_FALLTHROUGH();
+        case Function::SceneType:
+        case Function::CollectionType:
+        case Function::EFXType:
+        case Function::RGBMatrixType:
+        {
+            int newDuration = int(sf->duration()) - targetCutDuration;
+            if (newDuration < minDuration)
+                newDuration = minDuration;
+
+            setShowItemDurationWithUndo(sf, newDuration);
+            m_doc->setModified();
+            return true;
+        }
+        case Function::ChaserType:
+        case Function::SequenceType:
+        {
+            Chaser *chaser = qobject_cast<Chaser *>(func);
+            if (chaser == nullptr || chaser->stepsCount() == 0)
+                return false;
+
+            convertChaserCommonToPerStep(chaser);
+
+            quint32 chaserRelativeTime = mapCursorToChaserTime(sf, chaser, cursorTime);
+
+            int cutStartIndex = chaserStepIndexFromTime(chaser, chaserRelativeTime);
+            if (cutStartIndex < 0)
+                return false;
+
+            quint32 stepStartTime = 0;
+            for (int i = 0; i < cutStartIndex; ++i)
+                stepStartTime += qMax(quint32(1), chaserStepDuration(chaser, i));
+
+            int cutRemaining = targetCutDuration;
+            int cutDuration = 0;
+            int stepIndex = cutStartIndex;
+            quint32 cursorOffset = chaserRelativeTime > stepStartTime ? (chaserRelativeTime - stepStartTime) : 0;
+
+            while (cutRemaining > 0 && stepIndex < chaser->stepsCount())
+            {
+                ChaserStep *stepRef = chaser->stepAt(stepIndex);
+                if (stepRef == nullptr)
+                    break;
+
+                ChaserStep step = *stepRef;
+                quint32 stepDuration = qMax(quint32(1), step.duration);
+                quint32 offset = qMin(cursorOffset, stepDuration);
+                int removable = (stepIndex == cutStartIndex) ? int(stepDuration - offset) : int(stepDuration);
+                if (removable <= 0)
+                {
+                    cursorOffset = 0;
+                    stepIndex++;
+                    continue;
+                }
+
+                int consume = qMin(cutRemaining, removable);
+
+                if (stepIndex == cutStartIndex && offset > 0)
+                {
+                    quint32 newStepDuration = stepDuration;
+                    if (consume < removable)
+                        newStepDuration = qMax(quint32(1), quint32(int(stepDuration) - consume));
+                    else
+                        newStepDuration = qMax(quint32(1), quint32(offset));
+                    setChaserStepDurationWithUndo(chaser, stepIndex, newStepDuration);
+
+                    cutDuration += consume;
+                    cutRemaining -= consume;
+                    cursorOffset = 0;
+                    if (consume < removable)
+                        break;
+                    stepIndex++;
+                    continue;
+                }
+
+                if (consume < removable)
+                {
+                    quint32 newStepDuration = qMax(quint32(1), quint32(int(stepDuration) - consume));
+                    setChaserStepDurationWithUndo(chaser, stepIndex, newStepDuration);
+
+                    cutDuration += consume;
+                    cutRemaining = 0;
+                    break;
+                }
+
+                if (chaser->stepsCount() <= 1)
+                {
+                    quint32 newStepDuration = 1;
+                    int actualConsume = int(stepDuration - newStepDuration);
+                    if (actualConsume <= 0)
+                        break;
+
+                    setChaserStepDurationWithUndo(chaser, stepIndex, newStepDuration);
+
+                    cutDuration += actualConsume;
+                    cutRemaining -= actualConsume;
+                    break;
+                }
+
+                Tardis::instance()->enqueueAction(Tardis::ChaserRemoveStep, chaser->id(),
+                                                  Tardis::instance()->actionToByteArray(Tardis::ChaserRemoveStep,
+                                                                                        chaser->id(), stepIndex),
+                                                  QVariant());
+                if (chaser->removeStep(stepIndex) == false)
+                    break;
+
+                cutDuration += consume;
+                cutRemaining -= consume;
+            }
+
+            if (cutDuration <= 0)
+                return false;
+
+            int newDuration = int(sf->duration()) - cutDuration;
+            if (newDuration < minDuration)
+                newDuration = minDuration;
+
+            setShowItemDurationWithUndo(sf, newDuration);
+            m_doc->setModified();
+            return true;
+        }
+        default:
+        break;
+    }
+
+    return false;
+}
+
+bool ShowManager::insertTimeAtCursor(int length, int cursorTime)
+{
+    if (m_currentShow == nullptr || length <= 0)
+        return false;
+
+    bool hasTarget = false;
+    bool hasItemsAfterCursor = false;
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            if (sf == nullptr || sf->isLocked())
+                continue;
+
+            int startTime = int(sf->startTime());
+            if (startTime > cursorTime)
+                hasItemsAfterCursor = true;
+
+            int endTime = startTime + int(sf->duration());
+            if (cursorTime < startTime || cursorTime > endTime)
+                continue;
+
+            hasTarget = true;
+            if (hasItemsAfterCursor)
+                break;
+        }
+
+        if (hasTarget && hasItemsAfterCursor)
+            break;
+    }
+
+    if (!hasTarget && !hasItemsAfterCursor)
+        return false;
+
+    if (moveAllItemsAfterCursor(cursorTime, length) == false)
+        return false;
+
+    bool changed = false;
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            if (sf == nullptr || sf->isLocked())
+                continue;
+
+            int startTime = int(sf->startTime());
+            int endTime = startTime + int(sf->duration());
+            if (cursorTime < startTime || cursorTime > endTime)
+                continue;
+
+            changed |= insertShowItemTimeAt(sf, length, cursorTime);
+        }
+    }
+
+    if (hasTarget && !hasItemsAfterCursor && !changed)
+        moveAllItemsAfterCursor(cursorTime, -length);
+
+    return changed || hasItemsAfterCursor;
+}
+
+bool ShowManager::cutTimeAtCursor(int length, int cursorTime)
+{
+    if (m_currentShow == nullptr || length <= 0)
+        return false;
+
+    bool changed = false;
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            if (sf == nullptr || sf->isLocked())
+                continue;
+
+            int startTime = int(sf->startTime());
+            int endTime = startTime + int(sf->duration());
+            if (cursorTime < startTime || cursorTime > endTime)
+                continue;
+
+            changed |= cutShowItemTimeAt(sf, length, cursorTime);
+        }
+    }
+
+    if (!changed)
+        return false;
+
+    moveAllItemsAfterCursor(cursorTime, -length);
+
+    return changed;
+}
+
+void ShowManager::resetContents()
+{
+    resetView();
+    m_currentTime = 0;
+    emit currentTimeChanged(m_currentTime);
+
+    m_selectedTrackId = -1;
+    m_cursorMovedDuringPause = false;
+
+    if (m_currentShow != nullptr)
+    {
+        disconnect(m_currentShow, SIGNAL(timeChanged(quint32)), this, SLOT(slotTimeChanged(quint32)));
+        disconnect(m_currentShow, SIGNAL(showFinished()), this, SLOT(slotShowFinished()));
+        disconnect(m_currentShow, SIGNAL(stopped(quint32)), this, SLOT(slotShowStopped()));
+    }
+
+    m_currentShow = nullptr;
+
+    // the clipboard holds ShowFunction pointers belonging to the show
+    // being closed, so drop them to avoid dangling references
+    // (the selection is already cleared by resetView() above)
+    if (m_clipboard.isEmpty() == false)
+    {
+        m_clipboard.clear();
+        emit clipboardItemsCountChanged(0);
+    }
+
+    emit tracksChanged();
+    emit isEditingChanged();
+    setPlaybackState(false, false);
+}
+
+void ShowManager::resetView()
+{
+    // the selection references the items about to be destroyed,
+    // so clear it before deleting anything
+    if (m_selectedItems.isEmpty() == false)
+    {
+        m_selectedItems.clear();
+        emit selectedItemsCountChanged(0);
+    }
+
+    QMapIterator<quint32, QQuickItem*> it(m_itemsMap);
+    while (it.hasNext())
+    {
+        it.next();
+        delete it.value();
+    }
+    m_itemsMap.clear();
+}
+
+void ShowManager::renderView(QQuickItem *parent)
+{
+    resetView();
+
+    if (m_currentShow == nullptr)
+        return;
+
+    setContextItem(parent);
+
+    int trkIdx = 0;
+
+    foreach (Track *track, m_currentShow->tracks())
+    {
+        foreach (ShowFunction *sf, track->showFunctions())
+        {
+            Function *func = m_doc->function(sf->functionID());
+            if (func == nullptr)
+                continue;
+
+            QQuickItem *newItem = qobject_cast<QQuickItem*>(siComponent->create());
+
+            newItem->setParentItem(parent);
+            newItem->setProperty("trackIndex", trkIdx);
+            newItem->setProperty("sfRef", QVariant::fromValue(sf));
+            newItem->setProperty("funcRef", QVariant::fromValue(func));
+
+            m_itemsMap[sf->id()] = newItem;
+        }
+
+        trkIdx++;
+    }
+}
+
+void ShowManager::enableFlicking(bool enable)
+{
+    QQuickItem *flickable = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject *>("showItemsArea"));
+    flickable->setProperty("interactive", enable);
+}
+
+int ShowManager::showDuration() const
+{
+    if (m_currentShow == nullptr)
+        return 0;
+
+    return m_currentShow->totalDuration();
+}
+
+void ShowManager::playShow()
+{
+    if (m_currentShow == nullptr)
+        return;
+
+    if (m_currentShow->isRunning() == false)
+    {
+        m_cursorMovedDuringPause = false;
+        m_currentShow->start(m_doc->masterTimer(), FunctionParent::master(), m_currentTime);
+        setPlaybackState(true, false);
+        return;
+    }
+
+    if (m_currentShow->isPaused())
+    {
+        if (m_cursorMovedDuringPause)
+        {
+            m_currentShow->stop(FunctionParent::master());
+            m_currentShow->stopAndWait();
+            m_cursorMovedDuringPause = false;
+            m_currentShow->start(m_doc->masterTimer(), FunctionParent::master(), m_currentTime);
+        }
+        else
+        {
+            m_currentShow->setPause(false);
+        }
+
+        setPlaybackState(true, false);
+        return;
+    }
+
+    m_currentShow->setPause(true);
+    setPlaybackState(true, true);
+}
+
+void ShowManager::stopShow()
+{
+    if (m_currentShow != nullptr && m_currentShow->isRunning())
+    {
+        m_cursorMovedDuringPause = false;
+        m_currentShow->stop(FunctionParent::master());
+        setPlaybackState(false, false);
+        return;
+    }
+
+    setPlaybackState(false, false);
+
+    if (m_currentTime != 0)
+    {
+        m_currentTime = 0;
+        emit currentTimeChanged(m_currentTime);
+    }
+}
+
+bool ShowManager::isPlaying() const
+{
+    return m_isPlaying;
+}
+
+bool ShowManager::isPaused() const
+{
+    return m_isPaused;
+}
+
+QColor ShowManager::itemsColor() const
+{
+    return m_itemsColor;
+}
+
+void ShowManager::setItemsColor(QColor itemsColor)
+{
+    if (m_itemsColor == itemsColor)
+        return;
+
+    m_itemsColor = itemsColor;
+    emit itemsColorChanged(itemsColor);
+}
+
+int ShowManager::selectedItemsCount() const
+{
+    return m_selectedItems.count();
+}
+
+int ShowManager::clipboardItemsCount() const
+{
+    return m_clipboard.count();
+}
+
+bool ShowManager::multipleSelection() const
+{
+    return m_multipleSelection;
+}
+
+void ShowManager::setMultipleSelection(bool multipleSelection)
+{
+    if (m_multipleSelection == multipleSelection)
+        return;
+
+    m_multipleSelection = multipleSelection;
+    emit multipleSelectionChanged();
+}
+
+void ShowManager::setItemSelection(int trackIdx, ShowFunction *sf, QQuickItem *item, bool selected, int keyModifiers)
+{
+    bool allowMulti = m_multipleSelection
+            || (keyModifiers & Qt::ControlModifier)
+            || (keyModifiers & Qt::ShiftModifier);
+    bool changed = false;
+
+    if (selected == true)
+    {
+        if (!allowMulti)
+        {
+            for (int i = m_selectedItems.count() - 1; i >= 0; --i)
+            {
+                SelectedShowItem si = m_selectedItems.at(i);
+                if (si.m_showFunc == sf)
+                    continue;
+                if (si.m_item != nullptr)
+                    si.m_item->setProperty("isSelected", false);
+                m_selectedItems.removeAt(i);
+                changed = true;
+            }
+        }
+
+        bool alreadySelected = false;
+        foreach (SelectedShowItem si, m_selectedItems)
+        {
+            if (si.m_showFunc == sf)
+            {
+                alreadySelected = true;
+                break;
+            }
+        }
+
+        if (!alreadySelected)
+        {
+            SelectedShowItem selection;
+            selection.m_trackIndex = trackIdx;
+            selection.m_showFunc = sf;
+            selection.m_item = item;
+            m_selectedItems.append(selection);
+            changed = true;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < m_selectedItems.count(); i++)
+        {
+            SelectedShowItem si = m_selectedItems.at(i);
+            if (si.m_showFunc == sf)
+            {
+                m_selectedItems.removeAt(i);
+                changed = true;
+                break;
+            }
+        }
+    }
+    if (changed)
+        emit selectedItemsCountChanged(m_selectedItems.count());
+    emit itemClicked(App::ShowDragItem);
+}
+
+void ShowManager::resetItemsSelection()
+{
+    foreach (SelectedShowItem ssi, m_selectedItems)
+    {
+        if (ssi.m_item != nullptr)
+            ssi.m_item->setProperty("isSelected", false);
+    }
+    m_selectedItems.clear();
+    emit selectedItemsCountChanged(m_selectedItems.count());
+}
+
+QVariantList ShowManager::selectedItemRefs() const
+{
+    QVariantList list;
+    foreach (SelectedShowItem si, m_selectedItems)
+    {
+        if (si.m_showFunc != nullptr)
+            list.append(QVariant::fromValue(si.m_showFunc.data()));
+    }
+    return list;
+}
+
+QStringList ShowManager::selectedItemNames() const
+{
+    QStringList names;
+    foreach (SelectedShowItem si, m_selectedItems)
+    {
+        if (si.m_showFunc == nullptr)
+            continue;
+
+        Function *func = m_doc->function(si.m_showFunc->functionID());
+        if (func != nullptr)
+            names.append(func->name());
+    }
+
+    return names;
+}
+
+bool ShowManager::selectedItemsLocked() const
+{
+    foreach (SelectedShowItem si, m_selectedItems)
+    {
+        if (si.m_showFunc != nullptr && si.m_showFunc->isLocked())
+            return true;
+    }
+    return false;
+}
+
+void ShowManager::setSelectedItemsLock(bool lock)
+{
+    foreach (SelectedShowItem si, m_selectedItems)
+    {
+        if (si.m_showFunc != nullptr)
+            si.m_showFunc->setLocked(lock);
+    }
+}
+
+void ShowManager::slotTimeChanged(quint32 msec_time)
+{
+    m_currentTime = (int)msec_time;
+    emit currentTimeChanged(m_currentTime);
+}
+
+void ShowManager::slotShowFinished()
+{
+    stopShow();
+}
+
+void ShowManager::slotShowStopped()
+{
+    setPlaybackState(false, false);
+}
+
+void ShowManager::setPlaybackState(bool playing, bool paused)
+{
+    if (playing == false)
+        paused = false;
+
+    if (m_isPlaying != playing)
+    {
+        m_isPlaying = playing;
+        emit isPlayingChanged(m_isPlaying);
+    }
+
+    if (m_isPaused != paused)
+    {
+        m_isPaused = paused;
+        emit isPausedChanged(m_isPaused);
+    }
+}
+
+bool ShowManager::checkOverlapping(Track *track, ShowFunction *sourceFunc,
+                                   quint32 startTime, quint32 duration) const
+{
+    if (track == nullptr)
+        return false;
+
+    foreach (ShowFunction *sf, track->showFunctions())
+    {
+        if (sf == sourceFunc)
+            continue;
+
+        Function *func = m_doc->function(sf->functionID());
+        if (func != nullptr)
+        {
+            quint32 fst = sf->startTime();
+            if ((startTime >= fst && startTime <= fst + sf->duration()) ||
+                (fst >= startTime && fst <= startTime + duration))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+QVariantList ShowManager::previewData(Function *f) const
+{
+    QVariantList data;
+    if (f == nullptr)
+        return data;
+
+    switch (f->type())
+    {
+        case Function::ChaserType:
+        case Function::SequenceType:
+        {
+            Chaser *chaser = qobject_cast<Chaser *>(f);
+            quint32 stepsTimeCounter = 0;
+
+            foreach (ChaserStep step, chaser->steps())
+            {
+                uint stepFadeIn = step.fadeIn;
+                uint stepFadeOut = step.fadeOut;
+                uint stepDuration = step.duration;
+                if (chaser->fadeInMode() == Chaser::Common)
+                    stepFadeIn = chaser->fadeInSpeed();
+                if (chaser->fadeOutMode() == Chaser::Common)
+                    stepFadeOut = chaser->fadeOutSpeed();
+                if (chaser->durationMode() == Chaser::Common)
+                    stepDuration = chaser->duration();
+
+                stepsTimeCounter += stepDuration;
+
+                if (stepFadeIn > 0)
+                {
+                    data.append(FadeIn);
+                    data.append(stepFadeIn);
+                }
+                data.append(StepDivider);
+                data.append(stepsTimeCounter);
+
+                if (stepFadeOut > 0)
+                {
+                    data.append(FadeOut);
+                    data.append(stepFadeOut);
+                }
+            }
+        }
+        break;
+
+        /* All the other Function types */
+        case Function::AudioType:
+        case Function::VideoType:
+        {
+            data.append(RepeatingDuration);
+            data.append(f->totalDuration());
+            data.append(FadeIn);
+            data.append(f->fadeInSpeed());
+            data.append(FadeOut);
+            data.append(f->fadeOutSpeed());
+        }
+        break;
+        default:
+        {
+            data.append(RepeatingDuration);
+            data.append(f->totalDuration());
+        }
+        break;
+    }
+
+    return data;
+}
+
+void ShowManager::copyToClipboard()
+{
+    m_clipboard.clear();
+
+    for (SelectedShowItem item : m_selectedItems)
+        m_clipboard.append(item);
+
+    emit clipboardItemsCountChanged(m_clipboard.count());
+}
+
+bool ShowManager::pasteFromClipboard()
+{
+    if (m_currentShow == nullptr)
+        return false;
+
+    quint32 lowerTime = UINT_MAX;
+    quint32 lowerTrack = UINT_MAX;
+
+    // pre-parse copied items to find the ones with the
+    // lowest start time and the topmost track
+    for (SelectedShowItem item : m_clipboard)
+    {
+        if (item.m_showFunc == nullptr)
+            continue;
+
+        if (item.m_showFunc->startTime() < lowerTime)
+            lowerTime = item.m_showFunc->startTime();
+
+        if (item.m_trackIndex < lowerTrack)
+            lowerTrack = item.m_trackIndex;
+    }
+
+    QList<Track*> trackList = m_currentShow->tracks();
+
+    // paste on the currently selected track, if any. Items copied from
+    // multiple tracks keep their relative track offset, just like they
+    // keep their relative start time
+    int targetTrack = trackList.indexOf(m_currentShow->track(selectedTrackId()));
+    if (targetTrack < 0)
+        targetTrack = int(lowerTrack);
+
+    bool overlapping = false;
+    int pasted = 0;
+
+    // now add the ShowFunctions on the proper tracks
+    // while keeping the delta time of the original items
+    for (SelectedShowItem item : m_clipboard)
+    {
+        if (item.m_showFunc == nullptr)
+            continue;
+
+        int trackIdx = targetTrack + (int(item.m_trackIndex) - int(lowerTrack));
+
+        // don't paste outside the existing tracks
+        if (trackIdx < 0 || trackIdx >= trackList.count())
+            continue;
+
+        Track *track = trackList.at(trackIdx);
+
+        if (checkOverlapping(track, item.m_showFunc, m_currentTime, item.m_showFunc->duration()))
+        {
+            overlapping = true;
+            continue;
+        }
+
+        Function *func = m_doc->function(item.m_showFunc->functionID());
+        if (func == nullptr)
+            continue;
+
+        if (func->type() == Function::SequenceType)
+        {
+            Sequence *sequence = qobject_cast<Sequence*>(func);
+            Scene *scene = qobject_cast<Scene*>(m_doc->function(sequence->boundSceneID()));
+            if (scene == nullptr)
+                continue;
+
+            sequence->setBoundSceneID(scene->id());
+        }
+
+        addItems(contextItem(), trackIdx,
+                 m_currentTime + item.m_showFunc->startTime() - lowerTime,
+                 QVariantList() << func->id(), item.m_showFunc.data());
+        pasted++;
+    }
+
+    // signal a failure only if overlapping prevented
+    // every single item from being pasted
+    return pasted > 0 || overlapping == false;
+}

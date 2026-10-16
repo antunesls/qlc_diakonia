@@ -1,0 +1,362 @@
+/*
+  Q Light Controller Plus
+  FixtureConsole.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+import QtQuick.Layouts
+
+import org.qlcplus.classes 1.0
+import "."
+
+Rectangle
+{
+    id: consoleRoot
+    width: channelsRow.width
+    height: parent.height
+    color: UISettings.bgStrong
+
+    onWidthChanged: consoleRoot.sizeChanged(width, height)
+    onHeightChanged:
+    {
+        if (height < UISettings.iconSizeDefault * 3)
+            fxColumn.visible = false
+        else
+            fxColumn.visible = true
+        consoleRoot.sizeChanged(width, height)
+    }
+
+    property Fixture fixtureObj
+    property variant values
+    property bool dmxValues: true
+    property real maxValue: 255
+    property bool isSelected: false
+    property bool showEnablers: false
+    property bool sceneConsole: false
+    property bool externalChange: false
+    property bool multipleSelection: false
+
+    /** Incremented by the Scene console every time the external controller
+     *  mapping changes, to re-evaluate the channel highlights */
+    property int externalMapRevision: 0
+
+    signal doubleClicked
+    signal clicked
+    signal sizeChanged(var w, var h)
+    signal valueChanged(var fixtureID, var chIndex, var value)
+    signal requestTool(var item, var fixtureID, var chIndex, var value)
+    signal closeTool()
+
+    onValuesChanged:
+    {
+        externalChange = true
+        for (var i = 0; i < values.length; i++)
+        {
+            //console.log("Value " + i + " = " + values[i]);
+            var valueItem = channelsRpt.itemAt(i)
+            if (valueItem)
+                valueItem.dmxValue = values[i]
+        }
+        externalChange = false
+    }
+
+    function setChannelValue(channel, value)
+    {
+        var channelItem = channelsRpt.itemAt(channel)
+        if (!channelItem)
+            return
+
+        if (showEnablers == true)
+            channelItem.isEnabled = true
+        externalChange = true
+        channelItem.dmxValue = value
+        externalChange = false
+    }
+
+    function updateChannels()
+    {
+        for (var i = 0; i < channelsRpt.count; i++)
+        {
+            var channelItem = channelsRpt.itemAt(i)
+            if (channelItem)
+                channelItem.updateChannel()
+        }
+    }
+
+    Column
+    {
+        id: fxColumn
+        height: parent.height
+        visible: false
+
+        Rectangle
+        {
+            id: fxNameBar
+            color: UISettings.bgStronger
+            width: parent.width
+            height: UISettings.listItemHeight
+            clip: true
+
+            RobotoText
+            {
+                anchors.verticalCenter: parent.verticalCenter
+                x: 2
+                label: fixtureObj ? fixtureObj.name : ""
+                fontSize: UISettings.textSizeDefault
+            }
+            DMXPercentageButton
+            {
+                x: parent.width - width - 3
+                y: 1
+                z: 2
+                height: parent.height - 2
+                dmxMode: dmxValues
+                onClicked:
+                {
+                    if (dmxValues)
+                    {
+                        dmxValues = false
+                        maxValue = 100
+                    }
+                    else
+                    {
+                        maxValue = 255
+                        dmxValues = true
+                    }
+                }
+            }
+
+            MouseArea
+            {
+                anchors.fill: parent
+                z: 1
+                onClicked: consoleRoot.clicked()
+                onDoubleClicked: consoleRoot.doubleClicked()
+            }
+        }
+        Row
+        {
+            id: channelsRow
+            height: parent.height - fxNameBar.height
+            Repeater
+            {
+                id: channelsRpt
+                model: fixtureObj ? fixtureObj.channels : null
+                delegate:
+                    Rectangle
+                    {
+                        id: chDelegate
+                        color: isSelected ? UISettings.selection : "transparent"
+                        border.width: faderIndex >= 0 ? 2 : 1
+                        border.color: faderIndex >= 0 ? UISettings.highlight : UISettings.borderColorDark
+                        width: UISettings.iconSizeDefault
+                        height: channelsRow.height
+
+                        property real dmxValue
+                        property bool isEnabled: showEnablers ? false : true
+                        property bool isSelected: false
+
+                        /** Index of the external controller fader mapped to this
+                         *  channel, or -1 when the channel is not controlled */
+                        property int faderIndex:
+                            (sceneConsole && externalMapRevision >= 0 && fixtureObj && sceneEditor)
+                                ? sceneEditor.controlledFaderIndex(fixtureObj.id, index)
+                                : -1
+
+                        function updateChannel()
+                        {
+                            chIcon.source = fixtureObj ? fixtureManager.channelIcon(fixtureObj.id, index) : ""
+                            chIcon.tooltip = fixtureObj ? fixtureManager.channelName(fixtureObj.id, index) : ""
+                        }
+
+                        onDmxValueChanged:
+                        {
+                            if (externalChange == true)
+                                return
+
+                            if (sceneConsole == false)
+                                fixtureManager.setChannelValue(fixtureObj.id, index, dmxValue)
+                            else
+                                functionManager.setChannelValue(fixtureObj.id, index, dmxValue)
+
+                            consoleRoot.valueChanged(fixtureObj.id, index, dmxValue)
+                        }
+
+                        // This is the black overlay to "simulate" a disabled channel
+                        Rectangle
+                        {
+                            x: 1
+                            y: chIcon.y
+                            z: 2
+                            width: parent.width - 2
+                            height: chDelegate.height - enableCheckBox.height
+                            color: "black"
+                            opacity: 0.7
+                            visible: showEnablers ? !isEnabled : false
+                        }
+
+                        // external controller fader number badge
+                        Rectangle
+                        {
+                            id: faderBadge
+                            z: 3
+                            visible: chDelegate.faderIndex >= 0
+                            width: UISettings.iconSizeMedium * 0.65
+                            height: width
+                            radius: width / 2
+                            x: (chDelegate.width - width) / 2
+                            y: height / 3
+                            color: UISettings.highlight
+                            border.width: 1
+                            border.color: "white"
+
+                            RobotoText
+                            {
+                                anchors.centerIn: parent
+                                label: chDelegate.faderIndex + 1
+                                fontSize: UISettings.textSizeDefault * 0.7
+                                fontBold: true
+                                labelColor: "white"
+                            }
+                        }
+
+                        Rectangle
+                        {
+                            width: parent.width
+                            height: (showEnablers ? enableCheckBox.height : 0) + chIcon.height + 1
+                            color: UISettings.bgLight
+                        }
+
+                        Column
+                        {
+                            id: chColumn
+                            x: 1
+                            y: 1
+                            width: parent.width - 2
+                            height: parent.height
+                            spacing: 1
+
+                            // channel enable/disable
+                            Rectangle
+                            {
+                                id: enableCheckBox
+                                x: (parent.width - width) / 2
+                                width: UISettings.iconSizeMedium
+                                height: UISettings.iconSizeMedium / 2
+                                radius: 2
+                                visible: showEnablers
+                                color: isEnabled ? (chDelegate.isSelected ? UISettings.selection : UISettings.highlight) : UISettings.bgLight
+                                border.width: 1
+                                border.color: isEnabled ? "white" : UISettings.bgLighter
+                                //Layout.alignment: Qt.AlignCenter
+
+                                MouseArea
+                                {
+                                    anchors.fill: parent
+                                    onClicked: (mouse) =>
+                                    {
+                                        if (isEnabled && ((mouse.modifiers & Qt.ControlModifier) || multipleSelection))
+                                        {
+                                            chDelegate.isSelected = !chDelegate.isSelected
+                                            sceneEditor.setChannelSelection(fixtureObj.id, index, chDelegate.isSelected);
+
+                                            if (sceneConsole == true)
+                                                functionManager.setChannelValue(fixtureObj.id, index, dmxValue)
+                                            return
+                                        }
+
+                                        isEnabled = !isEnabled
+                                        if (sceneConsole == true)
+                                        {
+                                            if (isEnabled == true)
+                                                functionManager.setChannelValue(fixtureObj.id, index, dmxValue)
+                                            else
+                                                sceneEditor.unsetChannel(fixtureObj.id, index)
+                                        }
+                                    }
+                                }
+                            }
+
+                            // channel icon
+                            IconButton
+                            {
+                                id: chIcon
+                                x: (parent.width - width) / 2
+                                width: UISettings.iconSizeMedium
+                                height: width
+                                border.width: 0
+                                tooltip: fixtureObj ? fixtureManager.channelName(fixtureObj.id, index) : ""
+                                imgSource: fixtureObj ? fixtureManager.channelIcon(fixtureObj.id, index) : ""
+                                focusPolicy: Qt.ClickFocus
+
+                                onClicked:
+                                {
+                                    if (fixtureObj)
+                                        consoleRoot.requestTool(chColumn, fixtureObj.id, index, dmxValue)
+                                }
+                                Keys.onPressed: (event) =>
+                                {
+                                    if (event.key === Qt.Key_Escape)
+                                        consoleRoot.closeTool()
+                                }
+                            }
+
+                            // channel fader
+                            QLCPlusFader
+                            {
+                                id: slider
+                                x: (parent.width - width) / 2
+                                width: parent.width * 0.95
+                                height: chDelegate.height - (showEnablers ? enableCheckBox.height : 0) - chIcon.height - chValueSpin.height
+                                from: 0
+                                to: 255
+                                value: dmxValue
+                                enabled: showEnablers ? isEnabled : true
+                                focusPolicy: Qt.NoFocus
+                                onMoved: dmxValue = valueAt(position)
+
+                                Component.onCompleted:
+                                {
+                                    if (sceneConsole)
+                                    {
+                                        if (showEnablers && sceneEditor.hasChannel(fixtureObj.id, index) === true)
+                                            isEnabled = true
+                                    }
+                                }
+                            }
+
+                            // channel value
+                            CustomSpinBox
+                            {
+                                id: chValueSpin
+                                width: parent.width
+                                height: UISettings.listItemHeight * 0.75
+                                from: 0
+                                to: maxValue
+                                suffix: dmxValues ? "" : "%"
+                                showControls: false
+                                padding: 0
+                                horizontalAlignment: Qt.AlignHCenter
+                                value: dmxValues ? dmxValue : (dmxValue / 255.0) * 100.0
+                                onValueModified: dmxValue = dmxValues ? value : value * 2.55
+                            }
+                        }
+                    }
+            }
+        }
+    }
+}

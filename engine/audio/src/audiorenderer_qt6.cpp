@@ -1,0 +1,267 @@
+/*
+  Q Light Controller Plus
+  audiorenderer_qt6.cpp
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include <QMediaDevices>
+#include <QSettings>
+#include <QString>
+#include <QDebug>
+
+#include "doc.h"
+#include "audiorenderer_qt6.h"
+#include "audioplugincache.h"
+
+AudioRendererQt6::AudioRendererQt6(QString device, Doc *doc, QObject *parent)
+    : AudioRenderer(parent)
+    , m_audioSink(NULL)
+    , m_output(NULL)
+    , m_device(device)
+    , m_bytesWritten(0)
+    , m_processedUsecsBase(0)
+{
+    QSettings settings;
+    QString devName = "";
+
+    QVariant var;
+    if (m_device.isEmpty())
+        var = settings.value(SETTINGS_AUDIO_OUTPUT_DEVICE);
+    else
+        var = QVariant(m_device);
+
+    if (var.isValid() == true)
+        devName = var.toString();
+
+    m_deviceInfo = doc->audioPluginCache()->getOutputDeviceInfo(devName);
+}
+
+AudioRendererQt6::~AudioRendererQt6()
+{
+    stop();
+
+    if (m_audioSink == NULL)
+        return;
+
+    m_audioSink->stop();
+    delete m_audioSink;
+    m_audioSink = NULL;
+}
+
+bool AudioRendererQt6::initialize(quint32 freq, int chan, AudioFormat format)
+{
+    m_format.setChannelCount(chan);
+    m_format.setSampleRate(freq);
+    //m_format.setCodec("audio/pcm");
+
+    switch (format)
+    {
+        case PCM_S8:
+            m_format.setSampleFormat(QAudioFormat::UInt8);
+        break;
+        case PCM_S16LE:
+        case PCM_S24LE:
+            m_format.setSampleFormat(QAudioFormat::Int16);
+        break;
+        case PCM_S32LE:
+            m_format.setSampleFormat(QAudioFormat::Int32);
+        break;
+        default:
+            qWarning("AudioRendererQt6: unsupported format detected");
+            return false;
+    }
+
+    if (!m_deviceInfo.isFormatSupported(m_format))
+    {
+        m_format = m_deviceInfo.preferredFormat();
+        qWarning() << "Default format not supported - trying to use nearest" << m_format.sampleRate();
+    }
+
+    return true;
+}
+
+qint64 AudioRendererQt6::latency() const
+{
+    return 0;
+}
+
+QList<AudioDeviceInfo> AudioRendererQt6::getDevicesInfo()
+{
+    QList<AudioDeviceInfo> devList;
+    QStringList outDevs, inDevs;
+
+    // create a preliminary list of input devices only
+    foreach (const QAudioDevice &deviceInfo, QMediaDevices::audioInputs())
+        inDevs.append(deviceInfo.description());
+
+    // loop through output devices and check if they're input devices too
+    foreach (const QAudioDevice &deviceInfo, QMediaDevices::audioOutputs())
+    {
+        outDevs.append(deviceInfo.description());
+        AudioDeviceInfo info;
+        info.deviceName = deviceInfo.description();
+        info.privateName = deviceInfo.description(); //QString::number(i);
+        info.capabilities = 0;
+        info.capabilities |= AUDIO_CAP_OUTPUT;
+        if (inDevs.contains(deviceInfo.description()))
+        {
+            info.capabilities |= AUDIO_CAP_INPUT;
+            inDevs.removeOne(deviceInfo.description());
+        }
+        devList.append(info);
+    }
+
+    // add the devices left in the input list. These don't have output capabilities
+    foreach (QString dev, inDevs)
+    {
+        AudioDeviceInfo info;
+        info.deviceName = dev;
+        info.privateName = dev; //QString::number(i);
+        info.capabilities = 0;
+        info.capabilities |= AUDIO_CAP_INPUT;
+        devList.append(info);
+    }
+
+    return devList;
+}
+
+qint64 AudioRendererQt6::writeAudio(unsigned char *data, qint64 maxSize)
+{
+    if (m_audioSink == NULL || m_output == NULL)
+        return 0;
+
+    // Write only as much as currently fits in the device buffer. The base
+    // renderer keeps track of the leftover (pendingAudioBytes) and retries,
+    // so partial writes keep a small buffer steadily topped up without
+    // stalling on the whole 8KB chunk.
+    const qint64 toWrite = qMin<qint64>(maxSize, m_audioSink->bytesFree());
+    if (toWrite <= 0)
+        return 0;
+
+    qint64 written = m_output->write((const char *)data, toWrite);
+
+    if (written != toWrite)
+        qDebug() << "[writeAudio] expected to write" << toWrite << "but wrote" << written;
+
+    if (written > 0)
+        m_bytesWritten += written;
+
+    return qMax<qint64>(0, written);
+}
+
+bool AudioRendererQt6::backendDrainedAtEos() const
+{
+    if (m_audioSink == NULL)
+        return true;
+
+    const qint64 frameBytes = qMax<qint64>(1, m_format.bytesPerFrame());
+    const qint64 bytesPerSecond = qint64(m_format.bytesPerFrame()) * qint64(m_format.sampleRate());
+    if (bytesPerSecond <= 0)
+        return (m_audioSink->state() == QAudio::IdleState);
+
+    qint64 processedUsecs = m_audioSink->processedUSecs() - m_processedUsecsBase;
+    if (processedUsecs < 0)
+        processedUsecs = 0;
+    const qint64 processedBytes = (processedUsecs * bytesPerSecond) / 1000000;
+    const qint64 bytesStillInPipeline = qMax<qint64>(0, m_bytesWritten - processedBytes);
+    const bool sinkIdle = (m_audioSink->state() == QAudio::IdleState);
+    const bool qtBufferEmpty = (m_audioSink->bufferSize() > 0 &&
+                                m_audioSink->bytesFree() >= m_audioSink->bufferSize());
+    const bool nearDrained = (bytesStillInPipeline <= frameBytes);
+    const bool drained = sinkIdle || (qtBufferEmpty && nearDrained);
+
+#if 0
+    static int eosDbgCounter = 0;
+    if (drained || ((eosDbgCounter++ % 50) == 0))
+    {
+        qDebug() << "[AudioRendererQt6::backendDrainedAtEos]"
+                 << "written:" << m_bytesWritten
+                 << "processedBytes:" << processedBytes
+                 << "pending:" << bytesStillInPipeline
+                 << "processedUSecs:" << processedUsecs
+                 << "bufferSize:" << m_audioSink->bufferSize()
+                 << "bytesFree:" << m_audioSink->bytesFree()
+                 << "state:" << m_audioSink->state()
+                 << "frameBytes:" << frameBytes
+                 << "qtBufferEmpty:" << qtBufferEmpty
+                 << "nearDrained:" << nearDrained
+                 << "error:" << m_audioSink->error();
+    }
+#endif
+
+    return drained;
+}
+
+void AudioRendererQt6::drain()
+{
+    m_audioSink->reset();
+}
+
+void AudioRendererQt6::reset()
+{
+    m_audioSink->reset();
+}
+
+void AudioRendererQt6::suspend()
+{
+    m_audioSink->suspend();
+}
+
+void AudioRendererQt6::resume()
+{
+    m_audioSink->resume();
+}
+
+void AudioRendererQt6::run()
+{
+    if (m_audioSink == NULL)
+    {
+        qDebug() << "Creating audio sink on" << m_deviceInfo.description();
+
+        m_audioSink = new QAudioSink(m_deviceInfo, m_format);
+
+        if (m_audioSink == NULL)
+        {
+            qWarning() << "Cannot open audio output stream from device" << m_deviceInfo.description();
+            return;
+        }
+
+        // Size the output buffer from the actual format so playback starts
+        // with a small, low-latency buffer instead of a fixed 64KB (~370ms
+        // at 44.1kHz/16bit/stereo). Configurable via QSettings.
+        QSettings settings;
+        int bufferMs = settings.value(SETTINGS_AUDIO_OUTPUT_BUFFER,
+                                      DEFAULT_AUDIO_OUTPUT_BUFFER_MS).toInt();
+        if (bufferMs < 10)
+            bufferMs = 10;
+
+        const qint64 bytesPerSecond = qint64(m_format.bytesPerFrame()) * qint64(m_format.sampleRate());
+        if (bytesPerSecond > 0)
+            m_audioSink->setBufferSize((bytesPerSecond * bufferMs) / 1000);
+
+        m_output = m_audioSink->start();
+        m_bytesWritten = 0;
+        m_processedUsecsBase = m_audioSink->processedUSecs();
+
+        if (m_audioSink->error() != QAudio::NoError)
+        {
+            qWarning() << "Cannot start audio output stream. Error:" << m_audioSink->error();
+            return;
+        }
+    }
+    AudioRenderer::run();
+    m_audioSink->stop();
+}

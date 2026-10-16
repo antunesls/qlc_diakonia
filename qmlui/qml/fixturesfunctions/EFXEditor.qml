@@ -1,0 +1,1074 @@
+/*
+  Q Light Controller Plus
+  EFXEditor.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+
+import org.qlcplus.classes 1.0
+
+import "TimeUtils.js" as TimeUtils
+import "."
+
+Rectangle
+{
+    id: efxeContainer
+    objectName: "efxEditorRoot"
+    color: "transparent"
+
+    property int functionID: -1
+
+    signal requestView(int ID, string qmlSrc, bool back)
+
+    function deleteSelectedItems()
+    {
+        if (eeSelector.itemsCount === 0)
+            return
+
+        deleteItemsPopup.open()
+    }
+
+    ModelSelector
+    {
+        id: eeSelector
+        onItemsCountChanged: console.log("EFX Editor selected items changed!")
+    }
+
+    CustomPopupDialog
+    {
+        id: deleteItemsPopup
+        title: qsTr("Delete fixture heads")
+        message: qsTr("Are you sure you want to remove the selected fixture head(s)?")
+        onAccepted: efxEditor.removeHeads(eeSelector.itemsList())
+    }
+
+    TimeEditTool
+    {
+        id: timeEditTool
+
+        parent: mainView
+        z: 99
+        x: rightSidePanel.x - width
+        visible: false
+        tempoType: efxEditor.tempoType
+
+        onValueChanged: (val) =>
+        {
+            if (speedType == QLCFunction.FadeIn)
+                efxEditor.fadeInSpeed = val
+            else if (speedType == QLCFunction.Hold)
+                efxEditor.holdSpeed = val
+            else if (speedType == QLCFunction.FadeOut)
+                efxEditor.fadeOutSpeed = val
+        }
+    }
+
+    CustomPopupDialog
+    {
+        id: offsetPopup
+        width: mainView.width / 3
+        title: qsTr("EFX fixtures offset")
+
+        // Distribution mode: 0 = absolute, 1 = increasing, 2 = random
+        // (matches EFXEditor::FixturesOffsetMode)
+        property int offsetMode:
+            offsetIncreasingCheck.checked ? 1 :
+            (offsetRandomCheck.checked ? 2 : 0)
+
+        onAccepted: efxEditor.setFixturesOffset(offsetSpin.value, offsetPopup.offsetMode)
+
+        contentItem:
+            GridLayout
+            {
+                width: parent.width
+                columns: 2
+                columnSpacing: 5
+                rowSpacing: 4
+
+                // Row 1: the offset value
+                RobotoText
+                {
+                    label: qsTr("Offset")
+                    height: UISettings.listItemHeight
+                }
+                CustomSpinBox
+                {
+                    id: offsetSpin
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 360
+                    suffix: "°"
+                    value: 0
+                }
+
+                // Row 2: Increasing checkbox (exclusive with Randomize)
+                CustomCheckBox
+                {
+                    id: offsetIncreasingCheck
+                    implicitWidth: UISettings.listItemHeight
+                    implicitHeight: implicitWidth
+                    autoExclusive: false
+                    checked: true
+                    onCheckedChanged: if (checked) offsetRandomCheck.checked = false
+                }
+                RobotoText
+                {
+                    Layout.fillWidth: true
+                    label: qsTr("Increasing")
+                    height: UISettings.listItemHeight
+                }
+
+                // Row 3: Randomize checkbox (exclusive with Increasing)
+                CustomCheckBox
+                {
+                    id: offsetRandomCheck
+                    implicitWidth: UISettings.listItemHeight
+                    implicitHeight: implicitWidth
+                    autoExclusive: false
+                    checked: false
+                    onCheckedChanged: if (checked) offsetIncreasingCheck.checked = false
+                }
+                RobotoText
+                {
+                    Layout.fillWidth: true
+                    label: qsTr("Randomize")
+                    height: UISettings.listItemHeight
+                }
+            }
+    }
+
+    SplitView
+    {
+        anchors.fill: parent
+
+        handle: Rectangle
+        {
+            implicitWidth: screenPixelDensity * UISettings.scalingFactor * 0.9
+            color: SplitHandle.hovered || SplitHandle.pressed ? UISettings.highlight : UISettings.bgLighter
+        }
+
+        Loader
+        {
+            id: fxTreeLoader
+            width: UISettings.sidePanelWidth
+            SplitView.preferredWidth: UISettings.sidePanelWidth
+            visible: false
+            height: efxeContainer.height
+            source: ""
+
+            property var modelProvider: null
+
+            onLoaded:
+            {
+                if (modelProvider && item.hasOwnProperty('modelProvider'))
+                    item.modelProvider = modelProvider
+            }
+
+            Rectangle
+            {
+                width: 2
+                height: parent.height
+                x: parent.width - 2
+                color: UISettings.bgLight
+            }
+        }
+
+        Rectangle
+        {
+            SplitView.fillWidth: true
+            color: "transparent"
+
+            EditorTopBar
+            {
+                id: topBar
+                text: efxEditor.functionName
+                onTextChanged: efxEditor.functionName = text
+
+                onBackClicked:
+                {
+                    if (fxTreeLoader.visible)
+                    {
+                        fxTreeLoader.source = ""
+                        fxTreeLoader.visible = false
+                        rightSidePanel.width -= fxTreeLoader.width
+                    }
+
+                    var prevID = efxEditor.previousID
+                    requestView(prevID, functionManager.getEditorResource(prevID), true)
+                }
+            }
+
+            Flickable
+            {
+                id: editorFlickable
+                x: 5
+                y: topBar.height + 2
+                width: parent.width - 10
+                height: parent.height - y
+                interactive: !previewBox.isRotating
+
+                contentHeight: editorColumn.height
+                boundsBehavior: Flickable.StopAtBounds
+
+                //Component.onCompleted: console.log("Flickable height: " + height + ", Grid height: " + editorColumn.height + ", parent height: " + parent.height)
+
+                Column
+                {
+                    id: editorColumn
+                    width: parent.width
+                    spacing: 2
+
+                    property int itemsHeight: UISettings.listItemHeight
+                    property int firstColumnWidth: 0
+                    // Always reserve a constant scrollbar gutter, independent of
+                    // the scrollbar's visibility/width. Making the content width
+                    // depend on the scrollbar state creates a layout feedback loop
+                    // (content width -> content height -> scrollbar visible ->
+                    // content width ...) that never settles and hangs the GUI
+                    // thread when the content height sits near the scroll
+                    // threshold (e.g. right after creating a new EFX).
+                    property int colWidth: parent.width - UISettings.scrollBarWidth
+
+                    // row 1
+                    EFXPreview
+                    {
+                        id: previewBox
+                        width: editorColumn.colWidth - 5
+                        minimumHeight: efxeContainer.height / 6
+                        maximumHeight: efxeContainer.height / 3
+                        maxPanDegrees: efxEditor.maxPanDegrees
+                        maxTiltDegrees: efxEditor.maxTiltDegrees
+
+                        efxData: efxEditor.algorithmData
+                        fixturesData: efxEditor.fixturesData
+                        // guard against an empty efxData: dividing by 0 yields
+                        // Infinity/NaN, which coerces to a 0ms Timer interval and
+                        // makes the heads animation repaint the Canvas on every
+                        // event loop pass, hanging the GUI thread (see EFXPreview)
+                        animationInterval: efxData.length > 0 ? efxEditor.duration / (efxData.length / 2) : 0
+                        isRelative: efxEditor.isRelative
+                    }
+
+                    SectionBox
+                    {
+                        id: fixtureSection
+                        width: editorColumn.colWidth - 5
+                        isExpanded: false
+                        sectionLabel: qsTr("Fixtures")
+                        sectionContents:
+                            GridLayout
+                            {
+                                width: parent.width
+                                columns: 5
+                                columnSpacing: 0
+                                rowSpacing: 0
+
+                                // row 1 - toolbar
+                                Rectangle
+                                {
+                                    Layout.fillWidth: true
+                                    Layout.columnSpan: 5
+                                    color: UISettings.bgMedium
+                                    height: UISettings.listItemHeight
+
+                                    IconButton
+                                    {
+                                        id: addOffsetButton
+                                        width: height
+                                        height: parent.height
+                                        faSource: FontAwesome.fa_arrow_down_wide_short
+                                        faColor: "white"
+                                        tooltip: qsTr("Set an offset on all fixtures")
+                                        onClicked: offsetPopup.open()
+                                    }
+
+                                    IconButton
+                                    {
+                                        id: addFixture
+                                        anchors.top: parent.top
+                                        anchors.right: removeFixture.left
+
+                                        width: height
+                                        height: parent.height
+                                        faSource: FontAwesome.fa_plus
+                                        faColor: "limegreen"
+                                        checkable: true
+                                        tooltip: qsTr("Add a fixture/head")
+                                        onCheckedChanged:
+                                        {
+                                            if (checked)
+                                            {
+                                                if (!fxTreeLoader.visible)
+                                                    rightSidePanel.width += UISettings.sidePanelWidth
+                                                fxTreeLoader.visible = true
+                                                fxTreeLoader.modelProvider = efxEditor
+                                                fxTreeLoader.source = "qrc:/FixtureGroupManager.qml"
+                                            }
+                                            else
+                                            {
+                                                rightSidePanel.width -= fxTreeLoader.width
+                                                fxTreeLoader.source = ""
+                                                fxTreeLoader.visible = false
+                                            }
+                                        }
+                                    }
+                                    IconButton
+                                    {
+                                        id: removeFixture
+                                        anchors.top: parent.top
+                                        anchors.right: parent.right
+                                        width: height
+                                        height: parent.height
+                                        faSource: FontAwesome.fa_minus
+                                        faColor: "crimson"
+                                        tooltip: qsTr("Remove the selected fixture head(s)")
+                                        onClicked: efxeContainer.deleteSelectedItems()
+                                    }
+                                }
+
+                                // row 2 - header
+                                RobotoText
+                                {
+                                    id: numCol
+                                    width: UISettings.iconSizeMedium
+                                    height: UISettings.listItemHeight
+                                    label: "#"
+                                    textHAlign: Text.AlignHCenter
+                                    //fontSize: chListHeader.fSize
+
+                                    Rectangle
+                                    {
+                                        height: UISettings.listItemHeight
+                                        width: 1
+                                        anchors.right: parent.right
+                                        color: UISettings.fgMedium
+                                    }
+                                }
+
+                                RobotoText
+                                {
+                                    id: fxNameCol
+                                    Layout.fillWidth: true
+                                    height: UISettings.listItemHeight
+                                    label: qsTr("Fixture")
+
+                                    Rectangle
+                                    {
+                                        height: UISettings.listItemHeight
+                                        width: 1
+                                        anchors.right: parent.right
+                                        color: UISettings.fgMedium
+                                    }
+                                }
+
+                                RobotoText
+                                {
+                                    id: modeCol
+                                    height: UISettings.listItemHeight
+                                    width: UISettings.bigItemHeight
+                                    label: qsTr("Mode")
+
+                                    Rectangle
+                                    {
+                                        height: UISettings.listItemHeight
+                                        width: 1
+                                        anchors.right: parent.right
+                                        color: UISettings.fgMedium
+                                    }
+                                }
+
+                                RobotoText
+                                {
+                                    id: reverseCol
+                                    height: UISettings.listItemHeight
+                                    label: qsTr("Reverse")
+
+                                    Rectangle
+                                    {
+                                        height: UISettings.listItemHeight
+                                        width: 1
+                                        anchors.right: parent.right
+                                        color: UISettings.fgMedium
+                                    }
+                                }
+
+                                RobotoText
+                                {
+                                    id: offsetCol
+                                    height: UISettings.listItemHeight
+                                    label: qsTr("Start offset")
+                                }
+
+                                // row 3
+                                ListView
+                                {
+                                    id: fixtureListView
+                                    Layout.fillWidth: true
+                                    Layout.columnSpan: 5
+                                    model: efxEditor.fixtureList
+                                    implicitHeight: count * UISettings.listItemHeight
+                                    delegate:
+                                        Rectangle
+                                        {
+                                            width: fixtureListView.width
+                                            height: UISettings.listItemHeight
+                                            color: "transparent"
+
+                                            property int headMode: model.mode
+
+                                            // Highlight rectangle
+                                            Rectangle
+                                            {
+                                                anchors.fill: parent
+                                                //z: 5
+                                                //opacity: 0.3
+                                                radius: 3
+                                                color: UISettings.highlight
+                                                visible: model.isSelected
+                                            }
+
+                                            MouseArea
+                                            {
+                                                anchors.fill: parent
+                                                onClicked: (mouse) =>
+                                                {
+                                                    eeSelector.selectItem(index, fixtureListView.model, mouse.modifiers)
+                                                }
+                                            }
+
+                                            Row
+                                            {
+                                                //width: fixtureListView.width
+                                                height: UISettings.listItemHeight
+
+                                                /* Head number */
+                                                RobotoText
+                                                {
+                                                    width: numCol.width
+                                                    height: UISettings.listItemHeight
+                                                    label: index
+
+                                                    Rectangle
+                                                    {
+                                                        height: UISettings.listItemHeight
+                                                        width: 1
+                                                        anchors.right: parent.right
+                                                        color: UISettings.fgMedium
+                                                    }
+                                                }
+                                                /* Head name */
+                                                RobotoText
+                                                {
+                                                    width: fxNameCol.width
+                                                    height: UISettings.listItemHeight
+                                                    label: model.name
+
+                                                    Rectangle
+                                                    {
+                                                        height: UISettings.listItemHeight
+                                                        width: 1
+                                                        anchors.right: parent.right
+                                                        color: UISettings.fgMedium
+                                                    }
+                                                }
+                                                /* Head mode */
+                                                CustomComboBox
+                                                {
+                                                    height: editorColumn.itemsHeight
+                                                    width: modeCol.width
+                                                    model: [
+                                                        { mLabel: qsTr("Position") },
+                                                        { mLabel: qsTr("Dimmer") },
+                                                        { mLabel: qsTr("RGB") }
+                                                    ]
+                                                    currentIndex: headMode
+                                                    onCurrentIndexChanged: efxEditor.setFixtureMode(fxID, head, currentIndex)
+
+                                                    Rectangle
+                                                    {
+                                                        height: UISettings.listItemHeight
+                                                        width: 1
+                                                        anchors.right: parent.right
+                                                        color: UISettings.fgMedium
+                                                    }
+                                                }
+                                                /* Head reverse flag */
+                                                Rectangle
+                                                {
+                                                    color: "transparent"
+                                                    height: UISettings.listItemHeight
+                                                    width: reverseCol.width
+
+                                                    CustomCheckBox
+                                                    {
+                                                        anchors.centerIn: parent
+                                                        implicitWidth: parent.height
+                                                        implicitHeight: implicitWidth
+                                                        checked: model.reverse
+                                                        onCheckedChanged: efxEditor.setFixtureReversed(fxID, head, checked)
+                                                    }
+                                                    Rectangle
+                                                    {
+                                                        height: UISettings.listItemHeight
+                                                        width: 1
+                                                        anchors.right: parent.right
+                                                        color: UISettings.fgMedium
+                                                    }
+                                                }
+                                                /* Head offset */
+                                                CustomSpinBox
+                                                {
+                                                    width: offsetCol.width
+                                                    height: UISettings.listItemHeight
+                                                    from: 0
+                                                    to: 359
+                                                    suffix: "°"
+                                                    value: model.offset
+                                                    onValueModified: efxEditor.setFixtureOffset(fxID, head, value)
+                                                }
+
+                                            } // Row
+                                        } // Rectangle
+                                } // ListView
+
+                                Rectangle
+                                {
+                                    id: newFixtureBox
+                                    Layout.fillWidth: true
+                                    Layout.columnSpan: 5
+                                    height: UISettings.bigItemHeight * 0.6
+                                    color: "transparent"
+                                    radius: 10
+                                    visible: addFixture.checked
+
+                                    RobotoText
+                                    {
+                                        id: ntText
+                                        visible: false
+                                        anchors.centerIn: parent
+                                        label: qsTr("Add a new fixture")
+                                    }
+
+                                    DropArea
+                                    {
+                                        id: newFixtureDrop
+                                        anchors.fill: parent
+
+                                        keys: [ "fixture" ]
+
+                                        states: [
+                                            State
+                                            {
+                                                when: newFixtureDrop.containsDrag
+                                                PropertyChanges
+                                                {
+                                                    target: newFixtureBox
+                                                    color: "#3F00FF00"
+                                                }
+                                                PropertyChanges
+                                                {
+                                                    target: ntText
+                                                    visible: true
+                                                }
+                                            }
+                                        ]
+
+                                        onDropped:
+                                        {
+                                            console.log("Item(s) dropped here. x: " + drag.x + " y: " + drag.y)
+
+                                            for (var i = 0; i < drag.source.itemsList.length; i++)
+                                            {
+                                                console.log("Item #" + i + " type: " + drag.source.itemsList[i].itemType)
+                                                switch(drag.source.itemsList[i].itemType)
+                                                {
+                                                    case App.UniverseDragItem:
+                                                    case App.FixtureGroupDragItem:
+                                                        efxEditor.addGroup(drag.source.itemsList[i].cRef)
+                                                    break;
+                                                    case App.FixtureDragItem:
+                                                        efxEditor.addFixture(drag.source.itemsList[i].cRef)
+                                                    break;
+                                                    case App.HeadDragItem:
+                                                        efxEditor.addHead(drag.source.itemsList[i].fixtureID, drag.source.itemsList[i].headIndex)
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } // GridLayout
+                    } // SectionBox
+
+                    SectionBox
+                    {
+                        id: patternSection
+                        width: editorColumn.colWidth - 5
+                        isExpanded: true
+                        sectionLabel: qsTr("Pattern")
+                        sectionContents:
+                            GridLayout
+                            {
+                                width: parent.width
+                                columns: 2
+                                columnSpacing: 5
+                                rowSpacing: 4
+
+                                // row 1
+                                RobotoText
+                                {
+                                    label: qsTr("Pattern")
+                                    height: editorColumn.itemsHeight
+                                }
+                                CustomComboBox
+                                {
+                                    id: patternCombo
+                                    Layout.fillWidth: true
+                                    height: editorColumn.itemsHeight
+                                    textRole: ""
+                                    model: efxEditor.algorithms
+                                    currentIndex: efxEditor.algorithmIndex
+                                    onCurrentIndexChanged: efxEditor.algorithmIndex = currentIndex
+                                }
+
+                                // row 2
+                                Row
+                                {
+                                    Layout.columnSpan: 2
+                                    Layout.fillWidth: true
+                                    spacing: 4
+
+                                    CustomCheckBox
+                                    {
+                                        id: relativeCheck
+                                        implicitWidth: UISettings.listItemHeight
+                                        implicitHeight: implicitWidth
+                                        autoExclusive: false
+                                        checked: efxEditor.isRelative
+                                        onCheckedChanged: efxEditor.isRelative = checked
+                                    }
+
+                                    RobotoText
+                                    {
+                                        label: qsTr("Relative movement")
+                                        height: UISettings.listItemHeight
+                                    }
+                                }
+
+                                // row 3
+                                RobotoText
+                                {
+                                    label: qsTr("Width")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 127
+                                    value: efxEditor.algorithmWidth
+                                    onValueModified: efxEditor.algorithmWidth = value
+                                }
+
+                                // row 4
+                                RobotoText
+                                {
+                                    label: qsTr("Height")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 127
+                                    value: efxEditor.algorithmHeight
+                                    onValueModified: efxEditor.algorithmHeight = value
+                                }
+
+                                // row 5
+                                RobotoText
+                                {
+                                    visible: !relativeCheck.checked
+                                    label: qsTr("X offset")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: !relativeCheck.checked
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 255
+                                    value: efxEditor.algorithmXOffset
+                                    onValueModified: efxEditor.algorithmXOffset = value
+                                }
+
+                                // row 6
+                                RobotoText
+                                {
+                                    visible: !relativeCheck.checked
+                                    label: qsTr("Y offset")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: !relativeCheck.checked
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 255
+                                    value: efxEditor.algorithmYOffset
+                                    onValueModified: efxEditor.algorithmYOffset = value
+                                }
+
+                                // row 7
+                                RobotoText
+                                {
+                                    label: qsTr("Rotation")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 359
+                                    suffix: "°"
+                                    value: efxEditor.algorithmRotation
+                                    onValueModified: efxEditor.algorithmRotation = value
+                                }
+
+                                // row 8
+                                RobotoText
+                                {
+                                    label: qsTr("Start offset")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 360
+                                    suffix: "°"
+                                    value: efxEditor.algorithmStartOffset
+                                    onValueModified: efxEditor.algorithmStartOffset = value
+                                }
+
+                                // row 9
+                                RobotoText
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    label: qsTr("X frequency")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 32
+                                    value: efxEditor.algorithmXFrequency
+                                    onValueModified: efxEditor.algorithmXFrequency = value
+                                }
+
+                                // row 10
+                                RobotoText
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    label: qsTr("Y frequency")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 32
+                                    value: efxEditor.algorithmYFrequency
+                                    onValueModified: efxEditor.algorithmYFrequency = value
+                                }
+
+                                // row 11
+                                RobotoText
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    label: qsTr("X phase")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 360
+                                    suffix: "°"
+                                    value: efxEditor.algorithmXPhase
+                                    onValueModified: efxEditor.algorithmXPhase = value
+                                }
+
+                                // row 9
+                                RobotoText
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    label: qsTr("Y phase")
+                                    height: UISettings.listItemHeight
+                                }
+                                CustomSpinBox
+                                {
+                                    visible: patternCombo.displayText === "Lissajous"
+                                    Layout.fillWidth: true
+                                    from: 0
+                                    to: 360
+                                    suffix: "°"
+                                    value: efxEditor.algorithmYPhase
+                                    onValueModified: efxEditor.algorithmYPhase = value
+                                }
+
+                                // Enable/disable dimmer control. Off by default:
+                                // the EFX then animates Pan/Tilt only, as before.
+                                Row
+                                {
+                                    Layout.columnSpan: 2
+                                    Layout.fillWidth: true
+                                    spacing: 4
+
+                                    CustomCheckBox
+                                    {
+                                        id: dimmerControlCheck
+                                        implicitWidth: UISettings.listItemHeight
+                                        implicitHeight: implicitWidth
+                                        autoExclusive: false
+                                        checked: efxEditor.dimmerControl
+                                        onCheckedChanged: efxEditor.dimmerControl = checked
+                                    }
+
+                                    RobotoText
+                                    {
+                                        label: qsTr("Enable dimmer control")
+                                        height: UISettings.listItemHeight
+                                    }
+                                }
+                            } // GridLayout
+                    } // SectionBox
+
+                    SectionBox
+                    {
+                        id: speedSection
+                        width: editorColumn.colWidth - 5
+                        isExpanded: false
+                        sectionLabel: qsTr("Speed")
+                        sectionContents:
+                            GridLayout
+                            {
+                                width: parent.width
+                                columns: 3
+                                columnSpacing: 5
+                                rowSpacing: 4
+
+                                function showTimeTool(item, titleLabel, timeLabel, type)
+                                {
+                                    timeEditTool.allowFractions = QLCFunction.ByTwoFractions
+                                    timeEditTool.show(-1, item.mapToItem(mainView, 0, 0).y - timeEditTool.height,
+                                                      titleLabel, timeLabel, type)
+                                }
+
+                                // Row 1
+                                RobotoText
+                                {
+                                    id: fiLabel
+                                    label: qsTr("Fade in")
+                                    height: UISettings.listItemHeight
+                                }
+
+                                Rectangle
+                                {
+                                    Layout.fillWidth: true
+                                    height: UISettings.listItemHeight
+                                    color: UISettings.bgMedium
+
+                                    RobotoText
+                                    {
+                                        id: fiTimeLabel
+                                        x: 3
+                                        height: parent.height
+                                        label: TimeUtils.timeToQlcString(efxEditor.fadeInSpeed, efxEditor.tempoType)
+                                    }
+                                    MouseArea
+                                    {
+                                        anchors.fill: parent
+                                        onDoubleClicked: showTimeTool(this, fiLabel.label, fiTimeLabel.label, QLCFunction.FadeIn)
+                                    }
+                                }
+
+                                IconButton
+                                {
+                                    width: height
+                                    height: UISettings.listItemHeight
+                                    faSource: FontAwesome.fa_clock
+                                    faColor: UISettings.fgMain
+                                    onClicked: showTimeTool(this, fiLabel.label, fiTimeLabel.label, QLCFunction.FadeIn)
+                                }
+
+                                // Row 2
+                                RobotoText
+                                {
+                                    id: hLabel
+                                    height: UISettings.listItemHeight
+                                    label: qsTr("Loop")
+                                }
+
+                                Rectangle
+                                {
+                                    Layout.fillWidth: true
+                                    height: UISettings.listItemHeight
+                                    color: UISettings.bgMedium
+
+                                    RobotoText
+                                    {
+                                        id: hTimeLabel
+                                        x: 3
+                                        height: parent.height
+                                        label: TimeUtils.timeToQlcString(efxEditor.holdSpeed, efxEditor.tempoType)
+                                    }
+                                    MouseArea
+                                    {
+                                        anchors.fill: parent
+                                        onDoubleClicked: showTimeTool(this, hLabel.label, hTimeLabel.label, QLCFunction.Hold)
+                                    }
+                                }
+
+                                IconButton
+                                {
+                                    width: height
+                                    height: UISettings.listItemHeight
+                                    faSource: FontAwesome.fa_clock
+                                    faColor: UISettings.fgMain
+                                    onClicked: showTimeTool(this, hLabel.label, hTimeLabel.label, QLCFunction.Hold)
+                                }
+
+                                // Row 3
+                                RobotoText
+                                {
+                                    id: foLabel
+                                    height: UISettings.listItemHeight
+                                    label: qsTr("Fade out")
+                                }
+
+                                Rectangle
+                                {
+                                    Layout.fillWidth: true
+                                    height: UISettings.listItemHeight
+                                    color: UISettings.bgMedium
+
+                                    RobotoText
+                                    {
+                                        id: foTimeLabel
+                                        x: 3
+                                        height: parent.height
+                                        label: TimeUtils.timeToQlcString(efxEditor.fadeOutSpeed, efxEditor.tempoType)
+                                    }
+                                    MouseArea
+                                    {
+                                        anchors.fill: parent
+                                        onDoubleClicked: showTimeTool(this, foLabel.label, foTimeLabel.label, QLCFunction.FadeOut)
+                                    }
+                                }
+
+                                IconButton
+                                {
+                                    width: height
+                                    height: UISettings.listItemHeight
+                                    faSource: FontAwesome.fa_clock
+                                    faColor: UISettings.fgMain
+                                    onClicked: showTimeTool(this, foLabel.label, foTimeLabel.label, QLCFunction.FadeOut)
+                                }
+                            } // GridLayout
+                    }
+
+                    SectionBox
+                    {
+                        id: directionSection
+                        width: editorColumn.colWidth - 5
+                        sectionLabel: qsTr("Order and direction")
+                        sectionContents:
+                            GridLayout
+                            {
+                                width: parent.width
+                                columns: 4
+                                columnSpacing: 4
+                                rowSpacing: 4
+
+                                // Row 1
+                                IconPopupButton
+                                {
+                                    model: [
+                                        { mLabel: qsTr("Loop"), faIcon: FontAwesome.fa_retweet, mValue: QLCFunction.Loop },
+                                        { mLabel: qsTr("Single Shot"), faIcon: FontAwesome.fa_right_long, mValue: QLCFunction.SingleShot },
+                                        { mLabel: qsTr("Ping Pong"), faIcon: FontAwesome.fa_right_left, mValue: QLCFunction.PingPong }
+                                    ]
+
+                                    currValue: efxEditor.runOrder
+                                    onValueChanged: (value) => efxEditor.runOrder = value
+                                }
+                                RobotoText
+                                {
+                                    label: qsTr("Run Order")
+                                    Layout.fillWidth: true
+                                }
+
+                                // Row 2
+                                IconPopupButton
+                                {
+                                    model: [
+                                        { mLabel: qsTr("Forward"), faIcon: FontAwesome.fa_angles_right, mValue: QLCFunction.Forward },
+                                        { mLabel: qsTr("Backward"), faIcon: FontAwesome.fa_angles_left, mValue: QLCFunction.Backward }
+                                    ]
+
+                                    currValue: efxEditor.direction
+                                    onValueChanged: (value) => efxEditor.direction = value
+                                }
+                                RobotoText
+                                {
+                                    label: qsTr("Direction")
+                                    Layout.fillWidth: true
+                                }
+
+                                // Row 3
+                                IconPopupButton
+                                {
+                                    model: [
+                                        { mLabel: qsTr("Parallel"), mTextIcon: "P", mValue: EFX.Parallel },
+                                        { mLabel: qsTr("Serial"), mTextIcon: "S", mValue: EFX.Serial },
+                                        { mLabel: qsTr("Asymmetric"), mTextIcon: "A", mValue: EFX.Asymmetric }
+                                    ]
+
+                                    currValue: efxEditor.propagation
+                                    onValueChanged: (value) => efxEditor.propagation = value
+                                }
+                                RobotoText
+                                {
+                                    label: qsTr("Fixture Order")
+                                    Layout.fillWidth: true
+                                }
+                            }
+                    }
+
+                } // Column
+                ScrollBar.vertical: CustomScrollBar { id: sbar }
+            } // Flickable
+        } // Column
+    } // SplitView
+}

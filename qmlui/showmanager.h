@@ -1,0 +1,426 @@
+/*
+  Q Light Controller Plus
+  showmanager.h
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#ifndef SHOWMANAGER_H
+#define SHOWMANAGER_H
+
+#include <QObject>
+#include <QPointer>
+#include <QQuickItem>
+
+#include "previewcontext.h"
+#include "show.h"
+
+class Doc;
+class Track;
+class Function;
+class Chaser;
+class ShowFunction;
+class WaveformImageProvider;
+
+typedef struct
+{
+    quint32 m_trackIndex;
+    /* guarded pointers: Show items and ShowFunctions can be destroyed
+     * while still referenced here (view rebuild, undo, show closing),
+     * so use QPointer to have them automatically reset to nullptr */
+    QPointer<ShowFunction> m_showFunc;
+    QPointer<QQuickItem> m_item;
+} SelectedShowItem;
+
+class ShowManager final : public PreviewContext
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int currentShowID READ currentShowID WRITE setCurrentShowID NOTIFY currentShowIDChanged)
+    Q_PROPERTY(bool isEditing READ isEditing NOTIFY isEditingChanged)
+    Q_PROPERTY(QString showName READ showName WRITE setShowName NOTIFY showNameChanged)
+    Q_PROPERTY(QColor itemsColor READ itemsColor WRITE setItemsColor NOTIFY itemsColorChanged)
+
+    Q_PROPERTY(bool stretchFunctions READ stretchFunctions WRITE setStretchFunctions NOTIFY stretchFunctionsChanged)
+    Q_PROPERTY(bool gridEnabled READ gridEnabled WRITE setGridEnabled NOTIFY gridEnabledChanged)
+    Q_PROPERTY(double snapGuideX READ snapGuideX WRITE setSnapGuideX NOTIFY snapGuideXChanged)
+    Q_PROPERTY(bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
+    Q_PROPERTY(bool isPaused READ isPaused NOTIFY isPausedChanged)
+    Q_PROPERTY(int showDuration READ showDuration NOTIFY showDurationChanged)
+
+    Q_PROPERTY(Show::TimeDivision timeDivision READ timeDivision WRITE setTimeDivision NOTIFY timeDivisionChanged)
+    Q_PROPERTY(int beatsDivision READ beatsDivision NOTIFY beatsDivisionChanged)
+    Q_PROPERTY(float timeScale READ timeScale WRITE setTimeScale NOTIFY timeScaleChanged)
+    Q_PROPERTY(float tickSize READ tickSize NOTIFY tickSizeChanged)
+    Q_PROPERTY(int currentTime READ currentTime WRITE setCurrentTime NOTIFY currentTimeChanged)
+
+    Q_PROPERTY(QVariant tracks READ tracks NOTIFY tracksChanged)
+    Q_PROPERTY(int selectedTrackId READ selectedTrackId WRITE setSelectedTrackId NOTIFY selectedTrackIdChanged)
+    Q_PROPERTY(int selectedItemsCount READ selectedItemsCount NOTIFY selectedItemsCountChanged)
+    Q_PROPERTY(int clipboardItemsCount READ clipboardItemsCount NOTIFY clipboardItemsCountChanged)
+    Q_PROPERTY(bool multipleSelection READ multipleSelection WRITE setMultipleSelection NOTIFY multipleSelectionChanged)
+
+public:
+    explicit ShowManager(QQuickView *view, Doc *doc, QObject *parent = 0);
+
+    void initialize();
+
+    /** Return the ID of the Show Function being edited */
+    int currentShowID() const;
+
+    /** Return a reference of the Show currently being edited */
+    Show *currentShow() const;
+
+    /** Flag to indicate if a Show is currently being edited */
+    bool isEditing() const;
+
+    /** Set the ID of the Show Function to edit */
+    void setCurrentShowID(int currentShowID);
+
+    /** Return the name of the Show Function being edited */
+    QString showName() const;
+
+    /** Set the name of the Show Function to edit */
+    void setShowName(QString showName);
+
+    /** Reset the Show Manager contents to an initial state */
+    Q_INVOKABLE void resetContents();
+
+    /** Clear all the current items in the ShowManager view */
+    Q_INVOKABLE void resetView();
+
+    /** Request to render the current Show items on screen */
+    Q_INVOKABLE void renderView(QQuickItem *parent);
+
+    Q_INVOKABLE void enableFlicking(bool enable);
+
+    /** Return the current Show total duration in milliseconds */
+    int showDuration() const;
+
+    /** Get/Set the Function stretch flag */
+    bool stretchFunctions() const;
+    void setStretchFunctions(bool stretchFunctions);
+
+    /** Get/Set the grid snapping functionality */
+    bool gridEnabled() const;
+    void setGridEnabled(bool gridEnabled);
+
+    /** Get/Set the X position of the snap guide line (-1 = hidden) */
+    double snapGuideX() const;
+    void setSnapGuideX(double snapGuideX);
+
+    /** Play or resume the Show playback */
+    Q_INVOKABLE void playShow();
+
+    /** Stop or rewind the Show playback */
+    Q_INVOKABLE void stopShow();
+
+    /** Flag that indicates if the Show is currently being played */
+    bool isPlaying() const;
+
+    /** Flag that indicates if the Show playback is currently paused */
+    bool isPaused() const;
+
+signals:
+    void currentShowIDChanged(int currentShowID);
+    void isEditingChanged();
+    void showNameChanged(QString showName);
+    void stretchFunctionsChanged(bool stretchFunction);
+    void gridEnabledChanged(bool gridEnabled);
+    void snapGuideXChanged();
+    void isPlayingChanged(bool playing);
+    void isPausedChanged(bool paused);
+    void showDurationChanged(int showDuration);
+
+private:
+    void setPlaybackState(bool playing, bool paused);
+
+    /** Track if cursor is interactively being moved during pause */
+    bool m_cursorMovedDuringPause;
+
+    /** Cached playback state for immediate UI updates */
+    bool m_isPlaying;
+    bool m_isPaused;
+
+    /** A reference to the Show Function being edited */
+    Show *m_currentShow;
+
+    /** Flag that indicates if a Function should be stretched
+     *  when the corresponding Show Item duration changes */
+    bool m_stretchFunctions;
+
+    /** Flag that indicates if the Show items should be
+     *  snapped to the closest grid divisor */
+    bool m_gridEnabled;
+
+    /** X position of the snap guide line (-1 = hidden) */
+    double m_snapGuideX;
+
+    /*********************************************************************
+      * Time
+      ********************************************************************/
+public:
+    /** Get/Set the Show time division */
+    Show::TimeDivision timeDivision() const;
+    void setTimeDivision(Show::TimeDivision division);
+    int beatsDivision() const;
+
+    /** Return true if the current Show has any item on its tracks whose
+     *  Function is beat (BPM) tempo based. Used to warn the user before
+     *  switching the Show from a Time to a BPM based division, since doing
+     *  so snaps those items' start/duration to the nearest whole beat
+     *  (they may have been placed at an arbitrary fractional-beat pixel
+     *  position while the Show was displaying a Time based ruler) */
+    Q_INVOKABLE bool hasBeatBasedItems() const;
+
+    /** Get/Set the current time scale of the Show Manager timeline */
+    float timeScale() const;
+    void setTimeScale(float timeScale);
+
+    /** Get the size in pixels of the Show header time division */
+    float tickSize() const;
+
+    /** Get/Set the current time of the Show (aka cursor position) */
+    int currentTime() const;
+    void setCurrentTime(int currentTime);
+
+signals:
+    void timeDivisionChanged(Show::TimeDivision division);
+    void beatsDivisionChanged(int beatsDivision);
+    void timeScaleChanged(float timeScale);
+    void tickSizeChanged(float tickSize);
+    void currentTimeChanged(int currentTime);
+
+private:
+    /** The current time scale of the Show Manager timeline */
+    float m_timeScale;
+
+    /** Size in pixels of the Show Manager time division */
+    float m_tickSize;
+
+    /** The current time position of the Show in ms */
+    int m_currentTime;
+
+    /*********************************************************************
+      * Tracks
+      ********************************************************************/
+public:
+    /** Return a list of Track objects suitable for QML */
+    QVariant tracks() const;
+
+    /** Get/Set the selected track id */
+    int selectedTrackId() const;
+    void setSelectedTrackId(int id);
+
+    Q_INVOKABLE void setTrackSolo(int index, bool solo);
+
+    /** Move the track with the provided index in the provided direction */
+    Q_INVOKABLE void moveTrack(int index, int direction);
+
+    /** Delete the currently selected Show Track */
+    Q_INVOKABLE void deleteSelectedTrack();
+
+signals:
+    void tracksChanged();
+    void selectedTrackIdChanged(int id);
+
+private:
+    /** The index of the currently selected track */
+    int m_selectedTrackId;
+
+    /*********************************************************************
+      * Show Items
+      ********************************************************************/
+public:
+    /**
+     * This enumeration instructs the UI how to interpret the data
+     * stored in what previewData returns. It is a numeric
+     * prefix before the time value
+     */
+    enum PreviewDrawType
+    {
+        RepeatingDuration = 0,
+        FadeIn,
+        StepDivider,
+        FadeOut,
+        AudioData
+    };
+    Q_ENUM(PreviewDrawType)
+
+    /** Return the currently selected color for Show Items */
+    QColor itemsColor() const;
+
+    /** Set the color of the currently selected Show Items */
+    void setItemsColor(QColor itemsColor);
+
+    /** Add a new Item to the timeline.
+     *  This happens when dragging an existing Function from the Function Manager.
+     *  If the current Show is NULL, a new Show is created.
+     *  If the provided $trackIdx is not valid, a new Track is created.
+     *  If $sourceFunc is not NULL (e.g. when pasting), the created ShowFunction
+     *  inherits its duration, color and lock state from it.
+     */
+    Q_INVOKABLE void addItems(QQuickItem *parent, int trackIdx, int startTime, QVariantList idsList,
+                              ShowFunction *sourceFunc = nullptr);
+
+    /** Add a Show item from an existing ShowFunction reference and Track Id */
+    void addShowItem(ShowFunction *sf, quint32 trackId);
+
+    /** Delete the currently selected show items */
+    Q_INVOKABLE void deleteShowItems(QVariantList data);
+
+    /** Delete the item referencing the provided ShowFunction from the QML view */
+    void deleteShowItem(ShowFunction *sf);
+
+    /** Rebuild the whole timeline from the current Show contents.
+      * Used when Tracks are added/removed outside of the normal UI flow,
+      * for example by an undo/redo action */
+    void refreshView();
+
+    /** Method invoked when moving an existing Show Item on the timeline.
+     *  The new position is checked for overlapping against existing items on the
+     *  provided $newTrackIdx. On overlapping, false is returned and the UI
+     *  will bring back the Item to its original position.
+     *  If there is enough space, then the item is (in case) removed from the
+     *  $originalTrackIdx and moved into $newTrackIdx and true is returned.
+     */
+    Q_INVOKABLE bool checkAndMoveItem(ShowFunction *sf,  int originalTrackIdx,
+                                      int newTrackIdx, int newStartTime);
+
+    /** Move a ShowFunction item to the Track at $trackIdx.
+     *  This is used to apply a track change coming from an undo/redo or
+     *  from a connected network peer, where the UI didn't move the item */
+    bool moveShowItemToTrack(ShowFunction *sf, int trackIdx);
+
+    /** Set the start time of a ShowFunction item (if not overlapping) */
+    Q_INVOKABLE bool setShowItemStartTime(ShowFunction *sf, int startTime);
+
+    /** Set the duration of a ShowFunction item (if not overlapping) */
+    Q_INVOKABLE bool setShowItemDuration(ShowFunction *sf, int duration);
+
+    /** Insert a time segment in a ShowFunction item, applying type-specific rules */
+    Q_INVOKABLE bool insertShowItemTime(ShowFunction *sf, int length);
+
+    /** Cut a time segment from a ShowFunction item, applying type-specific rules */
+    Q_INVOKABLE bool cutShowItemTime(ShowFunction *sf, int length);
+
+    /** Insert time at cursor position for all the items covering that position */
+    Q_INVOKABLE bool insertTimeAtCursor(int length, int cursorTime);
+
+    /** Cut time at cursor position for all the items covering that position */
+    Q_INVOKABLE bool cutTimeAtCursor(int length, int cursorTime);
+
+    /** Returns pixel X positions of all item edges (start + end) across all tracks,
+     *  excluding the item with the given function ID */
+    Q_INVOKABLE QVariantList getSnapEdges(quint32 excludeFuncId,
+                                          double viewportLeft = -1, double viewportRight = -1) const;
+
+    /** Returns the number of the currently selected Show items */
+    int selectedItemsCount() const;
+
+    /** Returns the number of Show items currently in the clipboard */
+    int clipboardItemsCount() const;
+
+    /** Get/Set multi selection mode for Show items */
+    bool multipleSelection() const;
+    void setMultipleSelection(bool multipleSelection);
+
+    /** Add an item to the selection tracking list */
+    Q_INVOKABLE void setItemSelection(int trackIdx, ShowFunction *sf, QQuickItem *item, bool selected, int keyModifiers);
+
+    /** Deselect all the selected items at once */
+    Q_INVOKABLE void resetItemsSelection();
+
+    Q_INVOKABLE QVariantList selectedItemRefs() const;
+    Q_INVOKABLE QStringList selectedItemNames() const;
+
+    /** Returns true if at least one of the selected items is locked */
+    Q_INVOKABLE bool selectedItemsLocked() const;
+
+    /** Lock/Unlock all the currently selected items */
+    Q_INVOKABLE void setSelectedItemsLock(bool lock);
+
+    /**
+     * Returns an array of values coupled as: PreviewDrawType, time value
+     * The UI will render the lines according to their time value and their type
+     */
+    Q_INVOKABLE QVariantList previewData(Function *f) const;
+
+    Q_INVOKABLE void copyToClipboard();
+    /** Paste the clipboard items on the selected track at the cursor
+     *  position. Returns false if no item could be pasted because of
+     *  overlapping with the existing items */
+    Q_INVOKABLE bool pasteFromClipboard();
+
+protected slots:
+    void slotTimeChanged(quint32 msec_time);
+    void slotShowFinished();
+    void slotShowStopped();
+
+private:
+    // Timeline mapping helpers
+    int minimumTimelineDuration(Show::TimeDivision division) const;
+    quint32 itemRelativeTimeFromCursor(const ShowFunction *sf, int cursorTime) const;
+    quint32 mapCursorToChaserTime(const ShowFunction *sf, Chaser *chaser, int cursorTime) const;
+
+    // Chaser-specific helpers
+    quint32 chaserStepDuration(Chaser *chaser, int index) const;
+    int chaserStepIndexFromTime(Chaser *chaser, quint32 timeValue) const;
+    bool setChaserStepDurationWithUndo(Chaser *chaser, int stepIndex, quint32 newDuration);
+    void convertChaserCommonToPerStep(Chaser *chaser);
+
+    // Timeline mutation helpers
+    void setShowItemDurationWithUndo(ShowFunction *sf, int newDuration);
+    bool moveAllItemsAfterCursor(int cursorTime, int delta);
+
+    bool insertShowItemTimeAt(ShowFunction *sf, int length, int cursorTime);
+    bool cutShowItemTimeAt(ShowFunction *sf, int length, int cursorTime);
+
+    /** Check items overlapping for the given track, ShowFunction,
+     *  start time and duration. Returns true if overlapping is
+     *  detected, otherwise false */
+    bool checkOverlapping(Track *track, ShowFunction *sourceFunc,
+                          quint32 startTime, quint32 duration) const;
+
+signals:
+    void itemsColorChanged(QColor itemsColor);
+    void selectedItemsCountChanged(int count);
+    void clipboardItemsCountChanged(int count);
+    void multipleSelectionChanged();
+
+    /** Notify the UI that the Function with the given $fid has been modified,
+     *  so Show Items referencing it can repaint their preview lines */
+    void functionChanged(quint32 fid);
+
+private:
+    /** The background color for Show Items */
+    QColor m_itemsColor;
+
+    /** Pre-cached QML component for quick item creation */
+    QQmlComponent *siComponent;
+
+    /** Holds the currently selected Show items */
+    QList<SelectedShowItem> m_selectedItems;
+
+    /** Flag to enable multi selection in Show items */
+    bool m_multipleSelection;
+
+    /** Holds the item currently ready for pasting */
+    QList<SelectedShowItem> m_clipboard;
+
+    WaveformImageProvider *m_waveformProvider;
+};
+
+#endif // SHOWMANAGER_H

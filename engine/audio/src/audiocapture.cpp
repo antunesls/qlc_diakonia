@@ -1,0 +1,383 @@
+/*
+  Q Light Controller Plus
+  audiocapture.cpp
+
+  Copyright (c) Massimo Callegari
+  based on libbeat code by Maximilian Güntner
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include <QSettings>
+#include <QDateTime>
+#include <QDebug>
+#include <qmath.h>
+
+#include "audiocapture.h"
+#include "beattracker.h"
+
+#define USE_HANNING
+#define CLEAR_FFT_NOISE
+
+#define M_2PI       6.28318530718           /* 2*pi */
+
+AudioCapture::AudioCapture (QObject* parent)
+    : QThread (parent)
+    , m_userStop(true)
+    , m_pause(false)
+    , m_captureSize(0)
+    , m_sampleRate(0)
+    , m_channels(0)
+    , m_audioBuffer(NULL)
+    , m_audioMixdown(NULL)
+    , m_signalPower(0)
+    , m_smoothedSignalPower(0.0)
+    , m_fftInputBuffer(NULL)
+    , m_fftOutputBuffer(NULL)
+{
+    m_bufferSize = AUDIO_DEFAULT_BUFFER_SIZE;
+    m_sampleRate = AUDIO_DEFAULT_SAMPLE_RATE;
+    m_channels = AUDIO_DEFAULT_CHANNELS;
+
+    QSettings settings;
+    QVariant var = settings.value(SETTINGS_AUDIO_INPUT_SRATE);
+
+    if (var.isValid() == true)
+        m_sampleRate = var.toInt();
+
+    var = settings.value(SETTINGS_AUDIO_INPUT_CHANNELS);
+
+    if (var.isValid() == true)
+        m_channels = var.toInt();
+
+    qDebug() << "[AudioCapture] initialize" << m_sampleRate << m_channels;
+
+    m_captureSize = m_bufferSize * m_channels;
+
+    m_audioBuffer = new int16_t[m_captureSize];
+    m_audioMixdown = new int16_t[m_bufferSize];
+    m_fftInputBuffer = new double[m_bufferSize];
+#ifdef HAS_FFTW3
+    m_fftOutputBuffer = fftw_malloc(sizeof(fftw_complex) * m_bufferSize);
+
+    // Init FFTW
+    m_plan_forward = fftw_plan_dft_r2c_1d(m_bufferSize, m_fftInputBuffer,
+                                          reinterpret_cast<fftw_complex*>(m_fftOutputBuffer), 0);
+#endif
+    m_beatTracker = new BeatTracker(m_sampleRate, m_channels);
+}
+
+AudioCapture::~AudioCapture()
+{
+    // stop() has to be called from the implementation class
+    Q_ASSERT(!this->isRunning());
+
+    delete m_beatTracker;
+    delete[] m_audioBuffer;
+    delete[] m_audioMixdown;
+    delete[] m_fftInputBuffer;
+#ifdef HAS_FFTW3
+    fftw_destroy_plan(m_plan_forward);
+
+    if (m_fftOutputBuffer)
+        fftw_free(m_fftOutputBuffer);
+#endif
+}
+
+int AudioCapture::defaultBarsNumber() const
+{
+    return FREQ_SUBBANDS_DEFAULT_NUMBER;
+}
+
+void AudioCapture::registerBandsNumber(int number)
+{
+    qDebug() << "[AudioCapture] registering" << number << "bands";
+
+    QMutexLocker locker(&m_mutex);
+
+    bool firstBand = m_fftMagnitudeMap.isEmpty();
+    if (number > 0 && number <= FREQ_SUBBANDS_MAX_NUMBER)
+    {
+        if (m_fftMagnitudeMap.contains(number) == false)
+        {
+            BandsData newBands;
+            newBands.m_registerCounter = 1;
+            newBands.m_fftMagnitudeBuffer = QVector<double>(number);
+            m_fftMagnitudeMap[number] = newBands;
+        }
+        else
+            m_fftMagnitudeMap[number].m_registerCounter++;
+
+        if (firstBand)
+        {
+            locker.unlock();
+            start();
+        }
+    }
+}
+
+void AudioCapture::unregisterBandsNumber(int number)
+{
+    qDebug() << "[AudioCapture] unregistering" << number << "bands";
+
+    QMutexLocker locker(&m_mutex);
+
+    if (m_fftMagnitudeMap.contains(number))
+    {
+        m_fftMagnitudeMap[number].m_registerCounter--;
+        if (m_fftMagnitudeMap[number].m_registerCounter == 0)
+            m_fftMagnitudeMap.remove(number);
+
+        if (m_fftMagnitudeMap.isEmpty())
+        {
+            locker.unlock();
+            stop();
+        }
+    }
+}
+
+void AudioCapture::stop()
+{
+    qDebug() << "[AudioCapture] stop capture";
+    while (this->isRunning())
+    {
+        m_userStop = true;
+        usleep(10000);
+    }
+}
+
+double AudioCapture::fillBandsData(int number)
+{
+    // m_fftOutputBuffer contains the real and imaginary data of a spectrum
+    // representing all the frequencies from 0 to m_sampleRate Hz.
+    // Consider the configured spectrum range and split it into logarithmic
+    // bands, which better match audio perception.
+    // Each band value is the band energy (sum of the bins power) expressed
+    // in dBFS and mapped on a fixed [SPECTRUM_DB_FLOOR..0] dB scale to [0..1].
+    // Summing power makes pink noise (equal energy per octave) read flat,
+    // and an extra tilt compensates the typical roll-off of music.
+    // Returns the sum of the average band magnitudes, used for the volume bar.
+    double magnitudeTotal = 0.;
+#ifdef HAS_FFTW3
+    fftw_complex *fft = reinterpret_cast<fftw_complex*>(m_fftOutputBuffer);
+    const int maxBin = int(m_bufferSize / 2); // r2c valid bins: 0..N/2
+    const double nyquist = double(m_sampleRate) / 2.0;
+    const double minFreq = qMax(1.0, double(SPECTRUM_MIN_FREQUENCY));
+    const double maxFreq = qMin(double(SPECTRUM_MAX_FREQUENCY), nyquist);
+    const double logRange = (maxFreq > minFreq) ? qLn(maxFreq / minFreq) : 0.0;
+
+    if (number <= 0 || maxBin <= 1 || logRange <= 0.0)
+    {
+        if (number > 0 && m_fftMagnitudeMap.contains(number))
+            m_fftMagnitudeMap[number].m_fftMagnitudeBuffer.fill(0.0);
+        return 0.0;
+    }
+
+    // Power of a full scale sine with a Hann window (unnormalized FFT):
+    // peak bin = N/4, times the window equivalent noise bandwidth (1.5 bins)
+    const double fullScalePower = 3.0 * double(m_bufferSize) * double(m_bufferSize) / 32.0;
+    const int maxFreqBin = qBound(1, int(qCeil((maxFreq * m_bufferSize) / double(m_sampleRate))), maxBin + 1);
+
+    for (int b = 0; b < number; b++)
+    {
+        const double bandStartFreq = minFreq * qExp(logRange * (double(b) / double(number)));
+        const double bandEndFreq = minFreq * qExp(logRange * (double(b + 1) / double(number)));
+
+        int startBin = qBound(1, int(qFloor((bandStartFreq * m_bufferSize) / double(m_sampleRate))), maxBin);
+        int endBin = qBound(1, int(qCeil((bandEndFreq * m_bufferSize) / double(m_sampleRate))), maxFreqBin);
+
+        if (endBin <= startBin)
+            endBin = qMin(maxBin + 1, startBin + 1);
+
+        double magnitudeSum = 0.0;
+        double powerSum = 0.0;
+        for (int i = startBin; i < endBin; i++)
+        {
+            const double power = (fft[i][0] * fft[i][0]) + (fft[i][1] * fft[i][1]);
+            powerSum += power;
+            magnitudeSum += qSqrt(power);
+        }
+
+        const int bandWidth = endBin - startBin;
+        magnitudeTotal += magnitudeSum / (double(bandWidth) * M_2PI);
+
+        // spectral tilt, pivoting on 1kHz
+        const double centerFreq = qSqrt(bandStartFreq * bandEndFreq);
+        const double tiltDb = SPECTRUM_TILT_DB_OCTAVE * qLn(centerFreq / 1000.0) / M_LN2;
+        const double bandDb = (powerSum > 0.0)
+                ? 10.0 * std::log10(powerSum / fullScalePower) + tiltDb
+                : SPECTRUM_DB_FLOOR;
+
+        m_fftMagnitudeMap[number].m_fftMagnitudeBuffer[b] =
+                qBound(0.0, 1.0 - (bandDb / SPECTRUM_DB_FLOOR), 1.0);
+    }
+#else
+    Q_UNUSED(number)
+#endif
+    return magnitudeTotal;
+}
+
+void AudioCapture::processData()
+{
+    unsigned int i, j;
+    const double frameSec = (m_sampleRate > 0) ? (double(m_bufferSize) / double(m_sampleRate)) : 0.0;
+    static constexpr double kAttackTauSec = 0.040;  // fast rise
+    static constexpr double kReleaseTauSec = 0.200; // slower fall
+    const double attackAlpha = (frameSec > 0.0) ? (1.0 - qExp(-frameSec / kAttackTauSec)) : 1.0;
+    const double releaseAlpha = (frameSec > 0.0) ? (1.0 - qExp(-frameSec / kReleaseTauSec)) : 1.0;
+
+    auto smoothPower = [&](double rawPower) -> quint32
+    {
+        rawPower = qBound(0.0, rawPower, 32767.0);
+        const double alpha = (rawPower > m_smoothedSignalPower) ? attackAlpha : releaseAlpha;
+        m_smoothedSignalPower += alpha * (rawPower - m_smoothedSignalPower);
+        m_smoothedSignalPower = qBound(0.0, m_smoothedSignalPower, 32767.0);
+        return quint32(qRound(m_smoothedSignalPower));
+    };
+
+    // 2) Mix down to mono (int16 -> int16)
+    for (i = 0; i < m_bufferSize; i++)
+    {
+        m_audioMixdown[i] = 0;
+        for (j = 0; j < m_channels; j++)
+            m_audioMixdown[i] += m_audioBuffer[i*m_channels + j] / m_channels;
+    }
+
+    // 2a) DC removal + RMS (silence gate)
+    // Compute mean (DC)
+    long long acc = 0;
+    for (i = 0; i < m_bufferSize; ++i)
+        acc += m_audioMixdown[i];
+    const double mean = double(acc) / double(m_bufferSize);
+
+    // Remove DC, compute RMS in one pass (normalize to [-1,1])
+    double sumSq = 0.0;
+    for (i = 0; i < m_bufferSize; ++i)
+    {
+        const double x = (double(m_audioMixdown[i]) - mean) / 32768.0;
+        sumSq += x * x;
+        m_fftInputBuffer[i] = x; // will be windowed right below
+    }
+    const double rms = qSqrt(sumSq / double(m_bufferSize));
+
+    // If the frame is effectively silent, emit zeros and bail early.
+    // Threshold is tunable; ~0.002 ≈ -54 dBFS works well for typical PC inputs.
+    static constexpr double kSilenceRms = 0.002;
+    if (rms < kSilenceRms)
+    {
+        const double maxMagnitude = 1.0;
+        quint32 power = smoothPower(0.0);
+        m_signalPower = power;
+        for (int barsNumber : m_fftMagnitudeMap.keys())
+        {
+            // Ensure the buffer exists and is zeroed
+            auto &buf = m_fftMagnitudeMap[barsNumber].m_fftMagnitudeBuffer;
+            if (buf.size() != barsNumber)
+                buf = QVector<double>(barsNumber);
+            else
+                buf.fill(0.0);
+            emit dataProcessed(buf.data(), buf.size(), maxMagnitude, power);
+        }
+        return;
+    }
+
+    // 2b) Apply window to doubles already placed in m_fftInputBuffer
+#ifdef USE_BLACKMAN
+    const double a0 = (1-0.16)/2, a1 = 0.5, a2 = 0.16/2;
+    for (i = 0; i < bufferSize; i++)
+        m_fftInputBuffer[i] = m_fftInputBuffer[i] *
+                              (a0 - a1 * qCos((M_2PI * i) / (bufferSize - 1)) +
+                               a2 * qCos((2 * M_2PI * i) / (bufferSize - 1)));
+#endif
+#ifdef USE_HANNING
+    for (i = 0; i < m_bufferSize; i++)
+        m_fftInputBuffer[i] = m_fftInputBuffer[i] *
+                              (0.5 * (1.0 - qCos((M_2PI * i) / (m_bufferSize - 1))));
+#endif
+#ifdef USE_NO_WINDOW
+    // already filled: keep as-is
+#endif
+
+#ifdef HAS_FFTW3
+    // 3) FFT
+    fftw_execute(m_plan_forward);
+
+    // 4) Clear low-bin FFT noise
+#ifdef CLEAR_FFT_NOISE
+    // Clear only the very-low-frequency floor (incl. DC),
+    // otherwise log-spaced low bands get entirely muted.
+    const double noiseFloorHz = 20.0;
+    const int maxBin = int(m_bufferSize / 2);
+    const int noiseBins = qBound(1, int(qRound((noiseFloorHz * m_bufferSize) / double(m_sampleRate))), maxBin);
+    for (int n = 0; n < noiseBins; n++)
+    {
+        ((fftw_complex*)m_fftOutputBuffer)[n][0] = 0;
+        ((fftw_complex*)m_fftOutputBuffer)[n][1] = 0;
+    }
+#endif
+#endif
+
+    // 5) Fill per-band levels and compute power.
+    // Band levels are already normalized to [0..1], so the max magnitude is 1
+    const double maxMagnitude = 1.0;
+    for (int barsNumber : m_fftMagnitudeMap.keys())
+    {
+        const double pwrSum = fillBandsData(barsNumber);
+        const double rawPower = 32768.0 * pwrSum * qSqrt(M_2PI) / double(barsNumber);
+        m_signalPower = smoothPower(rawPower);
+        emit dataProcessed(m_fftMagnitudeMap[barsNumber].m_fftMagnitudeBuffer.data(),
+                           m_fftMagnitudeMap[barsNumber].m_fftMagnitudeBuffer.size(),
+                           maxMagnitude, m_signalPower);
+    }
+}
+
+void AudioCapture::run()
+{
+    qDebug() << "[AudioCapture] start capture";
+
+    m_userStop = false;
+
+    if (!initialize())
+    {
+        qWarning() << "[AudioCapture] Could not initialize audio capture, abandon";
+        return;
+    }
+
+    while (!m_userStop)
+    {
+        if (m_pause == false && m_captureSize != 0)
+        {
+            if (readAudio(m_captureSize) == true)
+            {
+                QMutexLocker locker(&m_mutex);
+                processData();
+
+                if (m_beatTracker->processAudio(m_audioBuffer, m_captureSize))
+                    emit beatDetected(qRound(m_beatTracker->bpm()));
+            }
+            else
+            {
+                //qDebug() << "Error reading data from audio source";
+                QThread::msleep(5);
+            }
+        }
+        else
+        {
+            QThread::msleep(15);
+        }
+
+        QThread::yieldCurrentThread();
+    }
+
+    uninitialize();
+}

@@ -1,0 +1,243 @@
+/*
+  Q Light Controller Plus
+  editorview.h
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#ifndef EDITORVIEW_H
+#define EDITORVIEW_H
+
+#include <QQuickView>
+
+#include "modeedit.h"
+#include "physicaledit.h"
+#include "qlcchannel.h"
+
+class QLCFixtureDef;
+class QLCCapability;
+class ChannelEdit;
+class AliasEdit;
+class ListModel;
+
+class EditorView final : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool id READ id CONSTANT)
+    Q_PROPERTY(bool isModified READ isModified NOTIFY hasChanged)
+    Q_PROPERTY(bool isUser READ isUser CONSTANT)
+    Q_PROPERTY(QString fileName READ fileName CONSTANT)
+
+    Q_PROPERTY(int productType READ productType WRITE setProductType NOTIFY productTypeChanged)
+    Q_PROPERTY(QString manufacturer READ manufacturer WRITE setManufacturer NOTIFY manufacturerChanged)
+    Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
+    Q_PROPERTY(QString author READ author WRITE setAuthor NOTIFY authorChanged)
+
+    Q_PROPERTY(PhysicalEdit *globalPhysical READ globalPhysical CONSTANT)
+    Q_PROPERTY(QVariant channels READ channels NOTIFY channelsChanged)
+
+    Q_PROPERTY(QVariant modes READ modes NOTIFY modesChanged)
+
+    Q_PROPERTY(QVariant aliasCapabilities READ aliasCapabilities NOTIFY aliasCapabilitiesChanged)
+
+public:
+    EditorView(QQuickView *view, int id, QLCFixtureDef *fixtureDef, QObject *parent = nullptr);
+    ~EditorView();
+
+    /** Get the unique ID of this editor */
+    int id() const;
+
+    /** Get the fixture definition reference being edited */
+    QLCFixtureDef *fixtureDefinition();
+
+    /** Get if the definition is user or system */
+    bool isUser() const;
+
+    /** When editing a system definition this method is called
+     *  to turn it into a user definition */
+    Q_INVOKABLE void remapFilename(QString userFolder);
+
+    /** Get/Set the fixture type */
+    int productType() const;
+    void setProductType(int type);
+
+    /** Get/Set the fixture manufacturer */
+    QString manufacturer() const;
+    void setManufacturer(QString manufacturer);
+
+    /** Get/Set the fixture model */
+    QString model() const;
+    void setModel(QString model);
+
+    /** Get/Set the definition author */
+    QString author() const;
+    void setAuthor(QString author);
+
+    /** Get an editor reference for the
+     *  global physical properties */
+    PhysicalEdit *globalPhysical();
+
+signals:
+    void hasChanged();
+    void productTypeChanged(int type);
+    void manufacturerChanged(QString manufacturer);
+    void modelChanged(QString model);
+    void authorChanged(QString author);
+    void definitionSaved(QLCFixtureDef *def);
+
+private:
+    /** Reference to the QML view root */
+    QQuickView *m_view;
+    /** Unique ID of this editor */
+    int m_id;
+    /** Reference to the definition being edited */
+    QLCFixtureDef *m_fixtureDef;
+    /** Reference to the global physical properties */
+    PhysicalEdit *m_globalPhy;
+
+    /************************************************************************
+     * Channels
+     ************************************************************************/
+public:
+    enum CompositeChannelTypes
+    {
+        RGBChannel = QLCChannel::Nothing + 100,
+        RGBWChannel,
+        RGBAChannel,
+        RGBLChannel,
+        RGBAWChannel
+    };
+    Q_ENUM(CompositeChannelTypes)
+
+    /** Get a list of all the available channels in the definition */
+    QVariant channels() const;
+
+    /** Request a channel editor.
+     *  If $name is empty, a new channel is added */
+    Q_INVOKABLE ChannelEdit *requestChannelEditor(QString name);
+
+    Q_INVOKABLE void addPresetChannel(QString name, int group);
+
+    /** Delete the given $channel from the definition */
+    Q_INVOKABLE bool deleteChannel(const QLCChannel *channel);
+
+    Q_INVOKABLE bool deleteChannels(QVariantList channels);
+
+private:
+    void updateChannelList();
+    void dismissChannelEditor();
+
+private:
+    /** Reference to a channel list usable in QML */
+    ListModel *m_channelList;
+
+    /** Reference to a channel editor */
+    ChannelEdit *m_channelEdit;
+
+signals:
+    void channelsChanged();
+
+    /************************************************************************
+     * Modes
+     ************************************************************************/
+public:
+    /** Get a list of all the available modes in the definition */
+    QVariant modes() const;
+
+    /** Request a mode editor.
+     *  If name is empty, a new mode is added */
+    Q_INVOKABLE ModeEdit *requestModeEditor(QString name);
+
+    Q_INVOKABLE bool deleteMode(QString name);
+
+private:
+    void updateModeList();
+    void dismissModeEditor();
+
+protected slots:
+    void modeNameChanged();
+
+private:
+    /** Reference to a mode list usable in QML */
+    ListModel *m_modeList;
+
+    /** Reference to a mode editor */
+    ModeEdit *m_modeEdit;
+
+signals:
+    void modesChanged();
+
+    /************************************************************************
+     * Aliases
+     ************************************************************************/
+public:
+    /** Get a list of all the alias capabilities in the definition. Each entry
+     *  exposes the owning channel (cRef), the capability (capRef) and a
+     *  display label */
+    QVariant aliasCapabilities() const;
+
+    /** Request an editor for the alias capability described by $channelName
+     *  and $capIndex (the capability index within that channel) */
+    Q_INVOKABLE AliasEdit *requestAliasEditor(QString channelName, int capIndex);
+
+    /** Rebuild the alias capability list. Public so the QML side can refresh
+     *  it after channel/capability edits that may have added or removed
+     *  alias-preset capabilities */
+    Q_INVOKABLE void updateAliasList();
+
+private:
+    void dismissAliasEditor();
+
+protected slots:
+    void aliasesModified();
+
+private:
+    /** Reference to the alias capability list usable in QML */
+    ListModel *m_aliasList;
+
+    /** Reference to an alias editor */
+    AliasEdit *m_aliasEdit;
+
+signals:
+    void aliasCapabilitiesChanged();
+
+    /*********************************************************************
+     * Load & Save
+     *********************************************************************/
+public:
+    Q_INVOKABLE QString save();
+    Q_INVOKABLE QString saveAs(QString path);
+
+    QString fileName();
+    void setFilenameFromModel();
+
+    /** Get the definition modification flag */
+    bool isModified() const;
+
+private:
+    QString checkFixture();
+
+protected slots:
+    void setModified(bool modified = true);
+
+private:
+    /** The definition file name */
+    QString m_fileName;
+    /** Definition modification flag */
+    bool m_isModified;
+};
+
+#endif // EDITORVIEW_H

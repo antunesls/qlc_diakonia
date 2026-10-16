@@ -1,0 +1,400 @@
+/*
+  Q Light Controller Plus
+  Fixture3DItem.qml
+
+  Copyright (c) Massimo Callegari
+  Copyright (c) Eric Arnebäck
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick as QQ2
+
+import Qt3D.Core
+import Qt3D.Render
+import Qt3D.Extras
+
+import org.qlcplus.classes 1.0
+import "Math3DView.js" as Math3D
+import "."
+
+Entity
+{
+    id: fixtureEntity
+    objectName: "fixture3DItem"
+
+    property int itemID: fixtureManager.invalidFixture()
+    property alias itemSource: eSceneLoader.source
+    property bool isSelected: false
+    property int headsNumber: 1
+
+    onItemIDChanged: isSelected = contextManager.isFixtureSelected(itemID)
+
+    property int meshType: MainView3D.NoMeshType
+
+    /* **************** Pan properties **************** */
+    property real panMaxDegrees: 360
+    property bool invertedPan: false
+    property real panSpeed: 4000 // in milliseconds
+    property real panRotation: 0
+    property Transform panTransform
+
+    /* **************** Tilt properties **************** */
+    property real tiltMaxDegrees: 270
+    property bool invertedTilt: false
+    property real tiltSpeed: 4000 // in milliseconds
+    property real tiltRotation: 0
+    property Transform tiltTransform
+
+    /* **************** Focus properties **************** */
+    property real focusMinDegrees: 15
+    property real focusMaxDegrees: 30
+    property real distCutoff: 40.0
+    property real cutoffAngle: (focusMinDegrees / 2.0) * (Math.PI / 180.0)
+
+    /* **************** Rendering quality properties **************** */
+    property bool useScattering: View3D.renderQuality === MainView3D.LowQuality ? false : true
+    property bool useShadows: View3D.renderQuality === MainView3D.LowQuality ? false : true
+    property int raymarchSteps:
+    {
+        switch(View3D.renderQuality)
+        {
+            case MainView3D.LowQuality: return 0
+            case MainView3D.MediumQuality: return 20
+            case MainView3D.HighQuality: return 40
+            case MainView3D.UltraQuality: return 80
+        }
+    }
+
+    /* **************** Spotlight cone properties **************** */
+    readonly property Layer spotlightShadingLayer: Layer { }
+    readonly property Layer outputDepthLayer: Layer { }
+    readonly property Layer spotlightScatteringLayer: Layer { }
+
+    property real coneBottomRadius: distCutoff * Math.tan(cutoffAngle) + coneTopRadius
+    property real coneTopRadius: transform ? (0.24023 / 2) * transform.scale3D.x * 0.7 : 0.0 // (diameter / 2) * scale * magic number
+
+    property real headLength:
+    {
+        switch(meshType)
+        {
+            case MainView3D.NoMeshType: return 0;
+            case MainView3D.ParMeshType: return 0.389005 * transform.scale3D.x
+            case MainView3D.MovingHeadMeshType: return 0.63663 * transform.scale3D.x
+            case MainView3D.ScannerMeshType: return 0.1 * transform.scale3D.x
+        }
+        console.log("UNSUPPORTED MESH TYPE " + meshType)
+        return 0.5 * transform.scale3D.x
+    }
+
+    /* ********************* Light properties ********************* */
+    /* ****** These are bound to uniforms in ScreenQuadEntity ***** */
+
+    property real lightIntensity: dimmerValue * shutterValue
+    property real dimmerValue: 0
+    property real shutterValue: sAnimator.shutterValue
+    property color lightColor: Qt.rgba(0, 0, 0, 1)
+    property vector3d lightPos: Qt.vector3d(0, 0, 0)
+    property vector3d lightDir: Math3D.getLightDirection(transform, panTransform, tiltTransform)
+
+    /* ********************** Light matrices ********************** */
+    property matrix4x4 lightMatrix
+    property matrix4x4 lightViewMatrix:
+        Math3D.getLightViewMatrix(lightMatrix, panRotation, tiltRotation, lightPos)
+    property matrix4x4 lightProjectionMatrix:
+        Math3D.getLightProjectionMatrix(distCutoff, coneBottomRadius, coneTopRadius, headLength, cutoffAngle)
+    property matrix4x4 lightViewProjectionMatrix: lightProjectionMatrix.times(lightViewMatrix)
+    property matrix4x4 lightViewProjectionScaleAndOffsetMatrix:
+        Math3D.getLightViewProjectionScaleOffsetMatrix(lightViewProjectionMatrix)
+
+    //onPanTransformChanged: console.log("Pan transform changed " + panTransform)
+    //onTiltTransformChanged: console.log("Tilt transform changed " + tiltTransform)
+
+    //onPositionChanged: console.log("Light position changed: " + position)
+    //onDirectionChanged: console.log("Light direction changed: " + direction)
+
+    function bindPanTransform(t, maxDegrees)
+    {
+        console.log("Binding pan ----")
+        fixtureEntity.panTransform = t
+        fixtureEntity.panMaxDegrees = maxDegrees
+        if (meshType == MainView3D.ScannerMeshType)
+        {
+            panRotation = 180 - (panMaxDegrees / 2)
+            coneTopRadius = 0.01 * transform.scale3D.x
+        }
+        t.rotationY = Qt.binding(function() {
+            return panRotation
+        })
+    }
+
+    function bindTiltTransform(t, maxDegrees)
+    {
+        console.log("Binding tilt ----")
+        fixtureEntity.tiltTransform = t
+        fixtureEntity.tiltMaxDegrees = maxDegrees
+        tiltRotation = maxDegrees / 2
+        t.rotationX = Qt.binding(function() {
+            return tiltRotation
+        })
+    }
+
+    function getHead(headIndex)
+    {
+        return fixtureEntity
+    }
+
+    function setHeadLightProps(headIndex, pos, matrix)
+    {
+        lightPos = pos
+        lightMatrix = matrix
+    }
+
+    function setHeadIntensity(headIndex, intensity)
+    {
+        dimmerValue = intensity
+    }
+
+    function setHeadRGBColor(headIndex, color)
+    {
+        lightColor = color
+    }
+
+    // Timestamp of the previous setPosition() call, used to pace animations to the
+    // rate at which new targets arrive (e.g. an EFX ticking every few ms) instead
+    // of always animating over the full physical slew time (which lags badly).
+    // 0 means "no previous update yet".
+    property real lastPositionTime: 0
+
+    // Gap (ms) above which two updates are considered unrelated: the previous move
+    // has settled, so the new one is a one-shot and should use the realistic
+    // physical slew time rather than being paced to the (long) elapsed interval.
+    readonly property real continuousUpdateGap: 1000
+
+    function setPosition(pan, tilt)
+    {
+        // Time since the last update. On a continuous effect (e.g. an EFX) this is
+        // the tick period, and we pace the animation to it so consecutive ticks
+        // chain smoothly and keep up. A large gap (or the very first move) means a
+        // one-shot: animate over the physical slew time so it looks like a real head.
+        var now = Date.now()
+        var elapsed = (lastPositionTime > 0) ? (now - lastPositionTime) : continuousUpdateGap + 1
+        var oneShot = (elapsed <= 0 || elapsed >= continuousUpdateGap)
+        lastPositionTime = now
+
+        if (panMaxDegrees)
+        {
+            var basePanPos = (meshType == MainView3D.ScannerMeshType) ? (180 - (panMaxDegrees / 2)) : 0
+            var panDeg = (panMaxDegrees / 0xFFFF) * pan
+            var panTgtDeg = invertedPan ? basePanPos + panMaxDegrees - panDeg : basePanPos + panDeg
+            panAnim.stop()
+            panAnim.from = panRotation
+            panAnim.to = panTgtDeg
+            // Physical slew time for this move: the fastest a real head could do it.
+            var panPhysical = (panSpeed / panMaxDegrees) * Math.abs(panAnim.to - panAnim.from)
+            panAnim.duration = animationDuration(elapsed, panPhysical, oneShot)
+            panAnim.start()
+        }
+
+        if (tiltMaxDegrees)
+        {
+            var baseTiltPos = (meshType == MainView3D.ScannerMeshType) ? (90 - (tiltMaxDegrees / 2)) : tiltMaxDegrees / 2
+            var tiltDeg = (tiltMaxDegrees / 0xFFFF) * tilt
+            var tiltTgtDeg
+            if (meshType == MainView3D.ScannerMeshType)
+                tiltTgtDeg = invertedTilt ? baseTiltPos + tiltMaxDegrees - tiltDeg : baseTiltPos + tiltDeg
+            else
+                tiltTgtDeg = invertedTilt ? -baseTiltPos + tiltDeg : baseTiltPos - tiltDeg
+            tiltAnim.stop()
+            tiltAnim.from = tiltRotation
+            tiltAnim.to = tiltTgtDeg
+            var tiltPhysical = (tiltSpeed / tiltMaxDegrees) * Math.abs(tiltAnim.to - tiltAnim.from)
+            tiltAnim.duration = animationDuration(elapsed, tiltPhysical, oneShot)
+            tiltAnim.start()
+        }
+    }
+
+    // Pick the animation duration for one position update.
+    //  - one-shot (first move / after a gap): use the realistic physical slew time
+    //    so an isolated move looks like a real head travelling (min 300 ms).
+    //  - continuous (rapid updates, e.g. an EFX): pace to the update interval, but
+    //    NEVER shorter than the physical slew time — otherwise a large per-tick
+    //    step would be crossed in a few ms, i.e. the head would teleport. When the
+    //    effect ticks faster than the head can move, we run at physical speed and
+    //    the head simply lags (as a real head would); it never jumps.
+    function animationDuration(elapsed, physical, oneShot)
+    {
+        if (oneShot)
+            return Math.max(physical, 300)
+        return Math.max(elapsed, physical, 1)
+    }
+
+    function setPositionSpeed(panDuration, tiltDuration)
+    {
+        if (panDuration !== -1)
+            panSpeed = panDuration
+        if (tiltDuration !== -1)
+            tiltSpeed = tiltDuration
+    }
+
+    function setShutter(type, low, high)
+    {
+        sAnimator.setShutter(type, low, high)
+    }
+
+    function setZoom(value, degrees)
+    {
+        if (degrees)
+            cutoffAngle = (value / 2) * (Math.PI / 180.0)
+        else
+            cutoffAngle = (((((focusMaxDegrees - focusMinDegrees) / 255.0) * value) + focusMinDegrees) / 2.0) * (Math.PI / 180.0)
+    }
+
+    function setupScattering(sceneEntity)
+    {
+        if (sceneEntity.coneMesh.length !== distCutoff)
+            sceneEntity.coneMesh.length = distCutoff
+
+        shadingCone.coneEffect = sceneEntity.spotlightShadingEffect
+        shadingCone.parent = sceneEntity
+        shadingCone.spotlightConeMesh = sceneEntity.coneMesh
+
+        scatteringCone.coneEffect = sceneEntity.spotlightScatteringEffect
+        scatteringCone.parent = sceneEntity
+        scatteringCone.spotlightConeMesh = sceneEntity.coneMesh
+
+        outDepthCone.coneEffect = sceneEntity.outputFrontDepthEffect
+        outDepthCone.parent = sceneEntity
+        outDepthCone.spotlightConeMesh = sceneEntity.coneMesh
+    }
+
+    function cleanupScattering()
+    {
+        if (shadingCone)
+            shadingCone.destroy()
+        if (scatteringCone)
+            scatteringCone.destroy()
+        if (outDepthCone)
+            outDepthCone.destroy()
+    }
+
+    ShutterAnimator { id: sAnimator }
+
+    QQ2.NumberAnimation on panRotation
+    {
+        id: panAnim
+        running: false
+        easing.type: QQ2.Easing.Linear
+    }
+
+    QQ2.NumberAnimation on tiltRotation
+    {
+        id: tiltAnim
+        running: false
+        easing.type: QQ2.Easing.Linear
+    }
+
+    property Texture2D depthTex:
+        Texture2D
+        {
+            width: 1024
+            height: 1024
+            format: Texture.D32F
+            generateMipMaps: false
+            magnificationFilter: Texture.Nearest
+            minificationFilter: Texture.Nearest
+            wrapMode
+            {
+                x: WrapMode.ClampToEdge
+                y: WrapMode.ClampToEdge
+            }
+        }
+
+    property RenderTarget shadowMap:
+        RenderTarget
+        {
+            attachments: [
+                RenderTargetOutput
+                {
+                    attachmentPoint: RenderTargetOutput.Depth
+                    texture: depthTex
+                }
+            ] // attachments
+        }
+
+    /* **************** Gobo properties **************** */
+    property Texture2D goboTexture: Texture2D { }
+    property real goboRotation: 0
+
+    function setGoboSpeed(cw, speed)
+    {
+        //console.log("Gobo clockwise: " + (cw ? "yes" : "no") + " speed: " + speed)
+        goboAnim.stop()
+        goboAnim.from = cw ? 0 : Math.PI * 2
+        goboAnim.to = cw ? Math.PI * 2 : 0
+        if (speed !== 0)
+        {
+            goboAnim.duration = speed
+            goboAnim.restart()
+        }
+    }
+
+    QQ2.NumberAnimation on goboRotation
+    {
+        id: goboAnim
+        running: false
+        duration: 0
+        easing.type: QQ2.Easing.Linear
+        from: 0
+        to: 360
+        loops: QQ2.Animation.Infinite
+    }
+
+    /* Cone meshes used for scattering. These get re-parented to
+       the main Scene entity via setupScattering */
+    SpotlightConeEntity
+    {
+        id: shadingCone
+        coneLayer: spotlightShadingLayer
+        fxEntity: fixtureEntity
+    }
+    SpotlightConeEntity
+    {
+        id: scatteringCone
+        coneLayer: spotlightScatteringLayer
+        fxEntity: fixtureEntity
+    }
+    SpotlightConeEntity
+    {
+        id: outDepthCone
+        coneLayer: outputDepthLayer
+        fxEntity: fixtureEntity
+    }
+
+    SceneLoader
+    {
+        id: eSceneLoader
+
+        onStatusChanged: (status) =>
+        {
+            if (status === SceneLoader.Ready)
+                View3D.initializeFixture(itemID, fixtureEntity, eSceneLoader)
+        }
+    }
+
+    /* Main transform of the whole fixture item */
+    property Transform transform: Transform { }
+
+    components: [ eSceneLoader, transform ]
+}
+

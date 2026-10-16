@@ -1,0 +1,594 @@
+/*
+  Q Light Controller Plus
+  networkpacketizer.cpp
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include <QDebug>
+#include <QVector3D>
+#include <QPointF>
+#include <QRectF>
+#include <QColor>
+#include <QFont>
+
+
+#include "networkpacketizer.h"
+#include "simplecrypt.h"
+#include "scenevalue.h"
+#include "tardis.h"
+
+NetworkPacketizer::NetworkPacketizer()
+{
+}
+
+void NetworkPacketizer::initializePacket(QByteArray &packet, int opCode) const
+{
+    packet.clear();
+    packet.append((char)0xE6);            // protocol ID MSB
+    packet.append((char)0x86);            // protocol ID LSB
+    packet.append((char)(opCode >> 8));   // opCode MSB
+    packet.append((char)opCode & 0x00FF); // opCode LSB
+    packet.append((char)0x00);            // sections number
+    packet.append((char)0x00);            // sections length MSB
+    packet.append((char)0x00);            // sections length LSB
+}
+
+void NetworkPacketizer::addSection(QByteArray &packet, QVariant value) const
+{
+    if (value.isNull())
+        return;
+
+    int oldLength = packet.length();
+
+    switch (QMetaType::Type(value.metaType().id()))
+    {
+        case QMetaType::Bool:
+            packet.append(BoolType);   // section type
+            packet.append(value.toBool() ? (char)0x01 : (char)0x00);
+        break;
+        case QMetaType::Int:
+        case QMetaType::UInt:
+        {
+            int intVal = value.toInt();
+            packet.append(IntType);                 // section type
+            packet.append((char)(intVal >> 24));    // section data MSB3
+            packet.append((char)(intVal >> 16));    // section data MSB2
+            packet.append((char)(intVal >> 8));     // section data MSB1
+            packet.append((char)(intVal & 0x00FF)); // section data LSB
+        }
+        break;
+        case QMetaType::Double:
+        {
+            float val = value.toFloat();
+            packet.append(FloatType);
+            packet.append(reinterpret_cast<const char*>(&val), sizeof(val));
+        }
+        break;
+        case QMetaType::QByteArray:
+        {
+            QByteArray ba = value.toByteArray();
+            packet.append(ByteArrayType);                // section type
+            packet.append((char)(ba.length() >> 8));     // section length MSB
+            packet.append((char)(ba.length() & 0x00FF)); // section length LSB
+            packet.append(ba);
+        }
+        break;
+        case QMetaType::QString:
+        {
+            QByteArray strVal = value.toString().toUtf8();
+            packet.append(StringType);                       // section type
+            packet.append((char)(strVal.length() >> 8));     // section length MSB
+            packet.append((char)(strVal.length() & 0x00FF)); // section length LSB
+            packet.append(strVal);
+        }
+        break;
+        case QMetaType::QVector3D:
+        {
+            QVector3D vect = value.value<QVector3D>();
+            float x = vect.x();
+            float y = vect.y();
+            float z = vect.z();
+            packet.append(Vector3DType);
+            packet.append(reinterpret_cast<const char*>(&x), sizeof(x));
+            packet.append(reinterpret_cast<const char*>(&y), sizeof(y));
+            packet.append(reinterpret_cast<const char*>(&z), sizeof(z));
+        }
+        break;
+        case QMetaType::QRectF:
+        {
+            QRectF rect = value.value<QRectF>();
+            float x = rect.x();
+            float y = rect.y();
+            float w = rect.width();
+            float h = rect.height();
+            packet.append(RectFType);
+            packet.append(reinterpret_cast<const char*>(&x), sizeof(x));
+            packet.append(reinterpret_cast<const char*>(&y), sizeof(y));
+            packet.append(reinterpret_cast<const char*>(&w), sizeof(w));
+            packet.append(reinterpret_cast<const char*>(&h), sizeof(h));
+        }
+        break;
+        case QMetaType::QPointF:
+        {
+            QPointF point = value.value<QPointF>();
+            float x = point.x();
+            float y = point.y();
+            packet.append(PointFType);
+            packet.append(reinterpret_cast<const char*>(&x), sizeof(x));
+            packet.append(reinterpret_cast<const char*>(&y), sizeof(y));
+        }
+        break;
+        case QMetaType::QColor:
+        {
+            QRgb rgb = value.value<QColor>().rgb();
+            packet.append(ColorType);               // section type
+            packet.append((char)(rgb >> 24));    // section data MSB3
+            packet.append((char)(rgb >> 16));    // section data MSB2
+            packet.append((char)(rgb >> 8));     // section data MSB1
+            packet.append((char)(rgb & 0x00FF)); // section data LSB
+        }
+        break;
+        case QMetaType::QFont:
+        {
+            QFont font = value.value<QFont>();
+            QByteArray strVal = font.toString().toUtf8();
+            packet.append(FontType);                         // section type
+            packet.append((char)(strVal.length() >> 8));     // section length MSB
+            packet.append((char)(strVal.length() & 0x00FF)); // section length LSB
+            packet.append(strVal);
+        }
+        break;
+        case QMetaType::QVariantList:
+        {
+            QVariantList list = value.toList();
+            for (const QVariant &item : list)
+            {
+                if (!item.canConvert<SceneValue>())
+                {
+                    qDebug() << "Unsupported QVariantList item metatype" << item.typeName();
+                    continue;
+                }
+                addSection(packet, item);
+            }
+
+            return;
+        }
+        default:
+        {
+            if (value.canConvert<SceneValue>())
+            {
+                SceneValue scv = value.value<SceneValue>();
+                packet.append(SceneValueType);
+                packet.append((char)(scv.fxi >> 24));    // MSB3
+                packet.append((char)(scv.fxi >> 16));    // MSB2
+                packet.append((char)(scv.fxi >> 8));     // MSB1
+                packet.append((char)(scv.fxi & 0x00FF)); // LSB
+                packet.append((char)(scv.channel >> 8));     // MSB
+                packet.append((char)(scv.channel & 0x00FF)); // LSB
+                packet.append((char)(scv.value & 0x00FF));   // LSB
+            }
+            else if (value.canConvert<UIntPair>())
+            {
+                UIntPair pairVal = value.value<UIntPair>();
+                packet.append(UIntPairType);
+                packet.append((char)(pairVal.first >> 24));    // MSB3
+                packet.append((char)(pairVal.first >> 16));    // MSB2
+                packet.append((char)(pairVal.first >> 8));     // MSB1
+                packet.append((char)(pairVal.first & 0x00FF)); // LSB
+                packet.append((char)(pairVal.second >> 24));    // MSB3
+                packet.append((char)(pairVal.second >> 16));    // MSB2
+                packet.append((char)(pairVal.second >> 8));     // MSB1
+                packet.append((char)(pairVal.second & 0x00FF)); // LSB
+            }
+            else if (value.canConvert<StringIntPair>())
+            {
+                StringIntPair pairVal = value.value<StringIntPair>();
+                packet.append(StringIntPairType);
+                QByteArray strVal = pairVal.first.toUtf8();
+                packet.append((char)(strVal.length() >> 8));     // string length MSB
+                packet.append((char)(strVal.length() & 0x00FF)); // string length LSB
+                packet.append(strVal);
+                packet.append((char)(pairVal.second >> 24));    // MSB3
+                packet.append((char)(pairVal.second >> 16));    // MSB2
+                packet.append((char)(pairVal.second >> 8));     // MSB1
+                packet.append((char)(pairVal.second & 0x00FF)); // LSB
+            }
+            else if (value.canConvert<StringDoublePair>())
+            {
+                StringDoublePair pairVal = value.value<StringDoublePair>();
+                packet.append(StringDoublePairType);
+                QByteArray strVal = pairVal.first.toUtf8();
+                packet.append((char)(strVal.length() >> 8));     // string length MSB
+                packet.append((char)(strVal.length() & 0x00FF)); // string length LSB
+                packet.append(strVal);
+                char *byteArray = (char*)&pairVal.second;
+                for (int ds = 0; ds < int(sizeof(double)); ds++)
+                    packet.append(byteArray[ds]);
+            }
+            else if (value.canConvert<StringStringPair>())
+            {
+                StringStringPair pairVal = value.value<StringStringPair>();
+                packet.append(StringStringPairType);
+                QByteArray strVal = pairVal.first.toUtf8();
+                packet.append((char)(strVal.length() >> 8));     // string length MSB
+                packet.append((char)(strVal.length() & 0x00FF)); // string length LSB
+                packet.append(strVal);
+                strVal = pairVal.second.toUtf8();
+                packet.append((char)(strVal.length() >> 8));     // string length MSB
+                packet.append((char)(strVal.length() & 0x00FF)); // string length LSB
+                packet.append(strVal);
+            }
+            else
+            {
+                qDebug() << "Unsupported data metatype" << value.typeName() << "Implement me";
+            }
+        }
+        break;
+    }
+
+    if (packet.length() == oldLength)
+        return;
+
+    quint16 newLength = packet.length() - HEADER_LENGTH;
+    // increment the number of sections
+    packet[4] = packet.at(4) + 1;
+    // update the total sections length
+    packet[5] = newLength >> 8;
+    packet[6] = newLength & 0xFF;
+}
+
+QByteArray NetworkPacketizer::encryptPacket(QByteArray &packet, SimpleCrypt *crypter) const
+{
+    QByteArray encPacket = packet.mid(0, HEADER_LENGTH); // copy the fixed size header
+    encPacket.append(crypter->encryptToByteArray(packet.mid(HEADER_LENGTH))); // encrypt the rest
+
+    quint16 newLength = encPacket.length() - HEADER_LENGTH;
+    encPacket[5] = newLength >> 8;
+    encPacket[6] = newLength & 0xFF;
+
+    return encPacket;
+}
+
+int NetworkPacketizer::decodePacket(QByteArray &packet, int &opCode, QVariantList &sections, SimpleCrypt *decrypter) const
+{
+    int bytes_read = 0;
+    quint8 sections_number = 0;
+    quint16 sections_length = 0;
+    QByteArray ba;
+    sections.clear();
+
+    /* Not enough data for a full header: ask the caller for more, otherwise
+     * the stream would be silently desynchronized one byte at a time */
+    if (packet.length() < HEADER_LENGTH)
+        return -1;
+
+    /* Check the protocol ID presence. There's no way to tell where the next
+     * packet begins, so give up on the whole buffer instead of resyncing
+     * byte by byte on data that will never be valid */
+    if (packet.at(0) != (char)0xE6 || packet.at(1) != (char)0x86)
+    {
+        qWarning() << "[Packetizer] Invalid protocol ID. Discarding" << packet.length() << "bytes";
+        return 0;
+    }
+
+    bytes_read += 2;
+
+    opCode = ((quint8)packet.at(bytes_read) << 8) + (quint8)packet.at(bytes_read + 1);
+    bytes_read += 2;
+
+    sections_number = packet.at(bytes_read++);
+
+    sections_length = ((quint8)packet.at(bytes_read) << 8) + (quint8)packet.at(bytes_read + 1);
+    bytes_read += 2;
+
+    if (packet.length() < HEADER_LENGTH + sections_length)
+        return -1;
+
+    if (decrypter)
+    {
+        QByteArray payload = packet.mid(bytes_read, sections_length);
+        //qDebug() << "section length:" << sections_length << "payload len:" << payload.length();
+        ba = decrypter->decryptToByteArray(payload);
+
+        /* An empty result is legitimate for a packet carrying no section, so
+         * the error flag is the only reliable way to detect a failure */
+        if (decrypter->lastError() != SimpleCrypt::ErrorNoError)
+        {
+            qWarning() << "[Packetizer] Decryption error:" << decrypter->lastError()
+                       << "opCode:" << QString::number(opCode, 16)
+                       << "payload len:" << payload.length()
+                       << "- packet dropped";
+            opCode = -1;
+            return HEADER_LENGTH + sections_length;
+        }
+        bytes_read = 0;
+    }
+    else
+        ba = packet;
+
+    auto malformedPacket = [&](const QString &description) -> int
+    {
+        qWarning() << "[Packetizer] Malformed packet:" << description
+                   << "opCode:" << QString::number(opCode, 16)
+                   << "sections:" << sections_number
+                   << "offset:" << bytes_read
+                   << "payload len:" << ba.length();
+        sections.clear();
+        opCode = -1;
+        return HEADER_LENGTH + sections_length;
+    };
+
+    auto ensureBytes = [&](int count, const char *context) -> int
+    {
+        if (bytes_read + count > ba.length())
+            return malformedPacket(QString("%1 needs %2 bytes").arg(context).arg(count));
+        return 0;
+    };
+
+    for (int i = 0; i < sections_number; i++)
+    {
+        if (bytes_read + 1 > ba.length())
+        {
+            qWarning() << "[Packetizer] Packet ended before all sections were decoded."
+                       << "opCode:" << QString::number(opCode, 16)
+                       << "expected sections:" << sections_number
+                       << "decoded sections:" << sections.length();
+            break;
+        }
+
+        quint8 sType = (quint8)ba.at(bytes_read++);
+
+        switch(sType)
+        {
+            case BoolType:
+            {
+                if (int err = ensureBytes(1, "bool value"))
+                    return err;
+                sections.append(QVariant((bool)ba.at(bytes_read++)));
+            }
+            break;
+            case IntType:
+            {
+                if (int err = ensureBytes(4, "int value"))
+                    return err;
+                int intVal = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                             ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+                sections.append(QVariant(intVal));
+            }
+            break;
+            case FloatType:
+            {
+                if (int err = ensureBytes(sizeof(float), "float value"))
+                    return err;
+                float val = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(val);
+                sections.append(QVariant(val));
+            }
+            break;
+            case StringType:
+            case FontType:
+            {
+                if (int err = ensureBytes(2, "string length"))
+                    return err;
+                QString strVal;
+                quint16 sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "string payload"))
+                    return err;
+
+                strVal.append(ba.mid(bytes_read, sLength));
+                if (sType == FontType)
+                {
+                    QFont font;
+                    font.fromString(strVal);
+                    sections.append(QVariant(font));
+                }
+                else
+                {
+                    sections.append(QVariant(strVal));
+                }
+
+                bytes_read += sLength;
+            }
+            break;
+            case ByteArrayType:
+            {
+                if (int err = ensureBytes(2, "bytearray length"))
+                    return err;
+                quint16 sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "bytearray payload"))
+                    return err;
+
+                sections.append(QVariant(ba.mid(bytes_read, sLength)));
+                bytes_read += sLength;
+            }
+            break;
+            case Vector3DType:
+            {
+                if (int err = ensureBytes(int(sizeof(float) * 3), "vector3d payload"))
+                    return err;
+                float x = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(x);
+                float y = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(y);
+                float z = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(z);
+                sections.append(QVariant(QVector3D(x, y, z)));
+            }
+            break;
+            case RectFType:
+            {
+                if (int err = ensureBytes(int(sizeof(float) * 4), "rectf payload"))
+                    return err;
+                float x = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(x);
+                float y = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(y);
+                float w = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(w);
+                float h = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(h);
+                sections.append(QVariant(QRectF(x, y, w, h)));
+            }
+            break;
+            case PointFType:
+            {
+                if (int err = ensureBytes(int(sizeof(float) * 2), "pointf payload"))
+                    return err;
+                float x = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(x);
+                float y = *reinterpret_cast<const float *>(ba.data() + bytes_read);
+                bytes_read += sizeof(y);
+                sections.append(QVariant(QPointF(x, y)));
+            }
+            break;
+            case ColorType:
+            {
+                if (int err = ensureBytes(4, "color payload"))
+                    return err;
+                QRgb rgbVal = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                             ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+                sections.append(QVariant(QColor(rgbVal)));
+            }
+            break;
+            case SceneValueType:
+            {
+                if (int err = ensureBytes(7, "scenevalue payload"))
+                    return err;
+                SceneValue scv;
+                scv.fxi = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                           ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+                scv.channel = ((quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                scv.value = (quint8)ba.at(bytes_read++);
+
+                QVariant var;
+                var.setValue(scv);
+                sections.append(var);
+            }
+            break;
+            case UIntPairType:
+            {
+                if (int err = ensureBytes(8, "uintpair payload"))
+                    return err;
+                UIntPair pairVal;
+                pairVal.first = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                                ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+                pairVal.second = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                                 ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+                QVariant var;
+                var.setValue(pairVal);
+                sections.append(var);
+            }
+            break;
+            case StringIntPairType:
+            {
+                if (int err = ensureBytes(2, "string/int pair string length"))
+                    return err;
+                StringIntPair pairVal;
+                QString strVal;
+                quint16 sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "string/int pair string payload"))
+                    return err;
+
+                strVal.append(ba.mid(bytes_read, sLength));
+                pairVal.first = strVal;
+                bytes_read += sLength;
+
+                if (int err = ensureBytes(4, "string/int pair int payload"))
+                    return err;
+                pairVal.second = ((quint8)ba.at(bytes_read) << 24) + ((quint8)ba.at(bytes_read + 1) << 16) +
+                                 ((quint8)ba.at(bytes_read + 2) << 8) + (quint8)ba.at(bytes_read + 3);
+                bytes_read += 4;
+
+                QVariant var;
+                var.setValue(pairVal);
+                sections.append(var);
+            }
+            break;
+            case StringDoublePairType:
+            {
+                if (int err = ensureBytes(2, "string/double pair string length"))
+                    return err;
+                StringDoublePair pairVal;
+                QString strVal;
+                quint16 sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "string/double pair string payload"))
+                    return err;
+
+                strVal.append(ba.mid(bytes_read, sLength));
+                pairVal.first = strVal;
+                bytes_read += sLength;
+
+                if (int err = ensureBytes(sizeof(double), "string/double pair double payload"))
+                    return err;
+                QByteArray dba = ba.mid(bytes_read, sizeof(double));
+
+                pairVal.second = *((double*)dba.data());
+                bytes_read += dba.length();
+
+                QVariant var;
+                var.setValue(pairVal);
+                sections.append(var);
+            }
+            break;
+            case StringStringPairType:
+            {
+                if (int err = ensureBytes(2, "string/string pair first length"))
+                    return err;
+                StringStringPair pairVal;
+                QString strVal;
+                quint16 sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "string/string pair first payload"))
+                    return err;
+
+                strVal.append(ba.mid(bytes_read, sLength));
+                pairVal.first = strVal;
+                bytes_read += sLength;
+
+                if (int err = ensureBytes(2, "string/string pair second length"))
+                    return err;
+                sLength = ((quint16)(quint8)ba.at(bytes_read) << 8) + (quint8)ba.at(bytes_read + 1);
+                bytes_read += 2;
+                if (int err = ensureBytes(sLength, "string/string pair second payload"))
+                    return err;
+
+                strVal.clear();
+                strVal.append(ba.mid(bytes_read, sLength));
+                pairVal.second = strVal;
+                bytes_read += sLength;
+
+                QVariant var;
+                var.setValue(pairVal);
+                sections.append(var);
+            }
+            break;
+            default:
+                return malformedPacket(QString("unknown section type %1").arg(sType));
+        }
+    }
+
+    return HEADER_LENGTH + sections_length;
+}
