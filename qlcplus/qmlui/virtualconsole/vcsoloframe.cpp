@@ -1,0 +1,160 @@
+/*
+  Q Light Controller Plus
+  vcsoloframe.cpp
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include "vcsoloframe.h"
+
+VCSoloFrame::VCSoloFrame(Doc *doc, VirtualConsole *vc, QObject *parent)
+    : VCFrame(doc, vc, parent)
+    , m_soloframeMixing(false)
+    , m_excludeMonitored(false)
+{
+    setType(VCWidget::SoloFrameWidget);
+}
+
+VCSoloFrame::~VCSoloFrame()
+{
+}
+
+QString VCSoloFrame::defaultCaption() const
+{
+    return tr("Solo Frame %1").arg(id() + 1);
+}
+
+void VCSoloFrame::render(QQuickView *view, QQuickItem *parent)
+{
+    if (view == nullptr || parent == nullptr)
+        return;
+
+    QQmlComponent *component = new QQmlComponent(view->engine(), QUrl("qrc:/VCFrameItem.qml"));
+
+    if (component->isError())
+    {
+        qDebug() << component->errors();
+        delete component;
+        return;
+    }
+
+    m_item = qobject_cast<QQuickItem*>(component->create());
+    if (m_item == nullptr)
+        qWarning() << Q_FUNC_INFO << "Unable to create solo frame component" << component->errors();
+    delete component;
+    if (m_item == nullptr)
+        return;
+
+    m_item->setParentItem(parent);
+    m_item->setProperty("isSolo", true);
+    m_item->setProperty("frameObj", QVariant::fromValue(this));
+
+    if (m_pagesMap.count() > 0)
+    {
+        QString chName = QString("frameDropArea%1").arg(id());
+        QQuickItem *childrenArea = qobject_cast<QQuickItem*>(m_item->findChild<QObject *>(chName));
+
+        foreach (VCWidget *child, m_pagesMap.keys())
+            child->render(view, childrenArea);
+    }
+}
+
+VCWidget *VCSoloFrame::createCopy(VCWidget *parent) const
+{
+    Q_ASSERT(parent != nullptr);
+
+    VCSoloFrame *frame = new VCSoloFrame(m_doc, m_vc, parent);
+    if (frame->copyFrom(this) == false)
+    {
+        delete frame;
+        frame = nullptr;
+    }
+
+    return frame;
+}
+
+bool VCSoloFrame::copyFrom(const VCWidget *widget)
+{
+    const VCSoloFrame *frame = qobject_cast<const VCSoloFrame*> (widget);
+    if (frame == nullptr)
+        return false;
+
+    // setSoloframeMixing(frame->soloframeMixing()); // TODO
+
+    return VCFrame::copyFrom(widget);
+}
+
+/*****************************************************************************
+ * Properties
+ *****************************************************************************/
+
+bool VCSoloFrame::soloframeMixing() const
+{
+    return m_soloframeMixing;
+}
+
+void VCSoloFrame::setSoloframeMixing(bool soloframeMixing)
+{
+    if (soloframeMixing == m_soloframeMixing)
+        return;
+
+    m_soloframeMixing = soloframeMixing;
+    setDocModified();
+
+    emit soloframeMixingChanged();
+}
+
+bool VCSoloFrame::excludeMonitoredFunctions() const
+{
+    return m_excludeMonitored;
+}
+
+void VCSoloFrame::setExcludeMonitoredFunctions(bool exclude)
+{
+    if (exclude == m_excludeMonitored)
+        return;
+
+    m_excludeMonitored = exclude;
+    setDocModified();
+
+    emit excludeMonitoredFunctionsChanged();
+}
+
+/*********************************************************************
+ * Widget Function
+ *********************************************************************/
+
+void VCSoloFrame::slotFunctionStarting(VCWidget *widget, quint32 fid, qreal intensity)
+{
+    qDebug() << "[VCSoloFrame] requested to start a Function with ID:" << fid << intensity << widget->caption();
+
+    qreal wIntensity = soloframeMixing() ? intensity : 1.0;
+
+    for (VCWidget *child : children(true))
+    {
+        if (child != widget)
+            child->notifyFunctionStarting(widget, fid, wIntensity, m_excludeMonitored);
+    }
+    widget->notifyFunctionStarting(widget, fid, wIntensity, m_excludeMonitored);
+}
+
+/*****************************************************************************
+ * Load & Save
+ *****************************************************************************/
+
+QString VCSoloFrame::xmlTagName() const
+{
+    return KXMLQLCVCSoloFrame;
+}

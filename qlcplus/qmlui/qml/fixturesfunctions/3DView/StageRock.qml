@@ -1,0 +1,287 @@
+/*
+  Q Light Controller Plus
+  StageRock.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+
+import Qt3D.Core
+import Qt3D.Render
+import Qt3D.Input
+import Qt3D.Extras
+
+import org.qlcplus.classes 1.0
+
+Entity
+{
+    id: stage
+
+    property vector3d size: contextManager ? contextManager.environmentSize : Qt.vector3d(5, 3, 5)
+    property real unitScale: View2D && View2D.gridUnits === MonitorProperties.Feet ? 0.3048 : 1.0
+    property vector3d sizeMeters: Qt.vector3d(size.x * unitScale,
+                                              size.y * unitScale,
+                                              size.z * unitScale)
+
+    property Layer sceneLayer
+    property Effect effect
+
+    // if the model changes, this has to be changed accordingly
+    property real trussHalfSize: 0.15
+
+    property Material material:
+        Material
+        {
+            effect: stage.effect
+
+            parameters: [
+                Parameter { name: "diffuse"; value: Qt.color("lightgray") },
+                Parameter { name: "specular"; value: Qt.color("black") },
+                Parameter { name: "shininess"; value: 1.0 },
+                Parameter { name: "bloom"; value: 0 }
+            ]
+        }
+
+    Component.onCompleted: rebuildTrusses()
+    onSizeMetersChanged: rebuildTrusses()
+
+    function rebuildTrusses()
+    {
+        if (sizeMeters.x <= 0 || sizeMeters.y <= 0 || sizeMeters.z <= 0)
+            return
+
+        if (sizeMeters.x > 1 || sizeMeters.y > 1 || sizeMeters.z > 1)
+            truss2mMesh.source = View3D.meshDirectory + "stage/truss_square_2m.obj"
+
+        if (sizeMeters.x % 2 || sizeMeters.y % 2 || sizeMeters.z % 2)
+            truss1mMesh.source = View3D.meshDirectory + "stage/truss_square_1m.obj"
+
+        // clean up any previously created truss entities
+        View3D.resetStage(stage)
+
+        var columnsArray = defaultColumnPositions()
+
+        // create the four truss columns
+        var i, len, vecPos
+        for (i = 0; i < 4; i++)
+        {
+            len = sizeMeters.y
+            vecPos = columnsArray[i]
+
+            while (len > 0)
+            {
+                if (len >= 2)
+                {
+                    vecPos.y = sizeMeters.y - len + 1
+                    createMesh(truss2mMesh, vecPos, Qt.vector3d(90, 0, 0))
+                    len -= 2
+                }
+                else
+                {
+                    vecPos.y = sizeMeters.y - len + 0.5
+                    createMesh(truss1mMesh, vecPos, Qt.vector3d(90, 0, 0))
+                    len -= 1
+                }
+            }
+        }
+
+        columnsArray = defaultColumnPositions()
+
+        // create upper side trusses
+        for (i = 0; i < 2; i++)
+        {
+            len = sizeMeters.z
+            vecPos = columnsArray[i]
+
+            while (len > 0)
+            {
+                if (len >= 2)
+                {
+                    vecPos.z = (sizeMeters.z / 2) - len + 1
+                    createMesh(truss2mMesh, vecPos, Qt.vector3d(0, 0, 0))
+                    len -= 2
+                }
+                else
+                {
+                    vecPos.z = (sizeMeters.z / 2) - len + 0.5
+                    createMesh(truss1mMesh, vecPos, Qt.vector3d(0, 0, 0))
+                    len -= 1
+                }
+            }
+        }
+
+        columnsArray = defaultColumnPositions()
+
+        // create upper front/rear trusses
+        for (i = 0; i < 2; i++)
+        {
+            len = sizeMeters.x
+            vecPos = columnsArray[i * 2]
+
+            while (len > 0)
+            {
+                if (len >= 2)
+                {
+                    vecPos.x = (sizeMeters.x / 2) - len + 1
+                    createMesh(truss2mMesh, vecPos, Qt.vector3d(0, 90, 0))
+                    len -= 2
+                }
+                else
+                {
+                    vecPos.x = (sizeMeters.x / 2) - len + 0.5
+                    createMesh(truss1mMesh, vecPos, Qt.vector3d(0, 90, 0))
+                    len -= 1
+                }
+            }
+        }
+    }
+
+    function defaultColumnPositions()
+    {
+        var array = [ Qt.vector3d(-sizeMeters.x / 2 - trussHalfSize, sizeMeters.y + trussHalfSize, sizeMeters.z / 2 + trussHalfSize),  // front left
+                      Qt.vector3d(sizeMeters.x / 2 + trussHalfSize, sizeMeters.y + trussHalfSize, sizeMeters.z / 2 + trussHalfSize),   // front right
+                      Qt.vector3d(-sizeMeters.x / 2 - trussHalfSize, sizeMeters.y + trussHalfSize, -sizeMeters.z / 2 - trussHalfSize), // rear left
+                      Qt.vector3d(sizeMeters.x / 2 + trussHalfSize, sizeMeters.y + trussHalfSize, -sizeMeters.z / 2 - trussHalfSize) ] // rear right
+        return array
+    }
+
+    function createMesh(obj, pos, rot)
+    {
+        return meshComp.createObject(stage, { mesh: obj, position: pos, vec3Rotation: rot } )
+    }
+
+    Component
+    {
+        id: meshComp
+        Entity
+        {
+            property bool isDynamic: true
+            property Mesh mesh
+            property vector3d position
+            property vector3d vec3Rotation
+
+            property Transform transform:
+                Transform
+                {
+                    translation: position
+                    rotationX: vec3Rotation.x
+                    rotationY: vec3Rotation.y
+                    rotationZ: vec3Rotation.z
+                }
+
+            components: [
+                mesh,
+                stage.material,
+                transform,
+                stage.sceneLayer
+            ]
+        }
+    }
+
+    Mesh
+    {
+        id: cornerMesh
+        source: View3D.meshDirectory + "stage/truss_square_corner.obj"
+    }
+
+    Mesh { id: truss2mMesh }
+    Mesh { id: truss1mMesh }
+
+    Entity
+    {
+        CuboidMesh
+        {
+            id: groundMesh
+            xExtent: sizeMeters.x
+            zExtent: sizeMeters.z
+            yExtent: 0.2
+        }
+
+        property Transform transform: Transform { translation: Qt.vector3d(0, - (groundMesh.yExtent / 2), 0) }
+
+        ObjectPicker
+        {
+            id: stagePicker
+            onClicked: (pick) => contextManager.setPositionPickPoint(pick.worldIntersection)
+        }
+
+        components: [
+            groundMesh,
+            stage.material,
+            transform,
+            stagePicker,
+            stage.sceneLayer
+        ]
+    }
+
+    // front left corner
+    Entity
+    {
+        id: flCorner
+        property Transform transform: Transform { translation: Qt.vector3d(-sizeMeters.x / 2 - trussHalfSize,
+                                                                           sizeMeters.y + trussHalfSize,
+                                                                           sizeMeters.z / 2 + trussHalfSize) }
+        components: [
+            cornerMesh,
+            stage.material,
+            transform,
+            stage.sceneLayer
+        ]
+    }
+
+    // front right corner
+    Entity
+    {
+        property Transform transform: Transform { translation: Qt.vector3d(sizeMeters.x / 2 + trussHalfSize,
+                                                                           sizeMeters.y + trussHalfSize,
+                                                                           sizeMeters.z / 2 + trussHalfSize) }
+        components: [
+            cornerMesh,
+            stage.material,
+            transform,
+            stage.sceneLayer
+        ]
+    }
+
+    // rear left corner
+    Entity
+    {
+        property Transform transform: Transform { translation: Qt.vector3d(-sizeMeters.x / 2 - trussHalfSize,
+                                                                           sizeMeters.y + trussHalfSize,
+                                                                           -sizeMeters.z / 2 - trussHalfSize) }
+        components: [
+            cornerMesh,
+            stage.material,
+            transform,
+            stage.sceneLayer
+        ]
+    }
+
+    // rear right corner
+    Entity
+    {
+        property Transform transform: Transform { translation: Qt.vector3d(sizeMeters.x / 2 + trussHalfSize,
+                                                                           sizeMeters.y + trussHalfSize,
+                                                                           -sizeMeters.z / 2 - trussHalfSize) }
+        components: [
+            cornerMesh,
+            stage.material,
+            transform,
+            stage.sceneLayer
+        ]
+    }
+
+}

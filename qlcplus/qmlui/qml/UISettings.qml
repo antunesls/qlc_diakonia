@@ -1,0 +1,91 @@
+/*
+  Q Light Controller Plus
+  UISettings.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+pragma Singleton
+
+import QtQuick
+
+QtObject
+{
+    property string robotoFontName: "Roboto Condensed"
+    property string fontAwesomeFontName: "Font Awesome 7 Free"
+
+    property real scalingFactor: 1.0
+
+    /* Colors */
+    property color bgStronger:      "#161616"
+    property color bgStrong:        "#232323"
+    property color bgMedium:        "#333"
+    property color bgControl:       "#555"
+    property color bgLight:         "#6F6F6F"
+    property color bgLighter:       "#8F8F8F"
+    property color bgFixtureOdd:    "#414b41"
+    property color bgFixtureEven:   "#42444b"
+
+    property color fgMain:          "white"
+    property color fgMedium:        "#888"
+    property color fgLight:         "#aaa"
+
+    property color sectionHeader:     "#31456B"
+    property color sectionHeaderDiv:  "#22304a"
+    property color highlight:         "#0978FF"
+    property color highlightPressed:  "#044089"
+    property color hover:             "#B6B6B6"
+    property color selection:         "yellow"
+    property color activeDropArea:    "#9DFF52"
+    property color borderColorDark:   "#111"
+
+    property color toolbarStartMain:  "#222"
+    property color toolbarStartSub:   "#333"
+    property color toolbarEnd:        "#111"
+    property color toolbarHoverStart: "#444"
+    property color toolbarHoverEnd:   "#171717"
+
+    property color toolbarSelectionMain: "#12B4FF"
+    property color toolbarSelectionSub:  "yellow"
+
+    /* Sizes */
+    property int  textSizeDefault:  screenPixelDensity * scalingFactor * 4.5
+    property real iconSizeDefault:  screenPixelDensity * scalingFactor * 10 // more or less the size of a finger
+    property real iconSizeMedium:   screenPixelDensity * scalingFactor * 8
+    property real listItemHeight:   screenPixelDensity * scalingFactor * 7
+    property real mediumItemHeight: screenPixelDensity * scalingFactor * 15
+    property real bigItemHeight:    screenPixelDensity * scalingFactor * 25
+    property real scrollBarWidth:   screenPixelDensity * scalingFactor * 6
+    property real sidePanelWidth:   screenPixelDensity * scalingFactor * 50
+
+    /* Persisted Simple Desk channel view scroll position, as the index of the
+       first visible channel (survives context changes) */
+    property int simpleDeskScrollIndex: 0
+
+    /* True while an in-app QML drag (channels, functions, fixtures, VC
+       widgets...) is in progress anywhere in the UI. MainView's full-window
+       fileDropArea (used for OS file drag & drop) watches this to get out of
+       the way: being a high z, full-window overlay, it would otherwise
+       always win Qt's drag hit test over any nested DropArea underneath it
+       and starve it of position updates, regardless of "keys" filtering. */
+    property bool internalDragActive: false
+
+    /* Channel properties column widths */
+    property real chPropsModesWidth: bigItemHeight * 1.2
+    property real chPropsFlagsWidth: bigItemHeight * 1.3
+    property real chPropsCanFadeWidth: bigItemHeight * 0.7
+    property real chPropsPrecedenceWidth: bigItemHeight * 1.2
+    property real chPropsModifierWidth: bigItemHeight
+}

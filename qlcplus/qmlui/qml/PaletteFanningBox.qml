@@ -1,0 +1,444 @@
+/*
+  Q Light Controller Plus
+  PaletteFanningBox.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import org.qlcplus.classes 1.0
+import "."
+
+Item
+{
+    id: boxRoot
+    width: 330
+    height: boxLayout.height
+
+    property alias checked: fanningButton.checked
+    property alias isPicking: colorPicker.checked
+    property bool isEditing: false
+    property QLCPalette editingPalette: null
+    property int paletteType: QLCPalette.Undefined
+
+    signal positionTypeChanged()
+
+    Component.onCompleted:
+    {
+        if (!isEditing && visible && paletteType !== QLCPalette.Undefined)
+            editingPalette = paletteManager.getEditingPalette(paletteType)
+    }
+
+    onPaletteTypeChanged:
+    {
+        if (!isEditing && visible && paletteType !== QLCPalette.Undefined)
+            editingPalette = paletteManager.getEditingPalette(paletteType)
+    }
+
+    onVisibleChanged:
+    {
+        if (isEditing)
+            return
+
+        if (visible)
+            editingPalette = paletteManager.getEditingPalette(paletteType)
+    }
+
+    Component.onDestruction:
+    {
+        paletteManager.releaseEditingPalette(paletteType)
+        editingPalette = null
+    }
+
+    function updateValue(value)
+    {
+        paletteManager.updatePalette(editingPalette, value)
+    }
+
+    function updateValues(val1, val2)
+    {
+        paletteManager.updatePalette(editingPalette, val1, val2)
+    }
+
+    function updatePreview()
+    {
+        paletteManager.previewPalette(editingPalette)
+    }
+
+    function editPalette(ePalette)
+    {
+        isEditing = true
+        editingPalette = ePalette
+
+        if (editingPalette.fanningType == QLCPalette.Flat)
+            return
+
+        switch (editingPalette.type)
+        {
+            case QLCPalette.Pan:
+                panCheck.checked = true
+                tiltCheck.checked = false
+                valueSpin.value = editingPalette.fanningValue
+            break
+            case QLCPalette.Tilt:
+                panCheck.checked = false
+                tiltCheck.checked = true
+                valueSpin.value = editingPalette.fanningValue
+            break
+            case QLCPalette.PanTilt:
+                panCheck.checked = true
+                tiltCheck.checked = true
+                valueSpin.value = editingPalette.fanningValue
+            break
+            case QLCPalette.Dimmer:
+                valueSpin.value = editingPalette.fanningValue
+            break
+            case QLCPalette.Color:
+                colorPreview.color = editingPalette.fanningValue
+            break
+        }
+    }
+
+    function showPalettePopup()
+    {
+        palettePopup.paletteObj = editingPalette
+        palettePopup.open()
+        palettePopup.focusEditItem()
+    }
+
+    function setName(paletteName)
+    {
+        if (editingPalette)
+            editingPalette.name = paletteName
+    }
+
+    function setColor(color)
+    {
+        colorPreview.color = color
+        editingPalette.fanningValue = color
+    }
+
+    PopupCreatePalette
+    {
+        id: palettePopup
+    }
+
+    Column
+    {
+        id: boxLayout
+        width: parent.width
+
+        RowLayout
+        {
+            width: boxRoot.width
+            height: UISettings.iconSizeMedium
+
+            IconButton
+            {
+                id: fanningButton
+                visible: boxRoot.paletteType !== QLCPalette.Shutter
+                width: UISettings.iconSizeMedium
+                height: width
+                imgSource: "qrc:/fanning.svg"
+                tooltip: qsTr("Show/Hide fanning options")
+                checkable: true
+                checked: false
+            }
+
+            Rectangle
+            {
+                color: "transparent"
+                Layout.fillWidth: true
+                height: UISettings.iconSizeMedium
+            }
+
+            IconButton
+            {
+                width: UISettings.iconSizeMedium
+                height: width
+                imgSource: "qrc:/palette.svg"
+                tooltip: qsTr("Create a new palette")
+                onClicked: boxRoot.showPalettePopup()
+            }
+        }
+
+        GridLayout
+        {
+            id: paramsGrid
+            visible: fanningButton.checked
+            columns: 2
+            x: 5
+            y: 5
+
+            // row 1
+            RobotoText
+            {
+                height: UISettings.iconSizeMedium
+                label: qsTr("Type")
+            }
+            RowLayout
+            {
+                Layout.fillWidth: true
+                height: UISettings.iconSizeMedium
+
+                IconPopupButton
+                {
+                    id: typeButton
+                    implicitWidth: UISettings.iconSizeMedium
+                    implicitHeight: implicitWidth
+                    model: [
+                        { mLabel: qsTr("Flat"), mIcon: "qrc:/algo-flat.svg", mValue: QLCPalette.Flat },
+                        { mLabel: qsTr("Linear"), mIcon: "qrc:/algo-linear.svg", mValue: QLCPalette.Linear },
+                        { mLabel: qsTr("Square"), mIcon: "qrc:/algo-square.svg", mValue: QLCPalette.Square },
+                        { mLabel: qsTr("Saw"), mIcon: "qrc:/algo-saw.svg", mValue: QLCPalette.Saw },
+                        { mLabel: qsTr("Sine"), mIcon: "qrc:/algo-sine.svg", mValue: QLCPalette.Sine }
+                    ]
+
+                    currValue: boxRoot.editingPalette ? boxRoot.editingPalette.fanningType : QLCPalette.Flat
+                    onValueChanged: (value) =>
+                    {
+                        if (boxRoot.editingPalette)
+                        {
+                            boxRoot.editingPalette.fanningType = value
+                            boxRoot.updatePreview()
+                        }
+                    }
+                }
+
+                RobotoText
+                {
+                    height: UISettings.iconSizeMedium
+                    label: typeButton.currentText
+                }
+            }
+
+            // row 2
+            RobotoText
+            {
+                height: UISettings.iconSizeMedium
+                label: qsTr("Layout")
+            }
+            RowLayout
+            {
+                Layout.fillWidth: true
+                height: UISettings.iconSizeMedium
+
+                IconPopupButton
+                {
+                    id: layoutButton
+                    implicitWidth: UISettings.iconSizeMedium
+                    implicitHeight: implicitWidth
+                    model: [
+                        { mLabel: qsTr("X Ascending"), mIcon: "qrc:/layout-ltr.svg", mValue: QLCPalette.XAscending },
+                        { mLabel: qsTr("X Descending"), mIcon: "qrc:/layout-rtl.svg", mValue: QLCPalette.XDescending },
+                        { mLabel: qsTr("X Centered"), mIcon: "qrc:/layout-xcenter.svg", mValue: QLCPalette.XCentered },
+                        { mLabel: qsTr("Y Ascending"), mIcon: "qrc:/layout-btt.svg", mValue: QLCPalette.YAscending },
+                        { mLabel: qsTr("Y Descending"), mIcon: "qrc:/layout-ttb.svg", mValue: QLCPalette.YDescending },
+                        { mLabel: qsTr("Y Centered"), mIcon: "qrc:/layout-ycenter.svg", mValue: QLCPalette.YCentered },
+                        { mLabel: qsTr("Z Ascending"), mIcon: "qrc:/layout-ftb.svg", mValue: QLCPalette.ZAscending },
+                        { mLabel: qsTr("Z Descending"), mIcon: "qrc:/layout-btf.svg", mValue: QLCPalette.ZDescending },
+                        { mLabel: qsTr("Z Centered"), mIcon: "qrc:/layout-zcenter.svg", mValue: QLCPalette.ZCentered }
+                    ]
+
+                    currValue: boxRoot.editingPalette ? boxRoot.editingPalette.fanningLayout : QLCPalette.XAscending
+                    onValueChanged:
+                    {
+                        if (boxRoot.editingPalette)
+                        {
+                            boxRoot.editingPalette.fanningLayout = value
+                            boxRoot.updatePreview()
+                        }
+                    }
+                }
+
+                RobotoText
+                {
+                    height: UISettings.iconSizeMedium
+                    label: layoutButton.currentText
+                }
+            }
+
+            // row 3
+            RobotoText
+            {
+                height: UISettings.iconSizeMedium
+                label: qsTr("Amount")
+            }
+            CustomSpinBox
+            {
+                from: 0
+                to: 1000
+                value: boxRoot.editingPalette ? boxRoot.editingPalette.fanningAmount : 100
+                suffix: "%"
+                onValueChanged:
+                {
+                    if (boxRoot.editingPalette)
+                    {
+                        boxRoot.editingPalette.fanningAmount = value
+                        boxRoot.updatePreview()
+                    }
+                }
+            }
+
+            // row 4
+            RowLayout
+            {
+                Layout.columnSpan: 2
+                visible: boxRoot.paletteType === QLCPalette.Pan ||
+                         boxRoot.paletteType === QLCPalette.Tilt ||
+                         boxRoot.paletteType === QLCPalette.PanTilt ? true : false
+
+                CustomCheckBox
+                {
+                    id: panCheck
+                    implicitHeight: UISettings.iconSizeMedium
+                    implicitWidth: implicitHeight
+                    checked: true
+                    enabled: tiltCheck.checked ? true : false
+                    onCheckedChanged:
+                    {
+                        if (checked)
+                            boxRoot.paletteType = tiltCheck.checked ? QLCPalette.PanTilt : QLCPalette.Pan
+                        else
+                            boxRoot.paletteType = QLCPalette.Tilt
+
+                        if (isEditing == false)
+                            boxRoot.editingPalette = paletteManager.getEditingPalette(boxRoot.paletteType)
+
+                        boxRoot.positionTypeChanged()
+
+                        updatePreview()
+                    }
+                }
+                RobotoText
+                {
+                    label: "Pan"
+                }
+                CustomCheckBox
+                {
+                    id: tiltCheck
+                    implicitHeight: UISettings.iconSizeMedium
+                    implicitWidth: implicitHeight
+                    checked: true
+                    enabled: panCheck.checked ? true : false
+                    onCheckedChanged:
+                    {
+                        if (checked)
+                            boxRoot.paletteType = panCheck.checked ? QLCPalette.PanTilt : QLCPalette.Tilt
+                        else
+                            boxRoot.paletteType = QLCPalette.Pan
+
+                        if (isEditing == false)
+                            boxRoot.editingPalette = paletteManager.getEditingPalette(boxRoot.paletteType)
+
+                        boxRoot.positionTypeChanged()
+
+                        updatePreview()
+                    }
+                }
+                RobotoText
+                {
+                    label: "Tilt"
+                }
+            }
+
+            // row 5
+            RobotoText
+            {
+                label: qsTr("Value")
+            }
+            CustomSpinBox
+            {
+                id: valueSpin
+
+                function suffixFromType()
+                {
+                    switch (boxRoot.paletteType)
+                    {
+                        case QLCPalette.Pan:
+                        case QLCPalette.Tilt:
+                        case QLCPalette.PanTilt:
+                            return "°"
+                        default:
+                            return ""
+                    }
+                }
+
+                function fromFromType()
+                {
+                    switch (boxRoot.paletteType)
+                    {
+                        case QLCPalette.Pan:
+                        case QLCPalette.Tilt:
+                        case QLCPalette.PanTilt:
+                            return -360
+                        default:
+                            return 0
+                    }
+                }
+
+                function toFromType()
+                {
+                    switch (boxRoot.paletteType)
+                    {
+                        case QLCPalette.Pan:
+                        case QLCPalette.Tilt:
+                        case QLCPalette.PanTilt:
+                            return 360
+                        default:
+                            return 255
+                    }
+                }
+
+                visible: boxRoot.paletteType != QLCPalette.Color
+                from: fromFromType()
+                to: toFromType()
+                suffix: suffixFromType()
+                onValueChanged:
+                {
+                    if (boxRoot.editingPalette)
+                    {
+                        boxRoot.editingPalette.fanningValue = value
+                        boxRoot.updatePreview()
+                    }
+                }
+            }
+            RowLayout
+            {
+                visible: boxRoot.paletteType == QLCPalette.Color
+
+                Rectangle
+                {
+                    id: colorPreview
+                    height: UISettings.iconSizeDefault
+                    Layout.fillWidth: true
+                    color: "black"
+                }
+                IconButton
+                {
+                    id: colorPicker
+                    faSource: FontAwesome.fa_eye_dropper
+                    faColor: "white"
+                    imgMargins: UISettings.iconSizeDefault / 4
+                    checkable: true
+                    tooltip: qsTr("Pick the selected color")
+                }
+            }
+        } // GridLayout
+    } // Column
+}

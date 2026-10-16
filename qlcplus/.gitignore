@@ -1,0 +1,72 @@
+# C++ objects and libs
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.so*
+*.dll
+*.dylib
+*.dmg
+.DS_Store
+
+# Qt-es
+.qmake.stash
+.qtc_clangd
+*.pro.user
+*.pro.user.*
+moc_*.cpp
+qrc_*.cpp
+Makefile
+Makefile.*
+*-build-*
+obj-x86_64-linux-gnu
+ui_*
+object_*
+engine/src/qlcconfig.h
+*.swp
+*.qmlc
+moc_predefs.h
+
+# Binaries
+*.exe
+*_test
+main/qlcplus
+fixtureeditor/qlcplus-fixtureeditor
+launcher/qlcplus-launcher
+hotplugmonitor/test/test
+qmlui/qlcplus5
+*.qm
+core
+
+# coverage
+coverage/
+*.gcda
+*.gcno
+
+# Development IDEs
+.vscode/
+
+# CMake build
+CMakeLists.txt.user
+build*
+
+# AI and agents
+.codex
+.claude
+.agents
+
+# debian packaging leftovers
+debian/files
+debian/*.debhelper
+debian/*.debhelper.log
+debian/*.substvars
+debian/debhelper-build-stamp
+debian/qlcplus/
+debian/qlcplus5/
+debian/qlcplus-data/
+debian/qlcplus-dbg/
+debian/qlcplus5-dbg/
+debian/tmp/

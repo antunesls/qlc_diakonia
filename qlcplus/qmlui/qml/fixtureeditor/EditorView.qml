@@ -1,0 +1,780 @@
+/*
+  Q Light Controller Plus
+  EditorView.qml
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import QtQuick
+import QtQuick.Dialogs
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Controls.Basic
+
+import org.qlcplus.classes 1.0
+import "."
+
+Rectangle
+{
+    id: editorRoot
+
+    property int editorId: -1
+    property EditorRef editorView: null
+
+    color: "transparent"
+
+    function initialize()
+    {
+        if (editorView.isUser === false)
+        {
+            messagePopup.message = qsTr("You are trying to edit a bundled fixture definition.<br>" +
+                                        "If you modify and save it, a new file will be stored in<br><i>" +
+                                        fixtureEditor.userFolder + "</i><br>and will override the bundled file.")
+            editorView.remapFilename(fixtureEditor.userFolder)
+            messagePopup.open()
+        }
+
+        sideEditor.active = false
+        sideEditor.itemName = ""
+        sideEditor.source = ""
+        sideEditor.active = true
+    }
+
+    function save(path)
+    {
+        //console.log("MANUFACTURER: " + editorView.manufacturer + ", MODEL: " + editorView.model)
+
+        if (editorView.manufacturer === "" || editorView.model === "")
+        {
+            messagePopup.message = qsTr("Manufacturer or model cannot be empty!")
+            messagePopup.open()
+            return
+        }
+
+        var errors = ""
+
+        if (path)
+            errors = editorView.saveAs(path)
+        else
+            errors = editorView.save()
+
+        if (errors != "")
+        {
+            messagePopup.message = qsTr("The following errors have been detected:") + "<br><ul>" + errors + "</ul>"
+            messagePopup.open()
+        }
+    }
+
+    function updateChannelToolbarPosition()
+    {
+        var toolbar = channelSection.loadedItem.toolbar
+
+        if (!channelSection.visible || !toolbar)
+            return
+
+        // channelSection top in the Flickable's visible coordinates
+        var topInFlick = channelSection.mapToItem(editorFlickable, 0, 0).y
+        var bottomInFlick = topInFlick + channelSection.height
+
+        // We want the toolbar floating when:
+        //  - the top of the section is above the top of the viewport (topInFlick < 0)
+        //  - but some part of the section (below the toolbar) is still visible
+        var shouldFloat =
+                (topInFlick < 0) &&
+                (bottomInFlick > 0 + toolbar.height)
+
+        if (shouldFloat)
+        {
+            // detach and parent to the Flickable to pin it at y = 0
+            if (toolbar.parent !== editorFlickable)
+            {
+                toolbar.parent = editorFlickable
+                toolbar.x = channelSection.x      // align with section
+                toolbar.y = 0                     // stick to top
+                toolbar.z = 100                   // above list items
+            }
+        }
+        else
+        {
+            // put it back into the section contents at its natural place
+            if (toolbar.parent !== channelSection.loadedItem)
+            {
+                toolbar.parent = channelSection.loadedItem.tContainer
+                toolbar.x = 0
+                toolbar.y = 0
+                toolbar.z = 0
+            }
+        }
+    }
+
+    CustomPopupDialog
+    {
+        id: messagePopup
+        parent: fixtureEditorView
+        width: fixtureEditorView.width / 2
+        standardButtons: Dialog.Ok
+        title: qsTr("!! Warning !!")
+        onAccepted: close()
+    }
+
+    PopupChannelWizard
+    {
+        id: wizardPopup
+        parent: fixtureEditorView
+        editorView: editorRoot.editorView
+    }
+
+    SplitView
+    {
+        anchors.fill: parent
+
+        handle: Rectangle
+        {
+            implicitWidth: screenPixelDensity * UISettings.scalingFactor * 0.9
+            color: SplitHandle.hovered || SplitHandle.pressed ? UISettings.highlight : UISettings.bgLighter
+        }
+
+        // left view: definition sections
+        Flickable
+        {
+            id: editorFlickable
+            Layout.fillWidth: true
+            height: parent.height
+
+            contentHeight: editorColumn.height
+            boundsBehavior: Flickable.StopAtBounds
+
+            SplitView.minimumWidth: editorRoot.width * 0.2
+            SplitView.preferredWidth: editorRoot.width * 0.5
+            SplitView.maximumWidth: editorRoot.width * 0.8
+
+            Column
+            {
+                id: editorColumn
+                width: parent.width - (sbar.visible ? sbar.width : 0)
+
+                // *********************************************************************
+                //                                GENERAL
+                // *********************************************************************
+                SectionBox
+                {
+                    id: generalSection
+                    width: parent.width
+                    sectionLabel: qsTr("General")
+
+                    sectionContents:
+                        GridLayout
+                        {
+                            width: Math.min(editorRoot.width / 2, parent.width)
+                            columns: 3
+
+                            // row 2
+                            RobotoText { label: qsTr("Manufacturer") }
+                            CustomTextEdit
+                            {
+                                id: manufacturerEdit
+                                Layout.fillWidth: true
+                                text: editorView ? editorView.manufacturer : ""
+                                onTextEdited: if (editorView) editorView.manufacturer = text
+                                KeyNavigation.tab: modelEdit
+                            }
+
+                            // row 1
+                            GroupBox
+                            {
+                                title: qsTr("Type")
+                                Layout.rowSpan: 3
+                                implicitWidth: UISettings.bigItemHeight + rightPadding * 2
+                                font.family: UISettings.robotoFontName
+                                font.pixelSize: UISettings.textSizeDefault
+                                palette.windowText: UISettings.fgMain
+
+                                IconPopupButton
+                                {
+                                    ListModel
+                                    {
+                                        id: typeModel
+                                        ListElement { mLabel: "Color Changer"; mIcon: "qrc:/fixture.svg"; mValue: 0 }
+                                        ListElement { mLabel: "Dimmer"; mIcon: "qrc:/dimmer.svg"; mValue: 1 }
+                                        ListElement { mLabel: "Effect"; mIcon: "qrc:/effect.svg"; mValue: 2 }
+                                        ListElement { mLabel: "Fan"; mIcon: "qrc:/fan.svg"; mValue: 3 }
+                                        ListElement { mLabel: "Flower"; mIcon: "qrc:/flower.svg"; mValue: 4 }
+                                        ListElement { mLabel: "Hazer"; mIcon: "qrc:/hazer.svg"; mValue: 5 }
+                                        ListElement { mLabel: "Laser"; mIcon: "qrc:/laser.svg"; mValue: 6 }
+                                        ListElement { mLabel: "LED Bar (Beams)"; mIcon: "qrc:/ledbar_beams.svg"; mValue: 7 }
+                                        ListElement { mLabel: "LED Bar (Pixels)"; mIcon: "qrc:/ledbar_pixels.svg"; mValue: 8 }
+                                        ListElement { mLabel: "Moving Head"; mIcon: "qrc:/movinghead.svg"; mValue: 9 }
+                                        ListElement { mLabel: "Other"; mIcon: "qrc:/other.svg"; mValue: 10 }
+                                        ListElement { mLabel: "Scanner"; mIcon: "qrc:/scanner.svg"; mValue: 11 }
+                                        ListElement { mLabel: "Smoke"; mIcon: "qrc:/smoke.svg"; mValue: 12 }
+                                        ListElement { mLabel: "Strobe"; mIcon: "qrc:/strobe.svg"; mValue: 13 }
+                                    }
+
+                                    implicitHeight: UISettings.bigItemHeight
+                                    delegateHeight: UISettings.listItemHeight
+                                    width: UISettings.bigItemHeight
+                                    model: typeModel
+                                    currValue: editorView ? editorView.productType : 0
+                                    onValueChanged:
+                                        function(value)
+                                        {
+                                            if (editorView)
+                                                editorView.productType = value
+                                        }
+                                }
+                            }
+
+                            // row 2
+                            RobotoText { label: qsTr("Model") }
+                            CustomTextEdit
+                            {
+                                id: modelEdit
+                                Layout.fillWidth: true
+                                text: editorView ? editorView.model : ""
+                                onTextEdited: if (editorView) editorView.model = text
+                                KeyNavigation.tab: authorEdit
+                            }
+
+                            // row 4
+                            RobotoText { label: qsTr("Author") }
+                            CustomTextEdit
+                            {
+                                id: authorEdit
+                                Layout.fillWidth: true
+                                text: editorView ? editorView.author : ""
+                                onTextEdited: if (editorView) editorView.author = text
+                            }
+                        }
+                } // SectionBox - General
+
+                // *********************************************************************
+                //                               PHYSICAL
+                // *********************************************************************
+                SectionBox
+                {
+                    id: phySection
+                    width: parent.width
+                    sectionLabel: qsTr("Physical properties")
+
+                    sectionContents:
+                        PhysicalProperties
+                        {
+                            width: Math.min(editorRoot.width / 2, parent.width)
+                            phy: editorView ? editorView.globalPhysical : null
+                        }
+                } // SectionBox - Physical
+
+                // *********************************************************************
+                //                                CHANNELS
+                // *********************************************************************
+                SectionBox
+                {
+                    id: channelSection
+                    width: parent.width
+                    sectionLabel: qsTr("Channels")
+
+                    sectionContents:
+                        Column
+                        {
+                            width: channelSection.width
+                            //height: chEditToolbar.height + channelList.height
+
+                            property alias tContainer: toolbarContainer
+                            property alias toolbar: chEditToolbar
+
+                            Item
+                            {
+                                id: toolbarContainer
+                                width: channelSection.width
+                                height: UISettings.iconSizeDefault
+
+                                Rectangle
+                                {
+                                    id: chEditToolbar
+                                    width: channelSection.width
+                                    height: UISettings.iconSizeDefault
+                                    gradient: Gradient
+                                    {
+                                        GradientStop { position: 0; color: UISettings.toolbarStartSub }
+                                        GradientStop { position: 1; color: UISettings.toolbarEnd }
+                                    }
+
+                                    RowLayout
+                                    {
+                                        anchors.fill: parent
+
+                                        IconButton
+                                        {
+                                            id: newChButton
+                                            faSource: FontAwesome.fa_plus
+                                            faColor: "limegreen"
+                                            tooltip: qsTr("Add a new channel")
+                                            onClicked:
+                                            {
+                                                sideEditor.active = false
+                                                sideEditor.itemName = ""
+                                                sideEditor.source = "qrc:/ChannelEditor.qml"
+                                                sideEditor.active = true
+                                            }
+                                        }
+
+                                        IconButton
+                                        {
+                                            id: delChButton
+                                            faSource: FontAwesome.fa_minus
+                                            faColor: "crimson"
+                                            tooltip: qsTr("Remove the selected channel(s)")
+                                            enabled: chanSelector.itemsCount
+                                            onClicked:
+                                            {
+                                                // retrieve selected indices from model selector and
+                                                // channel references from the ListView items
+                                                var refsArray = []
+                                                var selItems = chanSelector.itemsList()
+
+                                                for (var i = 0; i < selItems.length; i++)
+                                                    refsArray.push(channelList.itemAtIndex(selItems[i]).cRef)
+
+                                                editorView.deleteChannels(refsArray)
+                                                cDragItem.itemsList = []
+                                            }
+                                        }
+
+                                        Rectangle
+                                        {
+                                            Layout.fillWidth: true
+                                            color: "transparent"
+                                        }
+
+                                        IconButton
+                                        {
+                                            id: chWizButton
+                                            faSource: FontAwesome.fa_wand_magic_sparkles
+                                            faColor: "cyan"
+                                            tooltip: qsTr("Channel wizard")
+                                            onClicked: wizardPopup.open()
+                                        }
+                                    }
+                                } // Rectangle - toolbar
+                            } // Item - toolbar container
+
+                            ListView
+                            {
+                                id: channelList
+                                width: channelSection.width
+                                height: UISettings.listItemHeight * count
+                                boundsBehavior: Flickable.StopAtBounds
+                                interactive: false
+
+                                property bool dragActive: false
+
+                                model: editorView ? editorView.channels : null
+                                delegate:
+                                    Item
+                                    {
+                                        id: itemRoot
+                                        width: channelList.width
+                                        height: UISettings.listItemHeight
+
+                                        property QLCChannel cRef: model.cRef
+                                        property alias chanDelegate: delegateRoot.channelDelegate
+
+                                        MouseArea
+                                        {
+                                            id: delegateRoot
+                                            width: channelList.width
+                                            height: parent.height
+                                            propagateComposedEvents: true
+
+                                            property bool dragActive: drag.active
+                                            property Item channelDelegate: cDelegate
+
+                                            drag.target: cDragItem
+                                            drag.threshold: height / 2
+
+                                            onPressed:
+                                            {
+                                                var posnInWindow = cDelegate.mapToItem(mainView, cDelegate.x, cDelegate.y)
+                                                cDragItem.parent = mainView
+                                                cDragItem.x = posnInWindow.x - (cDragItem.width / 4)
+                                                cDragItem.y = posnInWindow.y - (cDragItem.height / 4)
+                                                cDragItem.z = 10
+                                            }
+
+                                            onClicked: (mouse) =>
+                                            {
+                                                chanSelector.selectItem(index, channelList.model, mouse.modifiers)
+                                            }
+
+                                            onDoubleClicked:
+                                            {
+                                                sideEditor.active = false
+                                                sideEditor.itemName = itemRoot.cRef.name
+                                                sideEditor.source = "qrc:/ChannelEditor.qml"
+                                                sideEditor.active = true
+                                            }
+
+                                            onDragActiveChanged:
+                                            {
+                                                if (dragActive)
+                                                {
+                                                    cDragItem.itemLabel = cEntryItem.tLabel
+                                                    cDragItem.itemIcon = cEntryItem.iSrc
+                                                    channelList.dragActive = true
+                                                    UISettings.internalDragActive = true
+                                                }
+                                                else
+                                                {
+                                                    cDragItem.Drag.drop()
+                                                    cDragItem.parent = channelList
+                                                    cDragItem.x = 0
+                                                    cDragItem.y = 0
+                                                    channelList.dragActive = false
+                                                    UISettings.internalDragActive = false
+                                                }
+                                            }
+
+                                            Rectangle
+                                            {
+                                                id: cDelegate
+                                                width: channelList.width
+                                                height: UISettings.listItemHeight
+                                                color: "transparent"
+
+                                                //property int itemType: App.ChannelDragItem
+                                                property QLCChannel cRef: itemRoot.cRef
+                                                property int chGroup: cRef ? cRef.group : 0
+                                                property int chColor: cRef ? cRef.colour : 0
+
+                                                onChGroupChanged: updateGroup()
+                                                onChColorChanged: updateGroup()
+
+                                                function updateGroup()
+                                                {
+                                                    cEntryItem.iSrc = cRef.getIconNameFromGroup(chGroup, true)
+                                                }
+
+                                                Rectangle
+                                                {
+                                                    anchors.fill: parent
+                                                    radius: 3
+                                                    color: UISettings.highlight
+                                                    visible: model.isSelected
+                                                }
+
+                                                IconTextEntry
+                                                {
+                                                    id: cEntryItem
+                                                    width: channelList.width
+                                                    height: UISettings.listItemHeight
+                                                    tLabel: cDelegate.cRef ? cDelegate.cRef.name : ""
+                                                    iSrc: cDelegate.cRef ? cDelegate.cRef.getIconNameFromGroup(cDelegate.cRef.group, true) : ""
+                                                }
+
+                                                Rectangle
+                                                {
+                                                    width: parent.width
+                                                    height: 1
+                                                    y: parent.height - 1
+                                                    color: UISettings.fgMedium
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                ModelSelector
+                                {
+                                    id: chanSelector
+                                    onItemsCountChanged:
+                                    {
+                                        cDragItem.itemsList = []
+                                        var selItems = itemsList()
+
+                                        for (var i = 0; i < selItems.length; i++)
+                                        {
+                                            var item = channelList.itemAtIndex(selItems[i])
+                                            cDragItem.itemsList.push(item.chanDelegate)
+                                        }
+                                    }
+                                }
+
+                                GenericMultiDragItem
+                                {
+                                    id: cDragItem
+                                    visible: channelList.dragActive
+
+                                    property bool fromMainEditor: true
+
+                                    Drag.active: channelList.dragActive
+                                    Drag.source: cDragItem
+                                    Drag.keys: [ "channel" ]
+                                }
+                            } // ListView
+                        } // Column
+                } // SectionBox - Channels
+
+                // *********************************************************************
+                //                                MODES
+                // *********************************************************************
+                SectionBox
+                {
+                    id: modeSection
+                    width: parent.width
+                    sectionLabel: qsTr("Modes")
+
+                    sectionContents:
+                        Column
+                        {
+                            width: modeSection.width
+                            //height: modeEditToolbar.height + modeList.height
+
+                            Rectangle
+                            {
+                                id: modeEditToolbar
+                                width: modeSection.width
+                                height: UISettings.iconSizeDefault
+                                gradient: Gradient
+                                {
+                                    GradientStop { position: 0; color: UISettings.toolbarStartSub }
+                                    GradientStop { position: 1; color: UISettings.toolbarEnd }
+                                }
+
+                                RowLayout
+                                {
+                                    anchors.fill: parent
+
+                                    IconButton
+                                    {
+                                        id: newModeButton
+                                        faSource: FontAwesome.fa_plus
+                                        faColor: "limegreen"
+                                        tooltip: qsTr("Add a new mode")
+                                        onClicked:
+                                        {
+                                            sideEditor.active = false
+                                            sideEditor.itemName = ""
+                                            sideEditor.source = "qrc:/ModeEditor.qml"
+                                            sideEditor.active = true
+                                        }
+                                    }
+
+                                    IconButton
+                                    {
+                                        id: delModeButton
+                                        faSource: FontAwesome.fa_minus
+                                        faColor: "crimson"
+                                        tooltip: qsTr("Remove the selected mode(s)")
+                                        onClicked:
+                                        {
+                                            var mItem = modeList.currentItem
+                                            editorView.deleteMode(mItem.modeName)
+                                        }
+                                    }
+
+                                    Rectangle
+                                    {
+                                        Layout.fillWidth: true
+                                        color: "transparent"
+                                    }
+                                }
+                            } // Rectangle - toolbar
+
+                            ListView
+                            {
+                                id: modeList
+                                width: modeSection.width
+                                height: UISettings.listItemHeight * count
+                                boundsBehavior: Flickable.StopAtBounds
+                                currentIndex: -1
+                                interactive: false
+
+                                model: editorView ? editorView.modes : null
+                                delegate:
+                                    Item
+                                    {
+                                        width: modeList.width
+                                        height: UISettings.listItemHeight
+
+                                        property alias modeName: modeTextEntry.tLabel
+
+                                        MouseArea
+                                        {
+                                            width: modeList.width
+                                            height: parent.height
+
+                                            onPressed: modeList.currentIndex = index
+                                            onDoubleClicked:
+                                            {
+                                                sideEditor.source = ""
+                                                sideEditor.itemName = model.name
+                                                sideEditor.source = "qrc:/ModeEditor.qml"
+                                            }
+
+                                            Rectangle
+                                            {
+                                                anchors.fill: parent
+                                                radius: 3
+                                                color: UISettings.highlight
+                                                visible: modeList.currentIndex === index
+                                            }
+
+                                            IconTextEntry
+                                            {
+                                                id: modeTextEntry
+                                                width: modeList.width
+                                                height: UISettings.listItemHeight
+                                                tLabel: model.name
+                                                faSource: FontAwesome.fa_list
+                                                faColor: UISettings.fgMain
+                                            }
+
+                                            Rectangle
+                                            {
+                                                width: parent.width
+                                                height: 1
+                                                y: parent.height - 1
+                                                color: UISettings.fgMedium
+                                            }
+                                        }
+                                    }
+                            } // ListView
+                        } // Column
+                } // SectionBox - Modes
+
+                SectionBox
+                {
+                    id: aliasSection
+                    width: parent.width
+                    sectionLabel: qsTr("Aliases")
+
+                    sectionContents:
+                        Column
+                        {
+                            width: aliasSection.width
+
+                            RobotoText
+                            {
+                                width: aliasSection.width
+                                height: UISettings.listItemHeight
+                                wrapText: true
+                                labelColor: UISettings.fgMedium
+                                label: qsTr("Set a capability preset to 'Alias' in the channel editor to make it appear here.")
+                                visible: aliasList.count === 0
+                            }
+
+                            ListView
+                            {
+                                id: aliasList
+                                width: aliasSection.width
+                                height: UISettings.listItemHeight * count
+                                boundsBehavior: Flickable.StopAtBounds
+                                currentIndex: -1
+                                interactive: false
+
+                                model: editorView ? editorView.aliasCapabilities : null
+                                delegate:
+                                    Item
+                                    {
+                                        width: aliasList.width
+                                        height: UISettings.listItemHeight
+
+                                        property QLCChannel cRef: model.cRef
+                                        property int capIndex: model.capIndex
+
+                                        MouseArea
+                                        {
+                                            width: aliasList.width
+                                            height: parent.height
+
+                                            onPressed: aliasList.currentIndex = index
+                                            onDoubleClicked:
+                                            {
+                                                sideEditor.active = false
+                                                sideEditor.itemName = cRef ? cRef.name : ""
+                                                sideEditor.itemIndex = capIndex
+                                                sideEditor.source = "qrc:/AliasEditor.qml"
+                                                sideEditor.active = true
+                                            }
+
+                                            Rectangle
+                                            {
+                                                anchors.fill: parent
+                                                radius: 3
+                                                color: UISettings.highlight
+                                                visible: aliasList.currentIndex === index
+                                            }
+
+                                            IconTextEntry
+                                            {
+                                                width: aliasList.width
+                                                height: UISettings.listItemHeight
+                                                tLabel: model.label + " (" + model.aliasCount + ")"
+                                                faSource: FontAwesome.fa_right_left
+                                                faColor: UISettings.fgMain
+                                            }
+
+                                            Rectangle
+                                            {
+                                                width: parent.width
+                                                height: 1
+                                                y: parent.height - 1
+                                                color: UISettings.fgMedium
+                                            }
+                                        }
+                                    }
+                            } // ListView
+                        } // Column
+                } // SectionBox - Alias
+
+            } // Column
+            ScrollBar.vertical:
+                CustomScrollBar
+                {
+                    id: sbar
+                    onPositionChanged: editorRoot.updateChannelToolbarPosition()
+                }
+        } // Flickable
+
+        // right view: editors
+        Loader
+        {
+            id: sideEditor
+            asynchronous: false
+
+            SplitView.minimumWidth: editorRoot.width * 0.2
+            SplitView.preferredWidth: editorRoot.width * 0.5
+            SplitView.maximumWidth: editorRoot.width * 0.8
+
+            property string itemName: ""
+            // extra identifier used by editors that need more than a name
+            // (e.g. the alias editor needs the capability index)
+            property int itemIndex: -1
+
+            onLoaded:
+            {
+                item.x = 10
+                item.y = 10
+                item.width = Qt.binding(function() { return sideEditor.width - 20 })
+                item.height = Qt.binding(function() { return sideEditor.height - 20 })
+
+                item.editorView = editorRoot.editorView
+                if (item.setItemIndex !== undefined)
+                    item.setItemIndex(itemName, itemIndex)
+                else
+                    item.setItemName(itemName)
+            }
+        }
+    }
+}

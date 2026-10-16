@@ -1,0 +1,481 @@
+/*
+  Q Light Controller Plus
+  videoprovider.cpp
+
+  Copyright (c) Massimo Callegari
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+#include <QGuiApplication>
+#include <QMediaMetaData>
+#include <QQmlContext>
+#include <QScreen>
+
+#include "videoprovider.h"
+#include "doc.h"
+
+VideoProvider::VideoProvider(QQuickView *view, Doc *doc, QObject *parent)
+    : QObject(parent)
+    , m_view(view)
+    , m_doc(doc)
+    , m_fullscreenContext(nullptr)
+{
+    Q_ASSERT(doc != nullptr);
+
+    qmlRegisterUncreatableType<Video>("org.qlcplus.classes", 1, 0, "VideoFunction", "Can't create a Video!");
+
+    for (Function *f : m_doc->functionsByType(Function::VideoType))
+        slotFunctionAdded(f->id());
+
+    connect(m_doc, SIGNAL(functionAdded(quint32)), this, SLOT(slotFunctionAdded(quint32)));
+    connect(m_doc, SIGNAL(functionRemoved(quint32)), this, SLOT(slotFunctionRemoved(quint32)));
+}
+
+VideoProvider::~VideoProvider()
+{
+    m_videoMap.clear();
+}
+
+void VideoProvider::shutdown()
+{
+    for (VideoContent *vc : std::as_const(m_videoMap))
+    {
+        if (vc)
+        {
+            vc->stopContent();
+            vc->destroyContext();
+        }
+    }
+    if (m_fullscreenContext)
+    {
+        m_fullscreenContext->close();
+        m_fullscreenContext->deleteLater();
+        m_fullscreenContext = nullptr;
+    }
+}
+
+QQuickView *VideoProvider::view() const
+{
+    return m_view;
+}
+
+QQuickView *VideoProvider::fullscreenContext() const
+{
+    return m_fullscreenContext;
+}
+
+void VideoProvider::setFullscreenContext(QQuickView *context)
+{
+    if (context == nullptr && m_fullscreenContext)
+        m_fullscreenContext->deleteLater();
+
+    m_fullscreenContext = context;
+}
+
+void VideoProvider::slotFunctionAdded(quint32 id)
+{
+    Function *func = m_doc->function(id);
+    if (func == nullptr || func->type() != Function::VideoType)
+        return;
+
+    if (m_videoMap.contains(id))
+        return;
+
+    Video *video = qobject_cast<Video *>(func);
+    m_videoMap[id] = new VideoContent(video, this);
+
+    connect(video, SIGNAL(requestPlayback()), this, SLOT(slotRequestPlayback()));
+    connect(video, SIGNAL(requestPause(bool)), this, SLOT(slotRequestPause(bool)));
+    connect(video, SIGNAL(requestStop()), this, SLOT(slotRequestStop()));
+}
+
+void VideoProvider::slotFunctionRemoved(quint32 id)
+{
+    if (m_videoMap.contains(id))
+    {
+        VideoContent *vc = m_videoMap.take(id);
+        delete vc;
+    }
+}
+
+void VideoProvider::slotRequestPlayback()
+{
+    Video *video = qobject_cast<Video *>(sender());
+    if (video == nullptr)
+        return;
+
+    if (m_videoMap.contains(video->id()))
+        m_videoMap[video->id()]->playContent();
+}
+
+void VideoProvider::slotRequestPause(bool enable)
+{
+    Video *video = qobject_cast<Video *>(sender());
+    if (video == nullptr)
+        return;
+
+    if (m_videoMap.contains(video->id()))
+        m_videoMap[video->id()]->pauseContent(enable);
+}
+
+void VideoProvider::slotRequestStop()
+{
+    Video *video = qobject_cast<Video *>(sender());
+    if (video == nullptr)
+        return;
+
+    if (m_videoMap.contains(video->id()))
+        m_videoMap[video->id()]->stopContent();
+}
+
+/*********************************************************************
+ * VideoContent class implementation
+ *********************************************************************/
+
+VideoContent::VideoContent(Video *video, VideoProvider *parent)
+    : m_provider(parent)
+    , m_video(video)
+    , m_mediaPlayer(nullptr)
+    , m_viewContext(nullptr)
+{
+    Q_ASSERT(video != nullptr);
+
+    slotDetectResolution();
+
+    connect(m_video, SIGNAL(sourceChanged(QString)),
+            this, SLOT(slotDetectResolution()));
+    connect(m_video, SIGNAL(attributeChanged(int,qreal)),
+            this, SLOT(slotAttributeChanged(int,qreal)));
+}
+
+quint32 VideoContent::id() const
+{
+    return m_video->id();
+}
+
+void VideoContent::destroyContext()
+{
+    // close() can emit closing() synchronously and invalidate m_viewContext.
+    QPointer<QQuickView> context = m_viewContext;
+    m_viewContext = nullptr;
+
+    if (m_video->fullscreen())
+    {
+        m_provider->setFullscreenContext(nullptr);
+    }
+    else if (context)
+    {
+        context->close();
+        if (context)
+            context->deleteLater();
+    }
+}
+
+void VideoContent::playContent()
+{
+    QScreen *vScreen = nullptr;
+
+    if (m_video->fullscreen())
+        m_viewContext = m_provider->fullscreenContext();
+
+    QList<QScreen *> screens = QGuiApplication::screens();
+    if (m_video->screen() < screens.count())
+        vScreen = screens.at(m_video->screen());
+
+    if (m_video->isPicture())
+    {
+        m_geometry.setSize(m_video->resolution());
+    }
+    else if (!m_video->customGeometry().isNull())
+    {
+        m_geometry = m_video->customGeometry();
+    }
+
+    qDebug() << "Video screen:" << m_video->screen() << ", geometry:" << m_geometry;
+
+    if (m_viewContext == nullptr)
+    {
+        m_viewContext = new QQuickView(QUrl("qrc:/VideoContext.qml"));
+        m_viewContext->rootContext()->setContextProperty("videoContent", this);
+
+        if (m_video->customGeometry().isNull())
+        {
+            m_viewContext->setGeometry(m_geometry);
+            if (vScreen)
+                m_viewContext->setPosition(vScreen->geometry().topLeft());
+        }
+        else
+        {
+            QPoint topLeft = vScreen ? vScreen->geometry().topLeft() : QPoint(0, 0);
+            topLeft.setX(topLeft.x() + m_video->customGeometry().x());
+            topLeft.setY(topLeft.y() + m_video->customGeometry().y());
+            m_viewContext->setGeometry(m_video->customGeometry());
+            m_viewContext->setPosition(topLeft);
+        }
+
+        connect(m_viewContext, SIGNAL(closing(QQuickCloseEvent*)), this, SLOT(slotWindowClosing()));
+    }
+    else
+    {
+        m_viewContext->rootContext()->setContextProperty("videoContent", this);
+    }
+
+    uint fadeIn  = m_video->overrideFadeInSpeed()  != Function::defaultSpeed() ? m_video->overrideFadeInSpeed()  : m_video->fadeInSpeed();
+    uint fadeOut = m_video->overrideFadeOutSpeed() != Function::defaultSpeed() ? m_video->overrideFadeOutSpeed() : m_video->fadeOutSpeed();
+    if (fadeIn == Function::defaultSpeed() || fadeIn == Function::infiniteSpeed())
+        fadeIn = 0;
+    if (fadeOut == Function::defaultSpeed() || fadeOut == Function::infiniteSpeed())
+        fadeOut = 0;
+
+    QQuickItem *root = m_viewContext->rootObject();
+    if (root == nullptr)
+        return;
+
+    if (m_video->isPicture())
+    {
+        QMetaObject::invokeMethod(root, "addPicture",
+                                  Q_ARG(QVariant, QVariant::fromValue(m_video)),
+                                  Q_ARG(QVariant, (int)fadeIn),
+                                  Q_ARG(QVariant, (int)fadeOut));
+    }
+    else
+    {
+        QMetaObject::invokeMethod(root, "addVideo",
+                                  Q_ARG(QVariant, QVariant::fromValue(m_video)),
+                                  Q_ARG(QVariant, (int)fadeIn),
+                                  Q_ARG(QVariant, (int)fadeOut),
+                                  Q_ARG(QVariant, (int)m_video->elapsed()));
+    }
+
+    m_viewContext->setFlags(m_viewContext->flags() | Qt::WindowStaysOnTopHint);
+
+    if (m_video->fullscreen())
+    {
+        m_provider->setFullscreenContext(m_viewContext);
+        if (vScreen)
+            m_viewContext->setScreen(vScreen);
+        m_viewContext->showFullScreen();
+    }
+    else
+    {
+        m_viewContext->show();
+        // Restore focus to the main QLC+ window so that VC interactions
+        // (e.g. a slider that started this video) remain active.
+        if (m_provider->view() != nullptr)
+            m_provider->view()->requestActivate();
+    }
+}
+
+void VideoContent::pauseContent(bool enable)
+{
+    if (m_viewContext == nullptr)
+        return;
+
+    QQuickItem *root = m_viewContext->rootObject();
+    if (root == nullptr)
+        return;
+
+    QMetaObject::invokeMethod(root, "pauseContent",
+                              Q_ARG(QVariant, m_video->id()),
+                              Q_ARG(QVariant, enable));
+}
+
+void VideoContent::stopContent()
+{
+    if (m_viewContext == nullptr)
+        return;
+
+    QQuickItem *root = m_viewContext->rootObject();
+    if (root == nullptr)
+        return;
+
+    QMetaObject::invokeMethod(root, "removeContent",
+                              Q_ARG(QVariant, m_video->id()));
+}
+
+void VideoContent::slotDetectResolution()
+{
+    QString sourceURL = m_video->sourceUrl();
+
+    if (m_video->isPicture())
+    {
+        QString localPath = sourceURL;
+        if (sourceURL.contains("://"))
+            localPath = QUrl(sourceURL).toLocalFile();
+
+        QPixmap img(localPath);
+        if (!img.isNull())
+        {
+            m_video->setResolution(img.size());
+            m_video->setDuration(3000);
+            m_video->setTotalDuration(3000);
+        }
+    }
+    else
+    {
+        m_mediaPlayer = new QMediaPlayer();
+
+        connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)),
+                this, SLOT(slotDurationChanged(qint64)));
+        connect(m_mediaPlayer, SIGNAL(metaDataChanged()),
+                this, SLOT(slotMetaDataChanged()));
+
+        if (sourceURL.contains("://"))
+            m_mediaPlayer->setSource(QUrl(sourceURL));
+        else
+            m_mediaPlayer->setSource(QUrl::fromLocalFile(sourceURL));
+    }
+}
+
+QVariant VideoContent::getAttribute(quint32 id, const char *propName) const
+{
+    if (m_viewContext == nullptr)
+        return QVariant();
+
+    QQuickItem *item = qobject_cast<QQuickItem*>(m_viewContext->findChild<QQuickItem*>(QString("media-%1").arg(id)));
+    if (item)
+        return item->property(propName);
+
+    return QVariant();
+}
+
+void VideoContent::updateAttribute(quint32 id, const char *propName, QVariant value)
+{
+    if (m_viewContext == nullptr)
+        return;
+
+    QQuickItem *item = qobject_cast<QQuickItem*>(m_viewContext->findChild<QQuickItem*>(QString("media-%1").arg(id)));
+    if (item)
+        item->setProperty(propName, value);
+}
+
+void VideoContent::slotAttributeChanged(int attrIndex, qreal value)
+{
+    switch (attrIndex)
+    {
+        case Video::Volume:
+        {
+            updateAttribute(m_video->id(), "volume", float(value / 100.0));
+        }
+        break;
+        case Video::XRotation:
+        {
+            QVector3D rot = m_video->rotation();
+            rot.setX(float(value));
+            updateAttribute(m_video->id(), "rotation", rot);
+        }
+        break;
+        case Video::YRotation:
+        {
+            QVector3D rot = m_video->rotation();
+            rot.setY(float(value));
+            updateAttribute(m_video->id(), "rotation", rot);
+        }
+        break;
+        case Video::ZRotation:
+        {
+            QVector3D rot = m_video->rotation();
+            rot.setZ(float(value));
+            updateAttribute(m_video->id(), "rotation", rot);
+        }
+        break;
+        case Video::XPosition:
+        {
+            if (m_viewContext == nullptr)
+                break;
+            qreal xDelta = qreal(m_viewContext->width()) * (value / 100.0);
+            QVariant var = getAttribute(m_video->id(), "geometry");
+            QRect currGeom = var.isNull() ? m_geometry : var.toRect();
+            QRect geom(m_geometry.x() + int(xDelta), currGeom.y(),
+                       currGeom.width(), currGeom.height());
+            updateAttribute(m_video->id(), "geometry", geom);
+        }
+        break;
+        case Video::YPosition:
+        {
+            if (m_viewContext == nullptr)
+                break;
+            qreal yDelta = qreal(m_viewContext->height()) * (value / 100.0);
+            QVariant var = getAttribute(m_video->id(), "geometry");
+            QRect currGeom = var.isNull() ? m_geometry : var.toRect();
+            QRect geom(currGeom.x(), m_geometry.y() + int(yDelta),
+                       currGeom.width(), currGeom.height());
+            updateAttribute(m_video->id(), "geometry", geom);
+        }
+        break;
+        case Video::WidthScale:
+        {
+            QVariant var = getAttribute(m_video->id(), "geometry");
+            QRect geom = var.isNull() ? m_geometry : var.toRect();
+            qreal newWidth = qreal(m_geometry.width()) * (value / 100.0);
+            geom.setWidth(int(newWidth));
+            updateAttribute(m_video->id(), "geometry", geom);
+        }
+        break;
+        case Video::HeightScale:
+        {
+            QVariant var = getAttribute(m_video->id(), "geometry");
+            QRect geom = var.isNull() ? m_geometry : var.toRect();
+            qreal newHeight = qreal(m_geometry.height()) * (value / 100.0);
+            geom.setHeight(int(newHeight));
+            updateAttribute(m_video->id(), "geometry", geom);
+        }
+        break;
+        default:
+        break;
+    }
+}
+
+void VideoContent::slotDurationChanged(qint64 duration)
+{
+    m_video->setTotalDuration(duration);
+}
+
+void VideoContent::slotMetaDataChanged()
+{
+    QMediaMetaData md = m_mediaPlayer->metaData();
+    foreach (QMediaMetaData::Key k, md.keys())
+    {
+        if (k == QMediaMetaData::Resolution)
+        {
+            m_geometry.setSize(md.value(k).toSize());
+
+            disconnect(m_mediaPlayer, SIGNAL(metaDataChanged()),
+                       this, SLOT(slotMetaDataChanged()));
+            m_mediaPlayer->deleteLater();
+            m_mediaPlayer = nullptr;
+        }
+    }
+}
+
+void VideoContent::slotWindowClosing()
+{
+    // The window is being closed manually (e.g. window manager close button).
+    // The QQuickView only hides on close(), it does not tear down the QML
+    // scene graph, so the MediaPlayer would keep playing in the background.
+    // Stop the QML content explicitly while the root object is still valid.
+    if (m_viewContext)
+    {
+        QQuickItem *root = m_viewContext->rootObject();
+        if (root)
+            QMetaObject::invokeMethod(root, "stopAllPlayback");
+    }
+
+    m_viewContext = nullptr;
+
+    // Window teardown can race with scene graph/root object destruction.
+    // Request function stop through the engine path instead of touching QML.
+    if (m_video && m_video->isRunning())
+        m_video->stopFromUI();
+}
