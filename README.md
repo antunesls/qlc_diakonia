@@ -32,7 +32,7 @@ Também funciona sem menu: `./diakonia.sh build all`, `./diakonia.sh run qlcplus
 | App | `app/app/build/outputs/apk/<debug\|release>/` | `qlc-cockpit-X.apk` |
 
 Pré-requisitos (o item 5 do menu confere todos):
-- **MSYS2 UCRT64** com `cmake`, `ninja`, `qt6` e, para o instalador, `nsis`.
+- **MSYS2 UCRT64** com `cmake`, `ninja`, `qt6`, `assimp` (sem ele a visão 3D fica vazia) e, para o instalador, `nsis`.
 - **Node.js**.
 - **JDK 17–21**, detectado em `~/.jdks`, no `jbr` do Android Studio ou pela variável `QLC_JDK`.
 - **Android SDK** com `adb`.

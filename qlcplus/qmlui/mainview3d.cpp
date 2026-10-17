@@ -330,7 +330,7 @@ QString MainView3D::meshDirectory() const
 {
     QDir dir = QDir::cleanPath(QLCFile::systemDirectory(MESHESDIR).path());
     //qDebug() << "Absolute mesh path: " << dir.absolutePath();
-    return QString(QLCFile::fileUrlPrefix()) + dir.absolutePath() + QDir::separator();
+    return QString(QLCFile::fileUrlPrefix()) + dir.absolutePath() + QLatin1Char('/');
 }
 
 QString MainView3D::goboDirectory() const
@@ -709,8 +709,8 @@ void MainView3D::createFixtureItem(quint32 fxID, quint16 headIndex, quint16 link
     }
 
     QLCFixtureMode *fxMode = fixture->fixtureMode();
-    QString meshPath = meshDirectory() + "fixtures" + QDir::separator();
-    QString openGobo = goboDirectory() + QDir::separator() + "Others/open.svg";
+    QString meshPath = meshDirectory() + "fixtures" + QLatin1Char('/');
+    QString openGobo = goboDirectory() + QLatin1Char('/') + "Others/open.svg";
     quint32 itemID = FixtureUtils::fixtureItemID(fxID, headIndex, linkedIndex);
     QEntity *newItem = nullptr;
 
@@ -753,7 +753,7 @@ void MainView3D::createFixtureItem(quint32 fxID, quint16 headIndex, quint16 link
         }
         newItem->setProperty("parBodies", multiPar);
         if (multiPar)
-            newItem->setProperty("parSource", meshDirectory() + "fixtures" + QDir::separator() +
+            newItem->setProperty("parSource", meshDirectory() + "fixtures" + QLatin1Char('/') +
                                  FixtureUtils::fixtureLightResource(fixture));
         newItem->setProperty("headsNumber", fixture->heads());
 
@@ -1801,7 +1801,7 @@ QString MainView3D::fixtureMeshPath(const Fixture *fixture) const
     if (file.isEmpty())
         return QString();
 
-    return meshDirectory() + "fixtures" + QDir::separator() + file;
+    return meshDirectory() + "fixtures" + QLatin1Char('/') + file;
 }
 
 QVector3D MainView3D::meshFileExtents(const QString &meshPath) const
@@ -2131,7 +2131,7 @@ void MainView3D::createGenericItem(QString filename, int itemID)
                 }
                 else
                 {
-                    filename = QLCFile::fileUrlPrefix() + m_doc->workspacePath() + QDir::separator() + filename;
+                    filename = QLCFile::fileUrlPrefix() + m_doc->workspacePath() + QLatin1Char('/') + filename;
                 }
             }
             else

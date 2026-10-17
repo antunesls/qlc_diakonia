@@ -418,6 +418,7 @@ doctor() {
     check "CMake/Ninja UCRT64"            "[[ -x '$MSYS2_ROOT/ucrt64/bin/cmake.exe' && -x '$MSYS2_ROOT/ucrt64/bin/ninja.exe' ]]" "pacman -S mingw-w64-ucrt-x86_64-{cmake,ninja}"
     check "Qt6 UCRT64"                    "[[ -d '$MSYS2_ROOT/ucrt64/lib/cmake/Qt6' ]]"
     check "windeployqt6"                  "[[ -x '$MSYS2_ROOT/ucrt64/bin/windeployqt6.exe' ]]"
+    check "assimp (modelos da visão 3D)"  "[[ -f '$MSYS2_ROOT/ucrt64/bin/libassimp-6.dll' ]]" "pacman -S mingw-w64-ucrt-x86_64-assimp"
     check "NSIS (makensis, p/ instalador)" "[[ -x '$MSYS2_ROOT/ucrt64/bin/makensis.exe' ]]" "pacman -S mingw-w64-ucrt-x86_64-nsis"
     check "Node.js $(node -v 2>/dev/null)" "command -v node"
     check "npm"                           "command -v npm"
