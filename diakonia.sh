@@ -229,7 +229,8 @@ run_qlcplus() {
     confirm "Ligar Web Access (porta 9999, usada pelo app)?" s && args+=(-w)
     confirm "Ligar servidor nativo (porta 9998, usado pelo MCP)?" s && args+=(-s)
     if [[ " ${args[*]} " == *" -s "* ]]; then
-        confirm "Autorizar automaticamente qualquer cliente nativo (só em rede confiável)?" n && args+=(-sa)
+        # Forma longa: builds antigos leem '-sa' como '-s -a' e fecham ("Missing value after '-sa'")
+        confirm "Autorizar automaticamente qualquer cliente nativo (só em rede confiável)?" n && args+=(--server-allow-all)
     fi
 
     local shows=("$SHOWS_DIR"/*.qxw)

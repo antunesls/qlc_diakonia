@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Q Light Controller Plus");
+    // Multi-letter short names (-wp, -wa, -sa) must not be split into -w -p, -s -a, ...
+    parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
 
     parser.addHelpOption();
     parser.addVersionOption();
