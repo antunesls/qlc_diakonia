@@ -140,6 +140,8 @@ _qlc_install() {
 _qlc_deploy() {
     cd "$QLC_INSTALL"
     windeployqt6 --qmldir "$QLC_SRC/qmlui/qml" qlcplusengine.dll Plugins/dmxusb.dll qlcplus5.exe
+    # Sem isto o Qt do MSYS2 procura os módulos QML em share/qt6/qml e a interface não carrega
+    printf '[Paths]\nPrefix = .\nPlugins = .\nQmlImports = qml\n' > qt.conf
     rm -f sceneparsers/gltfsceneexport.dll
     rm -rf generic networkinformation qmltooling renderplugins tls
     # Dependências do MSYS2 (ICU, libusb, fftw, ...) que o windeployqt não copia

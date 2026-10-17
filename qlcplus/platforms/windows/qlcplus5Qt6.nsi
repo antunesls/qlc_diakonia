@@ -107,6 +107,7 @@ Section
 	File *.dll
 	File *.qm
 	File Sample.qxw
+	File qt.conf
 	File /r geometryloaders
 	File /r iconengines
 	File /r imageformats
@@ -142,6 +143,7 @@ Section "Uninstall"
 	Delete $INSTDIR\qlcplus5.exe
 	Delete $INSTDIR\*.dll
 	Delete $INSTDIR\Sample.qxw
+	Delete $INSTDIR\qt.conf
 	Delete $INSTDIR\*.qm
 	RMDir /r $INSTDIR\geometryloaders
 	RMDir /r $INSTDIR\iconengines
