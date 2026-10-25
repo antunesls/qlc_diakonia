@@ -31,7 +31,10 @@ if(WIN32)
     set(FTD2XXDIR "C:/projects/D2XXSDK")
     # Prefer libFTDI (over WinUSB) to D2XX: the FTDI kernel driver crashes
     # (bugcheck 0x139) on recent Windows builds when D2XX opens the device
-    pkg_check_modules(LIBFTDI1 IMPORTED_TARGET libftdi1 libusb-1.0)
+    option(DMXUSB_D2XX "Use FTDI D2XX instead of libFTDI on Windows" OFF)
+    if(NOT DMXUSB_D2XX)
+        pkg_check_modules(LIBFTDI1 IMPORTED_TARGET libftdi1 libusb-1.0)
+    endif()
 endif()
 
 if(WIN32 AND EXISTS ${FTD2XXDIR} AND NOT LIBFTDI1_FOUND)
