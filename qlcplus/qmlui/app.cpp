@@ -64,6 +64,7 @@
 #include "tardis.h"
 #include "networkmanager.h"
 #include "nativeapi.h"
+#include "udpcommandserver.h"
 #include "stagewizard.h"
 
 #include "qlcfixturedefcache.h"
@@ -103,6 +104,7 @@ App::App()
     , m_simpleDesk(nullptr)
     , m_videoProvider(nullptr)
     , m_networkManager(nullptr)
+    , m_udpCommandServer(nullptr)
     , m_uiManager(nullptr)
     , m_stageWizard(nullptr)
     , m_doc(nullptr)
@@ -225,6 +227,10 @@ void App::startup()
 
     /* Extended native API: project, fixture library and I/O requests */
     new NativeApi(this, m_networkManager);
+
+    /* Plain text commands over UDP, mapped in the project */
+    m_udpCommandServer = new UdpCommandServer(this, this);
+    rootContext()->setContextProperty("udpCommands", m_udpCommandServer);
 
     m_tardis = new Tardis(this, m_doc, m_networkManager, m_fixtureManager, m_functionManager,
                           m_contextManager, m_simpleDesk, m_showManager, m_virtualConsole);
@@ -635,6 +641,11 @@ SimpleDesk *App::simpleDesk() const
     return m_simpleDesk;
 }
 
+UdpCommandServer *App::udpCommandServer() const
+{
+    return m_udpCommandServer;
+}
+
 NetworkManager *App::networkManager() const
 {
     return m_networkManager;
@@ -732,6 +743,7 @@ void App::clearDocument()
     //m_simpleDesk->resetContents(); // TODO
     m_showManager->resetContents();
     m_virtualConsole->resetContents();
+    m_udpCommandServer->resetMappings();
 
     // Drop the preview items *before* the Doc is emptied: they hold references
     // to fixtures that clearContents() is about to delete
@@ -1198,6 +1210,10 @@ bool App::loadXML(QXmlStreamReader &doc, bool goToConsole, bool fromMemory)
         {
             m_virtualConsole->loadXML(doc);
         }
+        else if (doc.name() == KXMLQLCUdpCommands)
+        {
+            m_udpCommandServer->loadXML(doc);
+        }
 #if 0
         else if (doc.name() == KXMLQLCSimpleDesk)
         {
@@ -1280,6 +1296,9 @@ QFile::FileError App::saveXML(const QString& fileName, bool autosave)
 
     /* Write virtual console to the XML document */
     m_virtualConsole->saveXML(&doc);
+
+    /* Write the UDP command mappings to the XML document */
+    m_udpCommandServer->saveXML(&doc);
 
     /* Write Simple Desk to the XML document */
     //SimpleDesk::instance()->saveXML(&doc);

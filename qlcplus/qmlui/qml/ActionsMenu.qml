@@ -527,6 +527,23 @@ Popup
                             implicitWidth: Math.min(UISettings.bigItemHeight * 4, mainView.width / 3)
                         }
                     }
+
+                    ContextMenuEntry
+                    {
+                        id: udpCommandsEntry
+                        entryText: qsTr("Comandos UDP")
+
+                        onClicked:
+                        {
+                            menuRoot.close()
+                            pUdpCommands.open()
+                        }
+
+                        PopupUdpCommands
+                        {
+                            id: pUdpCommands
+                        }
+                    }
                 }
             }
         }

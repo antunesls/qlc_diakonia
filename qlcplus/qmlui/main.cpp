@@ -25,6 +25,7 @@
 
 #include "app.h"
 #include "networkmanager.h"
+#include "udpcommandserver.h"
 #include "qlcconfig.h"
 #include "qlcfile.h"
 
@@ -134,6 +135,14 @@ int main(int argc, char *argv[])
     QCommandLineOption allowAllNativeOption(QStringList() << "sa" << "server-allow-all",
         "Automatically grant full access to every native TCP client (unsafe on untrusted networks)");
     parser.addOption(allowAllNativeOption);
+
+    QCommandLineOption udpCommandsOption(QStringList() << "u" << "udp-commands",
+        "Accept plain text commands over UDP on every interface (no authentication)");
+    parser.addOption(udpCommandsOption);
+
+    QCommandLineOption udpPortOption(QStringList() << "udp-port",
+        "UDP port for --udp-commands (default 7799)", "port");
+    parser.addOption(udpPortOption);
 
     parser.process(app);
 
@@ -251,6 +260,19 @@ int main(int argc, char *argv[])
 
         netMgr->setForcedServerTypes(forcedTypes);
         netMgr->startServer();
+    }
+
+    if (parser.isSet(udpCommandsOption) || parser.isSet(udpPortOption))
+    {
+        quint16 udpPort = parser.isSet(udpPortOption) ? parser.value(udpPortOption).toUShort()
+                                                      : UdpCommandServer::defaultPort;
+        UdpCommandServer *udpServer = qlcplusApp.udpCommandServer();
+        if (udpServer != nullptr && udpServer->startFromCommandLine(udpPort))
+        {
+            qCritical().noquote()
+                << "WARNING: --udp-commands lets any device that reaches UDP port" << udpPort
+                << "control QLC+. Use it only on a trusted network.";
+        }
     }
 
     // fullscreen mode

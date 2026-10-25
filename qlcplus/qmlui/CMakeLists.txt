@@ -60,6 +60,7 @@ set(SRC_FILES
     tardis/networkpacketizer.cpp tardis/networkpacketizer.h
     tardis/simplecrypt.cpp tardis/simplecrypt.h
     tardis/tardis.cpp tardis/tardis.h
+    tardis/udpcommandserver.cpp tardis/udpcommandserver.h
     treemodel.cpp treemodel.h
     treemodelitem.cpp treemodelitem.h
     uimanager.cpp uimanager.h

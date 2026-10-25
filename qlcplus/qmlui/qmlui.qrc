@@ -99,6 +99,7 @@
     <file alias="PopupNetworkClient.qml">qml/popup/PopupNetworkClient.qml</file>
     <file alias="PopupNetworkConnect.qml">qml/popup/PopupNetworkConnect.qml</file>
     <file alias="PopupNetworkServer.qml">qml/popup/PopupNetworkServer.qml</file>
+    <file alias="PopupUdpCommands.qml">qml/popup/PopupUdpCommands.qml</file>
     <file alias="PopupManualInputSource.qml">qml/popup/PopupManualInputSource.qml</file>
     <file alias="PopupInputChannelEditor.qml">qml/popup/PopupInputChannelEditor.qml</file>
     <file alias="PopupInputNumber.qml">qml/popup/PopupInputNumber.qml</file>

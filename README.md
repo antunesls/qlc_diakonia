@@ -40,6 +40,27 @@ Pré-requisitos (o item 5 do menu confere todos):
 
 Detalhes da Cockpit API em `qlcplus/COCKPIT_API.md`.
 
+## Comandos UDP
+
+O QLC+ do fork aceita comandos em texto por UDP (porta padrão 7799), vindos de qualquer aparelho da rede. Configure em **menu → Rede → Comandos UDP**: liga/desliga, porta, tabela "comando recebido → ação" (salva no `.qxw`), teste e log ao vivo. Também dá para ligar só nesta execução com `--udp-commands [--udp-port N]` (o `diakonia.sh run qlcplus` pergunta).
+
+Cada linha recebida é respondida ao remetente com `OK …` ou `ERR …`. Primeiro vale a tabela da tela; um comando de slider aceita o valor no fim (`volume 50%`). Com "Comandos diretos" ligado também valem, pelo nome completo (maiúsculas não importam) ou ID:
+
+```
+start|stop|toggle|status <função>      blackout on|off|toggle
+button|press|release <botão do VC>     stopall
+slider <slider> <0-255|N%>             list functions|buttons|sliders|cuelists
+cuelist <cue list> play|stop|next|prev ping | help
+```
+
+Teste rápido no PowerShell:
+
+```powershell
+$u = New-Object Net.Sockets.UdpClient; $b = [Text.Encoding]::UTF8.GetBytes("blackout toggle"); $u.Send($b, $b.Length, "127.0.0.1", 7799)
+```
+
+Não há senha: use só em rede confiável.
+
 > Os workflows em `qlcplus/.github` e `mcp/.github` vieram dos projetos originais e não são executados pelo GitHub a partir de subpastas.
 
 ## Sincronizar com os upstreams

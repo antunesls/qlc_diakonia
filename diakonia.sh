@@ -250,6 +250,12 @@ run_qlcplus() {
         # Forma longa: builds antigos leem '-sa' como '-s -a' e fecham ("Missing value after '-sa'")
         confirm "Autorizar automaticamente qualquer cliente nativo (só em rede confiável)?" n && args+=(--server-allow-all)
     fi
+    if confirm "Aceitar comandos UDP em texto (porta 7799, sem senha: só em rede confiável)?" n; then
+        args+=(--udp-commands)
+        local udp_port
+        udp_port="$(ask "Porta UDP" 7799)"
+        [[ "$udp_port" != 7799 ]] && args+=(--udp-port "$udp_port")
+    fi
 
     local shows=("$SHOWS_DIR"/*.qxw)
     echo "Abrir qual show?"

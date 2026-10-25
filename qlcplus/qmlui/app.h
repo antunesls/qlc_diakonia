@@ -43,6 +43,7 @@ class FixtureRemapManager;
 class InputOutputManager;
 class ImportManager;
 class NetworkManager;
+class UdpCommandServer;
 class VideoProvider;
 class FixtureEditor;
 class StageWizard;
@@ -257,6 +258,7 @@ private:
     ActionManager *m_actionManager;
     VideoProvider *m_videoProvider;
     NetworkManager *m_networkManager;
+    UdpCommandServer *m_udpCommandServer;
     UiManager *m_uiManager;
     StageWizard *m_stageWizard;
     Tardis *m_tardis;
@@ -276,6 +278,9 @@ public:
 
     /** Return the network manager instance */
     NetworkManager *networkManager() const;
+
+    /** Return the UDP text command server */
+    UdpCommandServer *udpCommandServer() const;
 
     /** Return if the current Doc instance has been loaded */
     bool docLoaded();
