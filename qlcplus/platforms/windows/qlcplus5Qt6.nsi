@@ -116,6 +116,7 @@ Section
 	File /r qml
 	File /r renderers
 	File /r sceneparsers
+	File /r styles
 	File /r ColorFilters
 	File /r Fixtures
 	File /r Gobos
@@ -125,7 +126,7 @@ Section
 	File /r ModifiersTemplates
 	File /r Plugins
 	File /r RGBScripts
-	File /r translations
+	File /nonfatal /r translations
 	File /r Web
 
 	WriteRegStr HKCU "SOFTWARE\qlcplus" "Install_Dir" "$INSTDIR"
@@ -152,6 +153,7 @@ Section "Uninstall"
 	RMDir /r $INSTDIR\platforms
 	RMDir /r $INSTDIR\renderers
 	RMDir /r $INSTDIR\sceneparsers
+	RMDir /r $INSTDIR\styles
 	RMDir /r $INSTDIR\qml
 	RMDir /r $INSTDIR\ColorFilters
 	RMDir /r $INSTDIR\Fixtures

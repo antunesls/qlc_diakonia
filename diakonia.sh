@@ -31,6 +31,8 @@ MSYS2_ROOT="${MSYS2_ROOT:-/c/msys64}"
 # Fixo no CMake do QLC+ (variables.cmake: INSTALLROOT = $SystemDrive/qlcplus)
 QLC_INSTALL="/c/qlcplus"
 QLC_EXE="$QLC_INSTALL/qlcplus5.exe"
+# libFTDI do MSYS2: backend do plugin DMX USB para adaptadores FTDI
+LIBFTDI_PC="$MSYS2_ROOT/ucrt64/lib/pkgconfig/libftdi1.pc"
 ANDROID_SDK="${ANDROID_SDK:-${ANDROID_HOME:-$HOME/AppData/Local/Android/Sdk}}"
 ADB="$ANDROID_SDK/platform-tools/adb.exe"
 APP_ID="com.diakonia.qlccockpit"
@@ -153,14 +155,21 @@ _qlc_deploy() {
 
 _qlc_installer() {
     local ver="$1" out="$2" nsi="qlcplus5-diakonia.nsi" exe="QLCplus-diakonia-$1-setup.exe"
+    # Barras normais: com -w o sed leria \U, \a... do caminho como escapes
+    local home; home=$(cygpath -m "$QLC_SRC")
     cd "$QLC_INSTALL"
-    sed -e "s|^!define QLCPLUS_HOME .*|!define QLCPLUS_HOME \"$(cygpath -w "$QLC_SRC")\"|" \
+    sed -e "s|^!define QLCPLUS_HOME .*|!define QLCPLUS_HOME \"$home\"|" \
         -e "s|^OutFile .*|OutFile \"$exe\"|" \
         qlcplus5Qt6.nsi > "$nsi"
     makensis -X'SetCompressor /FINAL lzma' "$nsi"
     rm -f "$nsi"
     mv "$exe" "$out/"
 }
+
+# libFTDI para o plugin DMX USB. Sem ela o plugin ignora adaptadores FTDI (a
+# interface QtSerialPort os descarta) ou cai no D2XX, que derruba o Windows
+# (bugcheck 0x139 no driver da FTDI). O adaptador precisa do driver WinUSB (Zadig).
+_pacman_libftdi() { pacman -S --needed --noconfirm mingw-w64-ucrt-x86_64-libftdi; }
 
 _has_makensis() { command -v makensis >/dev/null; }
 
@@ -173,6 +182,13 @@ build_qlcplus() {
     if tasklist //FI "IMAGENAME eq qlcplus5.exe" 2>/dev/null | grep -qi qlcplus5.exe; then
         warn "O QLC+ está aberto: a instalação em $QLC_INSTALL vai falhar ao sobrescrever os arquivos."
         confirm "Feche o QLC+ e confirme para continuar" s || return 1
+    fi
+    if [[ ! -f "$LIBFTDI_PC" ]]; then
+        warn "libFTDI não instalada no MSYS2: sem ela adaptadores DMX USB FTDI não aparecem no QLC+."
+        if confirm "Instalar agora com pacman?" s; then
+            step "QLC+: instalando libFTDI"
+            msys _pacman_libftdi
+        fi
     fi
     step "QLC+: compilando (MSYS2 UCRT64, Release, qmlui)"
     msys _qlc_build
@@ -420,6 +436,7 @@ doctor() {
     check "windeployqt6"                  "[[ -x '$MSYS2_ROOT/ucrt64/bin/windeployqt6.exe' ]]"
     check "assimp (modelos da visão 3D)"  "[[ -f '$MSYS2_ROOT/ucrt64/bin/libassimp-6.dll' ]]" "pacman -S mingw-w64-ucrt-x86_64-assimp"
     check "NSIS (makensis, p/ instalador)" "[[ -x '$MSYS2_ROOT/ucrt64/bin/makensis.exe' ]]" "pacman -S mingw-w64-ucrt-x86_64-nsis"
+    check "libFTDI (DMX USB FTDI)"        "[[ -f '$LIBFTDI_PC' ]]" "pacman -S mingw-w64-ucrt-x86_64-libftdi"
     check "Node.js $(node -v 2>/dev/null)" "command -v node"
     check "npm"                           "command -v npm"
     if jdk="$(find_jdk)"; then ok "JDK p/ Gradle: $jdk"; else warn "JDK 17-21 NÃO encontrado (defina QLC_JDK)"; fi
@@ -496,8 +513,8 @@ case "${1:-}" in
     "") main_menu ;;
     build)
         case "${2:-all}" in
-            qlcplus) build_qlcplus ;; mcp) build_mcp ;; app) build_app debug ;;
-            app-release) build_app release ;; all) build_all ;;
+            qlcplus) attempt build_qlcplus ;; mcp) attempt build_mcp ;; app) attempt build_app debug ;;
+            app-release) attempt build_app release ;; all) attempt build_all ;;
             *) die "Use: build [qlcplus|mcp|app|app-release|all]" ;;
         esac ;;
     run)
@@ -505,8 +522,8 @@ case "${1:-}" in
             qlcplus) run_qlcplus ;; mcp) run_mcp ;; app) run_app ;;
             *) die "Use: run [qlcplus|mcp|app]" ;;
         esac ;;
-    release) release ;;
-    test) test_mcp ;;
+    release) attempt release ;;
+    test) attempt test_mcp ;;
     doctor) doctor ;;
     clean) clean ;;
     *) sed -n '3,10p' "$SELF"; exit 1 ;;

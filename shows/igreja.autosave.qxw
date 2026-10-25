@@ -1,0 +1,1738 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="VC">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>5.3.1 GIT</Version>
+  <Author>antunesls</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Internal" BPM="120"/>
+   <NetworkServer Type="Native" AutoStart="False" Name="QLC+_A9FE8580" Password=""/>
+   <Universe Name="Universe 1" ID="0">
+    <Output Plugin="DMX USB" Name="FT232R USB UART (S/N: A50285BI)" UID="" Line="0">
+     <PluginParameters UniverseChannels="119"/>
+    </Output>
+   </Universe>
+   <Universe Name="Universe 2" ID="1"/>
+   <Universe Name="Universe 3" ID="2"/>
+   <Universe Name="Universe 4" ID="3"/>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>0</ID>
+   <Name>PAR 1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>1</ID>
+   <Name>PAR 2</Name>
+   <Universe>0</Universe>
+   <Address>16</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>2</ID>
+   <Name>PAR 3</Name>
+   <Universe>0</Universe>
+   <Address>32</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>3</ID>
+   <Name>PAR 4</Name>
+   <Universe>0</Universe>
+   <Address>48</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>4</ID>
+   <Name>PAR 5</Name>
+   <Universe>0</Universe>
+   <Address>64</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>5</ID>
+   <Name>PAR 6</Name>
+   <Universe>0</Universe>
+   <Address>80</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>6</ID>
+   <Name>PAR 7</Name>
+   <Universe>0</Universe>
+   <Address>96</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>ShowTech</Manufacturer>
+   <Model>PAR LED RGBW 7CH</Model>
+   <Mode>7 Canais</Mode>
+   <ID>7</ID>
+   <Name>PAR 8</Name>
+   <Universe>0</Universe>
+   <Address>112</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <FixtureGroup ID="0">
+   <Name>Palco E-D</Name>
+   <Size X="8" Y="1"/>
+   <Head X="0" Y="0" Fixture="0">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="2" Y="0" Fixture="6">0</Head>
+   <Head X="3" Y="0" Fixture="2">0</Head>
+   <Head X="4" Y="0" Fixture="7">0</Head>
+   <Head X="5" Y="0" Fixture="3">0</Head>
+   <Head X="6" Y="0" Fixture="4">0</Head>
+   <Head X="7" Y="0" Fixture="5">0</Head>
+  </FixtureGroup>
+  <FixtureGroup ID="1">
+   <Name>Centro</Name>
+   <Size X="4" Y="1"/>
+   <Head X="0" Y="0" Fixture="6">0</Head>
+   <Head X="1" Y="0" Fixture="2">0</Head>
+   <Head X="2" Y="0" Fixture="7">0</Head>
+   <Head X="3" Y="0" Fixture="3">0</Head>
+  </FixtureGroup>
+  <FixtureGroup ID="2">
+   <Name>Laterais</Name>
+   <Size X="4" Y="1"/>
+   <Head X="0" Y="0" Fixture="0">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="2" Y="0" Fixture="4">0</Head>
+   <Head X="3" Y="0" Fixture="5">0</Head>
+  </FixtureGroup>
+  <FixtureGroup ID="3">
+   <Name>Sem pastor</Name>
+   <Size X="7" Y="1"/>
+   <Head X="0" Y="0" Fixture="0">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="2" Y="0" Fixture="6">0</Head>
+   <Head X="3" Y="0" Fixture="2">0</Head>
+   <Head X="4" Y="0" Fixture="3">0</Head>
+   <Head X="5" Y="0" Fixture="4">0</Head>
+   <Head X="6" Y="0" Fixture="5">0</Head>
+  </FixtureGroup>
+  <Function ID="0" Type="Scene" Name="Apagado" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="1" Type="Scene" Name="Luz Pastor" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="2" Type="Scene" Name="Pastor + Ambiente" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,64,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="3" Type="Scene" Name="Pregação" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,179,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="4" Type="Scene" Name="Geral Branco" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="5" Type="Scene" Name="Recepção" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,153,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="6" Type="Scene" Name="Avisos" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,153,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="7" Type="Scene" Name="Oração" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,77,1,0,2,16,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="8" Type="Scene" Name="Santa Ceia" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,153,1,255,2,122,3,30,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,102,1,255,2,64,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="9" Type="Scene" Name="Batismo" Path="Culto">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,179,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="10" Type="Scene" Name="Louvor Azul" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="11" Type="Scene" Name="Louvor Roxo" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="12" Type="Scene" Name="Louvor Vermelho" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="13" Type="Scene" Name="Louvor Âmbar" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="14" Type="Scene" Name="Louvor Verde" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="15" Type="Scene" Name="Louvor Ciano" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="16" Type="Scene" Name="Louvor Rosa" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="17" Type="Scene" Name="Louvor Branco" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="18" Type="Scene" Name="Azul/Roxo A" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="19" Type="Scene" Name="Azul/Roxo B" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="20" Type="Scene" Name="Vermelho/Âmbar A" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="21" Type="Scene" Name="Vermelho/Âmbar B" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="22" Type="Scene" Name="Azul 15%" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,38,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="23" Type="Scene" Name="Strobo Branco" Path="Louvor">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,255,3,255,4,255,5,230,6,0</FixtureVal>
+  </Function>
+  <Function ID="24" Type="Scene" Name="Acende 1" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="25" Type="Scene" Name="Acende 2" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="26" Type="Scene" Name="Acende 3" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="27" Type="Scene" Name="Acende 4" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="28" Type="Scene" Name="Acende 5" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="29" Type="Scene" Name="Acende 6" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="30" Type="Scene" Name="Acende 7" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="31" Type="Scene" Name="Acende 8" Path="Sequências/Abertura">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,255,3,255,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="32" Type="Chaser" Name="Abertura" Path="Sequências">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="PerStep"/>
+   <Step Number="0" FadeIn="0" Hold="3000" FadeOut="0" Note="Tudo apagado">0</Step>
+   <Step Number="1" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 1">24</Step>
+   <Step Number="2" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 2">25</Step>
+   <Step Number="3" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 3">26</Step>
+   <Step Number="4" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 4">27</Step>
+   <Step Number="5" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 5">28</Step>
+   <Step Number="6" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 6">29</Step>
+   <Step Number="7" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 7">30</Step>
+   <Step Number="8" FadeIn="800" Hold="300" FadeOut="0" Note="Posição 8">31</Step>
+   <Step Number="9" FadeIn="500" Hold="2000" FadeOut="0" Note="Geral">4</Step>
+   <Step Number="10" FadeIn="0" Hold="4000" FadeOut="0" Note="Strobo">23</Step>
+   <Step Number="11" FadeIn="0" Hold="4294967294" FadeOut="0" Note="Fica aceso (aperte de novo para soltar)">4</Step>
+  </Function>
+  <Function ID="33" Type="Chaser" Name="Clímax" Path="Sequências">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="PerStep"/>
+   <Step Number="0" FadeIn="0" Hold="3000" FadeOut="0">23</Step>
+   <Step Number="1" FadeIn="0" Hold="4294967294" FadeOut="0" Note="Fica aceso">4</Step>
+  </Function>
+  <Function ID="34" Type="Chaser" Name="Louvor Lento" Path="Sequências">
+   <Speed FadeIn="4000" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="4000" Hold="4000" FadeOut="0">46</Step>
+   <Step Number="1" FadeIn="4000" Hold="4000" FadeOut="0">47</Step>
+   <Step Number="2" FadeIn="4000" Hold="4000" FadeOut="0">48</Step>
+   <Step Number="3" FadeIn="4000" Hold="4000" FadeOut="0">49</Step>
+  </Function>
+  <Function ID="35" Type="Chaser" Name="Louvor Animado" Path="Sequências">
+   <Speed FadeIn="300" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="300" Hold="1000" FadeOut="0">50</Step>
+   <Step Number="1" FadeIn="300" Hold="1000" FadeOut="0">51</Step>
+   <Step Number="2" FadeIn="300" Hold="1000" FadeOut="0">49</Step>
+   <Step Number="3" FadeIn="300" Hold="1000" FadeOut="0">47</Step>
+  </Function>
+  <Function ID="36" Type="Chaser" Name="Pulso Azul/Roxo" Path="Sequências">
+   <Speed FadeIn="0" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="500" FadeOut="0">52</Step>
+   <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">19</Step>
+  </Function>
+  <Function ID="37" Type="Chaser" Name="Pulso Vermelho/Âmbar" Path="Sequências">
+   <Speed FadeIn="0" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="500" FadeOut="0">53</Step>
+   <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">21</Step>
+  </Function>
+  <Function ID="38" Type="Chaser" Name="Respiração" Path="Sequências">
+   <Speed FadeIn="3000" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="3000" Hold="3500" FadeOut="0">46</Step>
+   <Step Number="1" FadeIn="3000" Hold="3500" FadeOut="0">22</Step>
+  </Function>
+  <Function ID="39" Type="RGBMatrix" Name="Matriz Corrida" Path="Efeitos/Matrizes">
+   <Speed FadeIn="0" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Stripes</Algorithm>
+   <Color Index="0">4278190335</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="40" Type="RGBMatrix" Name="Matriz Ping-pong" Path="Efeitos/Matrizes">
+   <Speed FadeIn="0" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>PingPong</RunOrder>
+   <Algorithm Type="Script">Stripes</Algorithm>
+   <Color Index="0">4286578943</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="41" Type="RGBMatrix" Name="Matriz Enche" Path="Efeitos/Matrizes">
+   <Speed FadeIn="0" FadeOut="0" Duration="367"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Fill</Algorithm>
+   <Color Index="0">4294933022</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="42" Type="Scene" Name="Dimmers abertos (efeitos)" Path="Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="43" Type="Collection" Name="Corrida E→D" Path="Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">39</Step>
+  </Function>
+  <Function ID="44" Type="Collection" Name="Ping-pong" Path="Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">40</Step>
+  </Function>
+  <Function ID="45" Type="Collection" Name="Enche E→D" Path="Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">41</Step>
+  </Function>
+  <Function ID="46" Type="Scene" Name="Passo Azul" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="47" Type="Scene" Name="Passo Roxo" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="48" Type="Scene" Name="Passo Ciano" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="49" Type="Scene" Name="Passo Rosa" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="50" Type="Scene" Name="Passo Vermelho" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="51" Type="Scene" Name="Passo Âmbar" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="52" Type="Scene" Name="Passo Azul/Roxo A" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="53" Type="Scene" Name="Passo Vermelho/Âmbar A" Path="Sequências/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="54" Type="Scene" Name="27 p Escuro" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="55" Type="Scene" Name="27 p Centro brasa" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,89,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,89,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="56" Type="Scene" Name="27 p Abre meio" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,140,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,140,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,140,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,140,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="57" Type="Scene" Name="27 p 27 anos" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,204,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="58" Type="Scene" Name="27 p Vitória" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,160,3,0,4,102,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="59" Type="Scene" Name="27 p Louvamos" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,179,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,179,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,179,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,179,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="60" Type="Scene" Name="27 p Verdades" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,51,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,115,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,115,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="61" Type="Scene" Name="27 p Impacto" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,208,3,128,4,255,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="62" Type="Scene" Name="27 p Jesus voltará" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,217,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,217,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,217,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,217,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="63" Type="Scene" Name="27 p Preparado" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,153,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="64" Type="Scene" Name="27 p Música final" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,230,1,255,2,160,3,0,4,51,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="65" Type="Scene" Name="27 p Aguardando vídeo" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,64,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="66" Type="Scene" Name="27 v Logo" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,115,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,128,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,128,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="67" Type="Scene" Name="27 v Explosão" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,208,3,128,4,128,5,200,6,0</FixtureVal>
+  </Function>
+  <Function ID="68" Type="Scene" Name="27 v Selo 27" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,160,3,0,4,77,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="69" Type="Scene" Name="27 v Transição" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,102,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,153,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,153,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,153,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,153,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="70" Type="Scene" Name="27 v Rastros A" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="71" Type="Scene" Name="27 v Rastros B" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,230,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,128,1,0,2,26,3,128,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="72" Type="Scene" Name="27 v Dourado final" Path="Aniversário 27/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="73" Type="Scene" Name="27 Escuro" Path="Aniversário 27">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="74" Type="Scene" Name="27 Dourado final" Path="Aniversário 27">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,102,1,255,2,160,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="75" Type="Chaser" Name="27 Narração" Path="Aniversário 27">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="PerStep"/>
+   <Step Number="0" FadeIn="0" Hold="2500" FadeOut="0" Note="0.0s">54</Step>
+   <Step Number="1" FadeIn="1200" Hold="1100" FadeOut="0" Note="2.5s">55</Step>
+   <Step Number="2" FadeIn="800" Hold="100" FadeOut="0" Note="4.8s">56</Step>
+   <Step Number="3" FadeIn="400" Hold="1100" FadeOut="0" Note="5.7s">57</Step>
+   <Step Number="4" FadeIn="300" Hold="2100" FadeOut="0" Note="7.2s">58</Step>
+   <Step Number="5" FadeIn="2000" Hold="1400" FadeOut="0" Note="9.6s">59</Step>
+   <Step Number="6" FadeIn="3000" Hold="2100" FadeOut="0" Note="13.0s">60</Step>
+   <Step Number="7" FadeIn="0" Hold="700" FadeOut="0" Note="18.1s">61</Step>
+   <Step Number="8" FadeIn="1500" Hold="2700" FadeOut="0" Note="18.8s">62</Step>
+   <Step Number="9" FadeIn="2000" Hold="5000" FadeOut="0" Note="23.0s">63</Step>
+   <Step Number="10" FadeIn="3000" Hold="2000" FadeOut="0" Note="30.0s">64</Step>
+   <Step Number="11" FadeIn="1500" Hold="4294967294" FadeOut="0" Note="35.0s">65</Step>
+  </Function>
+  <Function ID="76" Type="Chaser" Name="27 Vídeo" Path="Aniversário 27">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="PerStep"/>
+   <Step Number="0" FadeIn="1000" Hold="5200" FadeOut="0" Note="0.0s">66</Step>
+   <Step Number="1" FadeIn="0" Hold="800" FadeOut="0" Note="6.2s">67</Step>
+   <Step Number="2" FadeIn="0" Hold="2000" FadeOut="0" Note="7.0s">68</Step>
+   <Step Number="3" FadeIn="2000" Hold="0" FadeOut="0" Note="9.0s">69</Step>
+   <Step Number="4" FadeIn="1500" Hold="2400" FadeOut="0" Note="11.0s">70</Step>
+   <Step Number="5" FadeIn="3000" Hold="900" FadeOut="0" Note="14.9s">71</Step>
+   <Step Number="6" FadeIn="3000" Hold="800" FadeOut="0" Note="18.8s">70</Step>
+   <Step Number="7" FadeIn="3000" Hold="900" FadeOut="0" Note="22.6s">71</Step>
+   <Step Number="8" FadeIn="3000" Hold="900" FadeOut="0" Note="26.5s">70</Step>
+   <Step Number="9" FadeIn="3000" Hold="900" FadeOut="0" Note="30.4s">71</Step>
+   <Step Number="10" FadeIn="3000" Hold="800" FadeOut="0" Note="34.3s">70</Step>
+   <Step Number="11" FadeIn="3000" Hold="900" FadeOut="0" Note="38.1s">71</Step>
+   <Step Number="12" FadeIn="3000" Hold="4294967294" FadeOut="0" Note="42.0s">72</Step>
+  </Function>
+  <Monitor DisplayMode="0" ShowLabels="0">
+   <Font>Arial,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   <ChannelStyle>0</ChannelStyle>
+   <ValueStyle>0</ValueStyle>
+   <Grid Width="10" Height="3" Depth="5" Units="0" POV="1"/>
+   <StageItem>0</StageItem>
+   <FxItem ID="0" XPos="2830.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="1" XPos="3455.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="2" XPos="4705.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="3" XPos="5955.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="4" XPos="6580.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="5" XPos="7205.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="6" XPos="4080.39" YPos="1593.46" ZPos="1000"/>
+   <FxItem ID="7" XPos="5330.39" YPos="1593.46" ZPos="1000"/>
+  </Monitor>
+ </Engine>
+ <VirtualConsole>
+  <Frame Caption="Culto" ID="0">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <Frame Caption="Geral" ID="15">
+    <WindowState Visible="True" X="1013" Y="0" Width="494" Height="353"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Slider Caption="Master" ID="18" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="329" Y="47" Width="141" Height="259"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">GrandMaster</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255"/>
+    </Slider>
+    <Button Caption="Parar tudo" ID="17">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
+    <Button Caption="BLACKOUT" ID="16">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>Blackout</Action>
+    </Button>
+   </Frame>
+   <SoloFrame Caption="Cenas do culto" ID="4">
+    <WindowState Visible="True" X="0" Y="0" Width="918" Height="282"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Santa Ceia" ID="11">
+     <WindowState Visible="True" X="235" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="8"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Recepção" ID="5">
+     <WindowState Visible="True" X="70" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="5"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Geral Branco" ID="13">
+     <WindowState Visible="True" X="565" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Apagar" ID="14">
+     <WindowState Visible="True" X="730" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="0"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pregação" ID="7">
+     <WindowState Visible="True" X="400" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="3"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Avisos" ID="6">
+     <WindowState Visible="True" X="235" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="6"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Oração" ID="10">
+     <WindowState Visible="True" X="70" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="7"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pastor + Ambiente" ID="9">
+     <WindowState Visible="True" X="730" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="2"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Batismo" ID="12">
+     <WindowState Visible="True" X="400" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="9"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Luz Pastor" ID="8">
+     <WindowState Visible="True" X="565" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="1"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+  </Frame>
+  <Frame Caption="Louvor" ID="1">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <Frame Caption="Extras" ID="38">
+    <WindowState Visible="True" X="830" Y="10" Width="480" Height="335"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <SpeedDial Caption="Velocidade dos efeitos" ID="41">
+     <WindowState Visible="True" X="10" Y="145" Width="300" Height="180"/>
+     <Visibility>644</Visibility>
+     <Time>367</Time>
+     <AbsoluteValue Minimum="0" Maximum="10000"/>
+     <Function FadeIn="0" FadeOut="0" Duration="6">34</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">35</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">36</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">37</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">38</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">39</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">40</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="6">41</Function>
+    </SpeedDial>
+    <Button Caption="Clímax" ID="40">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="33"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="BLACKOUT louvor" ID="42">
+     <WindowState Visible="True" X="320" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>Blackout</Action>
+    </Button>
+    <Button Caption="STROBO (segure)" ID="39">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="23"/>
+     <Action Override="0" ForceLTP="0">Flash</Action>
+    </Button>
+   </Frame>
+   <SoloFrame Caption="Louvor (um por vez)" ID="19">
+    <WindowState Visible="True" X="10" Y="10" Width="810" Height="445"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Verde" ID="24">
+     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="14"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Rosa" ID="26">
+     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="16"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ciano" ID="25">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="15"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Corrida E→D" ID="35">
+     <WindowState Visible="True" X="10" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="43"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Âmbar" ID="23">
+     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="13"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Lento (cores)" ID="30">
+     <WindowState Visible="True" X="10" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="34"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Respiração" ID="34">
+     <WindowState Visible="True" X="650" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="38"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Vermelho" ID="22">
+     <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="12"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul" ID="20">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="10"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Roxo" ID="21">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="11"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pulso Azul/Roxo" ID="32">
+     <WindowState Visible="True" X="330" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="36"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Vermelho + Âmbar" ID="29">
+     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="20"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Animado (cores)" ID="31">
+     <WindowState Visible="True" X="170" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="35"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Enche E→D" ID="37">
+     <WindowState Visible="True" X="330" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="45"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Branco" ID="27">
+     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="17"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul + Roxo" ID="28">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="18"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pulso Verm/Âmbar" ID="33">
+     <WindowState Visible="True" X="490" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="37"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ping-pong" ID="36">
+     <WindowState Visible="True" X="170" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="44"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+  </Frame>
+  <Frame Caption="Sequências" ID="2">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <Frame Caption="Abertura e momentos" ID="43">
+    <WindowState Visible="True" X="0" Y="0" Width="730" Height="188"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Clímax (seq.)" ID="45">
+     <WindowState Visible="True" X="220" Y="45" Width="200" Height="110"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="33"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Parar tudo (seq.)" ID="46">
+     <WindowState Visible="True" X="430" Y="45" Width="200" Height="110"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
+    <Button Caption="ABERTURA" ID="44">
+     <WindowState Visible="True" X="10" Y="45" Width="200" Height="110"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="32"/>
+     <Action>Toggle</Action>
+    </Button>
+   </Frame>
+   <CueList Caption="Abertura - passos" ID="47">
+    <WindowState Visible="True" X="895" Y="494" Width="1013" Height="565"/>
+    <Chaser>32</Chaser>
+   </CueList>
+   <CueList Caption="Louvor Lento" ID="48">
+    <WindowState Visible="True" X="871" Y="23" Width="1036" Height="447"/>
+    <Chaser>34</Chaser>
+    <SlidersMode>Crossfade</SlidersMode>
+   </CueList>
+   <CueList Caption="Louvor Animado" ID="49">
+    <WindowState Visible="True" X="0" Y="589" Width="871" Height="447"/>
+    <Chaser>35</Chaser>
+   </CueList>
+  </Frame>
+  <Frame Caption="Manual" ID="3">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <Frame Caption="Pastor (PAR 8)" ID="65">
+    <WindowState Visible="True" X="1220" Y="10" Width="300" Height="455"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Slider Caption="Intensidade Pastor" ID="68" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="10" Y="245" Width="150" Height="200"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="7">0</Channel>
+     </Level>
+    </Slider>
+    <Button Caption="Pastor sozinho" ID="66">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="1"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pastor com ambiente" ID="67">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="2"/>
+     <Action>Toggle</Action>
+    </Button>
+   </Frame>
+   <Frame Caption="Cor manual (todos)" ID="60">
+    <WindowState Visible="True" X="840" Y="10" Width="370" Height="335"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Slider Caption="Mix Vermelho" ID="61" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="10" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">1</Channel>
+      <Channel Fixture="1">1</Channel>
+      <Channel Fixture="2">1</Channel>
+      <Channel Fixture="3">1</Channel>
+      <Channel Fixture="4">1</Channel>
+      <Channel Fixture="5">1</Channel>
+      <Channel Fixture="6">1</Channel>
+      <Channel Fixture="7">1</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Branco" ID="64" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="280" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">4</Channel>
+      <Channel Fixture="1">4</Channel>
+      <Channel Fixture="2">4</Channel>
+      <Channel Fixture="3">4</Channel>
+      <Channel Fixture="4">4</Channel>
+      <Channel Fixture="5">4</Channel>
+      <Channel Fixture="6">4</Channel>
+      <Channel Fixture="7">4</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Verde" ID="62" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="100" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">2</Channel>
+      <Channel Fixture="1">2</Channel>
+      <Channel Fixture="2">2</Channel>
+      <Channel Fixture="3">2</Channel>
+      <Channel Fixture="4">2</Channel>
+      <Channel Fixture="5">2</Channel>
+      <Channel Fixture="6">2</Channel>
+      <Channel Fixture="7">2</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Azul" ID="63" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="190" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">3</Channel>
+      <Channel Fixture="1">3</Channel>
+      <Channel Fixture="2">3</Channel>
+      <Channel Fixture="3">3</Channel>
+      <Channel Fixture="4">3</Channel>
+      <Channel Fixture="5">3</Channel>
+      <Channel Fixture="6">3</Channel>
+      <Channel Fixture="7">3</Channel>
+     </Level>
+    </Slider>
+   </Frame>
+   <Frame Caption="Intensidade por PAR (esquerda → direita)" ID="50">
+    <WindowState Visible="True" X="10" Y="10" Width="820" Height="335"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Slider Caption="PAR 3" ID="54" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="280" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="2">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 2" ID="52" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="100" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="1">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 7" ID="53" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="190" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="6">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 1" ID="51" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="10" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 6" ID="58" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="640" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="5">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="TODOS" ID="59" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="730" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="0">0</Channel>
+      <Channel Fixture="1">0</Channel>
+      <Channel Fixture="2">0</Channel>
+      <Channel Fixture="3">0</Channel>
+      <Channel Fixture="4">0</Channel>
+      <Channel Fixture="5">0</Channel>
+      <Channel Fixture="6">0</Channel>
+      <Channel Fixture="7">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 4" ID="56" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="460" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="3">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 5" ID="57" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="550" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="4">0</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="PAR 8 Pastor" ID="55" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="370" Y="45" Width="80" Height="280"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255">
+      <Channel Fixture="7">0</Channel>
+     </Level>
+    </Slider>
+   </Frame>
+  </Frame>
+  <Frame Caption="Aniversário 27" ID="69">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <CueList Caption="Vídeo 27 - passos" ID="85">
+    <WindowState Visible="True" X="23" Y="188" Width="918" Height="871"/>
+    <Chaser>76</Chaser>
+   </CueList>
+   <CueList Caption="Narração 27 - passos" ID="84">
+    <WindowState Visible="True" X="942" Y="141" Width="989" Height="918"/>
+    <Chaser>75</Chaser>
+   </CueList>
+   <SoloFrame Caption="27 anos (aperte junto com o play)" ID="78">
+    <WindowState Visible="True" X="10" Y="10" Width="810" Height="165"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="2. ▶ Narração 27" ID="80">
+     <WindowState Visible="True" X="210" Y="45" Width="190" Height="110"/>
+     <Appearance>
+      <ForegroundColor>4294955136</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="75"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="4. Dourado final 27" ID="82">
+     <WindowState Visible="True" X="610" Y="45" Width="190" Height="110"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="74"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="1. Apagar tudo (antes)" ID="79">
+     <WindowState Visible="True" X="10" Y="45" Width="190" Height="110"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
+    <Button Caption="3. ▶ Vídeo 27" ID="81">
+     <WindowState Visible="True" X="410" Y="45" Width="190" Height="110"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="76"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+   <Button Caption="BLACKOUT 27" ID="83">
+    <WindowState Visible="True" X="824" Y="23" Width="190" Height="110"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+     <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+    </Appearance>
+    <Function ID="4294967295"/>
+    <Action>Blackout</Action>
+   </Button>
+  </Frame>
+ </VirtualConsole>
+</Workspace>

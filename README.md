@@ -33,6 +33,7 @@ Também funciona sem menu: `./diakonia.sh build all`, `./diakonia.sh run qlcplus
 
 Pré-requisitos (o item 5 do menu confere todos):
 - **MSYS2 UCRT64** com `cmake`, `ninja`, `qt6`, `assimp` (sem ele a visão 3D fica vazia) e, para o instalador, `nsis`.
+- **libFTDI** (`mingw-w64-ucrt-x86_64-libftdi`) para adaptadores DMX USB FTDI; o build do QLC+ oferece instalar. O adaptador precisa usar o driver **WinUSB** (troque uma vez com o [Zadig](https://zadig.akeo.ie/)): com o driver da FTDI e o D2XX o Windows trava (tela azul).
 - **Node.js**.
 - **JDK 17–21**, detectado em `~/.jdks`, no `jbr` do Android Studio ou pela variável `QLC_JDK`.
 - **Android SDK** com `adb`.

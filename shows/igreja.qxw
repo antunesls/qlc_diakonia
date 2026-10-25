@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Workspace>
-<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="SDESK">
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="FIXANDFUNC">
  <Creator>
   <Name>Q Light Controller Plus</Name>
   <Version>5.3.1 GIT</Version>
@@ -1469,7 +1469,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="255">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="7">0</Channel>
      </Level>
     </Slider>
@@ -1487,7 +1487,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="169">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="0">2</Channel>
       <Channel Fixture="1">2</Channel>
       <Channel Fixture="2">2</Channel>
@@ -1504,7 +1504,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="174">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="0">3</Channel>
       <Channel Fixture="1">3</Channel>
       <Channel Fixture="2">3</Channel>
@@ -1538,7 +1538,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="237">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="0">1</Channel>
       <Channel Fixture="1">1</Channel>
       <Channel Fixture="2">1</Channel>
@@ -1563,7 +1563,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="80">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="3">0</Channel>
      </Level>
     </Slider>
@@ -1573,7 +1573,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="192">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="4">0</Channel>
      </Level>
     </Slider>
@@ -1583,7 +1583,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="128">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="1">0</Channel>
      </Level>
     </Slider>
@@ -1593,7 +1593,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="141">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="2">0</Channel>
      </Level>
     </Slider>
@@ -1603,7 +1603,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="198">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="0">0</Channel>
       <Channel Fixture="1">0</Channel>
       <Channel Fixture="2">0</Channel>
@@ -1620,7 +1620,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="112">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="6">0</Channel>
      </Level>
     </Slider>
@@ -1630,7 +1630,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="98">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="0">0</Channel>
      </Level>
     </Slider>
@@ -1640,7 +1640,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="152">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="5">0</Channel>
      </Level>
     </Slider>
@@ -1650,7 +1650,7 @@
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="188">
+     <Level LowLimit="0" HighLimit="255" Value="0">
       <Channel Fixture="7">0</Channel>
      </Level>
     </Slider>
@@ -1667,7 +1667,7 @@
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
    <Button Caption="BLACKOUT 27" ID="83">
-    <WindowState Visible="True" X="830" Y="10" Width="190" Height="110"/>
+    <WindowState Visible="True" X="824" Y="23" Width="190" Height="110"/>
     <Appearance>
      <BackgroundColor>4282664004</BackgroundColor>
      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
@@ -1722,11 +1722,11 @@
     </Button>
    </SoloFrame>
    <CueList Caption="Vídeo 27 - passos" ID="85">
-    <WindowState Visible="True" X="10" Y="360" Width="440" Height="340"/>
+    <WindowState Visible="True" X="23" Y="188" Width="918" Height="871"/>
     <Chaser>76</Chaser>
    </CueList>
    <CueList Caption="Narração 27 - passos" ID="84">
-    <WindowState Visible="True" X="1030" Y="10" Width="440" Height="340"/>
+    <WindowState Visible="True" X="942" Y="141" Width="989" Height="918"/>
     <Chaser>75</Chaser>
    </CueList>
   </Frame>

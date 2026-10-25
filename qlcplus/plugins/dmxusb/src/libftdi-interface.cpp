@@ -34,7 +34,7 @@ LibFTDIInterface::LibFTDIInterface(const QString& serial, const QString& name, c
                                    quint16 VID, quint16 PID, quint32 id)
     : DMXInterface(serial, name, vendor, VID, PID , id)
 {
-    bzero(&m_handle, sizeof(struct ftdi_context));
+    memset(&m_handle, 0, sizeof(struct ftdi_context));
     ftdi_init(&m_handle);
 #ifdef LIBFTDI1_5
     m_handle.module_detach_mode = AUTO_DETACH_REATACH_SIO_MODULE;
