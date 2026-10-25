@@ -513,7 +513,7 @@
    <Step Number="1" FadeIn="0" Hold="4294967294" FadeOut="0" Note="Fica aceso">4</Step>
   </Function>
   <Function ID="34" Type="Chaser" Name="Louvor Lento" Path="Sequências">
-   <Speed FadeIn="4000" FadeOut="0" Duration="8000"/>
+   <Speed FadeIn="4000" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
@@ -523,7 +523,7 @@
    <Step Number="3" FadeIn="4000" Hold="4000" FadeOut="0">49</Step>
   </Function>
   <Function ID="35" Type="Chaser" Name="Louvor Animado" Path="Sequências">
-   <Speed FadeIn="300" FadeOut="0" Duration="1300"/>
+   <Speed FadeIn="300" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
@@ -533,7 +533,7 @@
    <Step Number="3" FadeIn="300" Hold="1000" FadeOut="0">47</Step>
   </Function>
   <Function ID="36" Type="Chaser" Name="Pulso Azul/Roxo" Path="Sequências">
-   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Speed FadeIn="0" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
@@ -541,7 +541,7 @@
    <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">19</Step>
   </Function>
   <Function ID="37" Type="Chaser" Name="Pulso Vermelho/Âmbar" Path="Sequências">
-   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Speed FadeIn="0" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
@@ -549,7 +549,7 @@
    <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">21</Step>
   </Function>
   <Function ID="38" Type="Chaser" Name="Respiração" Path="Sequências">
-   <Speed FadeIn="3000" FadeOut="0" Duration="3500"/>
+   <Speed FadeIn="3000" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
@@ -567,7 +567,7 @@
    <Property Name="orientation" Value="Horizontal"/>
   </Function>
   <Function ID="40" Type="RGBMatrix" Name="Matriz Ping-pong" Path="Efeitos/Matrizes">
-   <Speed FadeIn="0" FadeOut="0" Duration="200"/>
+   <Speed FadeIn="0" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>PingPong</RunOrder>
    <Algorithm Type="Script">Stripes</Algorithm>
@@ -577,7 +577,7 @@
    <Property Name="orientation" Value="Horizontal"/>
   </Function>
   <Function ID="41" Type="RGBMatrix" Name="Matriz Enche" Path="Efeitos/Matrizes">
-   <Speed FadeIn="0" FadeOut="0" Duration="400"/>
+   <Speed FadeIn="0" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <Algorithm Type="Script">Fill</Algorithm>
