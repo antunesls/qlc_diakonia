@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Defines
 !define QLCPLUS_HOME "c:\projects\qlcplus"
-!define MUI_ICON "${QLCPLUS_HOME}\resources\icons\qlcplus.ico"
+!define MUI_ICON "${QLCPLUS_HOME}\resources\icons\diakonia\diakonia.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-uninstall.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-vintage.bmp"

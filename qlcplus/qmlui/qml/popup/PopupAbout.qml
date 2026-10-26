@@ -34,7 +34,21 @@ CustomPopupDialog
     contentItem:
         GridLayout
         {
+            columns: 3
             columnSpacing: UISettings.iconSizeMedium
+            rowSpacing: UISettings.iconSizeMedium * 0.5
+
+            Image
+            {
+                Layout.columnSpan: 3
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Math.min(popupRoot.width * 0.7, sourceSize.width)
+                Layout.preferredHeight: Layout.preferredWidth * sourceSize.height / Math.max(1, sourceSize.width)
+                source: "qrc:/diakonia-logo.png"
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
+            }
 
             Image
             {

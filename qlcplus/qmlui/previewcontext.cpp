@@ -177,7 +177,7 @@ void PreviewContext::setDetached(bool detached)
         }
 
         m_view->setTitle(contextTitle());
-        m_view->setIcon(QIcon(":/qlcplus.svg"));
+        m_view->setIcon(QIcon(":/diakonia-icon.png"));
 
         m_view->setGeometry(0, 0, 800, 600);
         m_view->show();

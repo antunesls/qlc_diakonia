@@ -9,7 +9,7 @@
  <Engine>
   <InputOutputMap>
    <BeatGenerator BeatType="Internal" BPM="120"/>
-   <NetworkServer Type="Native" AutoStart="False" Name="QLC+_A9FE8580" Password=""/>
+   <NetworkServer Type="Native|Web" AutoStart="False" Name="QLC+_A9FE8580" Password=""/>
    <Universe Name="Universe 1" ID="0"/>
    <Universe Name="Universe 2" ID="1"/>
    <Universe Name="Universe 3" ID="2"/>
@@ -24,6 +24,7 @@
    <Universe>0</Universe>
    <Address>0</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -34,6 +35,7 @@
    <Universe>0</Universe>
    <Address>16</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -44,6 +46,7 @@
    <Universe>0</Universe>
    <Address>32</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -54,6 +57,7 @@
    <Universe>0</Universe>
    <Address>48</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -64,6 +68,7 @@
    <Universe>0</Universe>
    <Address>64</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -74,6 +79,7 @@
    <Universe>0</Universe>
    <Address>80</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -84,6 +90,7 @@
    <Universe>0</Universe>
    <Address>96</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <Fixture>
    <Manufacturer>ShowTech</Manufacturer>
@@ -94,6 +101,7 @@
    <Universe>0</Universe>
    <Address>112</Address>
    <Channels>7</Channels>
+   <ForcedHTP>5</ForcedHTP>
   </Fixture>
   <FixtureGroup ID="0">
    <Name>Palco E-D</Name>
@@ -517,20 +525,20 @@
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
-   <Step Number="0" FadeIn="4000" Hold="4000" FadeOut="0">46</Step>
-   <Step Number="1" FadeIn="4000" Hold="4000" FadeOut="0">47</Step>
-   <Step Number="2" FadeIn="4000" Hold="4000" FadeOut="0">48</Step>
-   <Step Number="3" FadeIn="4000" Hold="4000" FadeOut="0">49</Step>
+   <Step Number="0" FadeIn="4000" Hold="0" FadeOut="0">46</Step>
+   <Step Number="1" FadeIn="4000" Hold="0" FadeOut="0">47</Step>
+   <Step Number="2" FadeIn="4000" Hold="0" FadeOut="0">48</Step>
+   <Step Number="3" FadeIn="4000" Hold="0" FadeOut="0">49</Step>
   </Function>
   <Function ID="35" Type="Chaser" Name="Louvor Animado" Path="Sequências">
    <Speed FadeIn="300" FadeOut="0" Duration="250"/>
    <Direction>Forward</Direction>
    <RunOrder>Loop</RunOrder>
    <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
-   <Step Number="0" FadeIn="300" Hold="1000" FadeOut="0">50</Step>
-   <Step Number="1" FadeIn="300" Hold="1000" FadeOut="0">51</Step>
-   <Step Number="2" FadeIn="300" Hold="1000" FadeOut="0">49</Step>
-   <Step Number="3" FadeIn="300" Hold="1000" FadeOut="0">47</Step>
+   <Step Number="0" FadeIn="300" Hold="0" FadeOut="0">50</Step>
+   <Step Number="1" FadeIn="300" Hold="0" FadeOut="0">51</Step>
+   <Step Number="2" FadeIn="300" Hold="0" FadeOut="0">49</Step>
+   <Step Number="3" FadeIn="300" Hold="0" FadeOut="0">47</Step>
   </Function>
   <Function ID="36" Type="Chaser" Name="Pulso Azul/Roxo" Path="Sequências">
    <Speed FadeIn="0" FadeOut="0" Duration="250"/>
@@ -1221,6 +1229,658 @@
    <FixtureVal ID="4">1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
    <FixtureVal ID="5">1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
   </Function>
+  <Function ID="101" Type="Scene" Name="Man PAR 1 100%" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255</FixtureVal>
+  </Function>
+  <Function ID="102" Type="Scene" Name="Man PAR 1 Branco" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="103" Type="Scene" Name="Man PAR 1 Vermelho" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="104" Type="Scene" Name="Man PAR 1 Âmbar" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="105" Type="Scene" Name="Man PAR 1 Verde" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="106" Type="Scene" Name="Man PAR 1 Ciano" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="107" Type="Scene" Name="Man PAR 1 Azul" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="108" Type="Scene" Name="Man PAR 1 Roxo" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="109" Type="Scene" Name="Man PAR 1 Rosa" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="110" Type="Scene" Name="Man PAR 1 Strobo" Path="Manual/PAR 1">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="111" Type="Scene" Name="Man PAR 2 100%" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">0,255</FixtureVal>
+  </Function>
+  <Function ID="112" Type="Scene" Name="Man PAR 2 Branco" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="113" Type="Scene" Name="Man PAR 2 Vermelho" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="114" Type="Scene" Name="Man PAR 2 Âmbar" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="115" Type="Scene" Name="Man PAR 2 Verde" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="116" Type="Scene" Name="Man PAR 2 Ciano" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="117" Type="Scene" Name="Man PAR 2 Azul" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="118" Type="Scene" Name="Man PAR 2 Roxo" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="119" Type="Scene" Name="Man PAR 2 Rosa" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="120" Type="Scene" Name="Man PAR 2 Strobo" Path="Manual/PAR 2">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="121" Type="Scene" Name="Man PAR 3 100%" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">0,255</FixtureVal>
+  </Function>
+  <Function ID="122" Type="Scene" Name="Man PAR 3 Branco" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="123" Type="Scene" Name="Man PAR 3 Vermelho" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="124" Type="Scene" Name="Man PAR 3 Âmbar" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="125" Type="Scene" Name="Man PAR 3 Verde" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="126" Type="Scene" Name="Man PAR 3 Ciano" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="127" Type="Scene" Name="Man PAR 3 Azul" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="128" Type="Scene" Name="Man PAR 3 Roxo" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="129" Type="Scene" Name="Man PAR 3 Rosa" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="130" Type="Scene" Name="Man PAR 3 Strobo" Path="Manual/PAR 3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="2">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="131" Type="Scene" Name="Man PAR 4 100%" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">0,255</FixtureVal>
+  </Function>
+  <Function ID="132" Type="Scene" Name="Man PAR 4 Branco" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="133" Type="Scene" Name="Man PAR 4 Vermelho" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="134" Type="Scene" Name="Man PAR 4 Âmbar" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="135" Type="Scene" Name="Man PAR 4 Verde" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="136" Type="Scene" Name="Man PAR 4 Ciano" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="137" Type="Scene" Name="Man PAR 4 Azul" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="138" Type="Scene" Name="Man PAR 4 Roxo" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="139" Type="Scene" Name="Man PAR 4 Rosa" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="140" Type="Scene" Name="Man PAR 4 Strobo" Path="Manual/PAR 4">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="3">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="141" Type="Scene" Name="Man PAR 5 100%" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">0,255</FixtureVal>
+  </Function>
+  <Function ID="142" Type="Scene" Name="Man PAR 5 Branco" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="143" Type="Scene" Name="Man PAR 5 Vermelho" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="144" Type="Scene" Name="Man PAR 5 Âmbar" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="145" Type="Scene" Name="Man PAR 5 Verde" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="146" Type="Scene" Name="Man PAR 5 Ciano" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="147" Type="Scene" Name="Man PAR 5 Azul" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="148" Type="Scene" Name="Man PAR 5 Roxo" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="149" Type="Scene" Name="Man PAR 5 Rosa" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="150" Type="Scene" Name="Man PAR 5 Strobo" Path="Manual/PAR 5">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="151" Type="Scene" Name="Man PAR 6 100%" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">0,255</FixtureVal>
+  </Function>
+  <Function ID="152" Type="Scene" Name="Man PAR 6 Branco" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="153" Type="Scene" Name="Man PAR 6 Vermelho" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="154" Type="Scene" Name="Man PAR 6 Âmbar" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="155" Type="Scene" Name="Man PAR 6 Verde" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="156" Type="Scene" Name="Man PAR 6 Ciano" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="157" Type="Scene" Name="Man PAR 6 Azul" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="158" Type="Scene" Name="Man PAR 6 Roxo" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="159" Type="Scene" Name="Man PAR 6 Rosa" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="160" Type="Scene" Name="Man PAR 6 Strobo" Path="Manual/PAR 6">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="5">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="161" Type="Scene" Name="Man PAR 7 100%" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">0,255</FixtureVal>
+  </Function>
+  <Function ID="162" Type="Scene" Name="Man PAR 7 Branco" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="163" Type="Scene" Name="Man PAR 7 Vermelho" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="164" Type="Scene" Name="Man PAR 7 Âmbar" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="165" Type="Scene" Name="Man PAR 7 Verde" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="166" Type="Scene" Name="Man PAR 7 Ciano" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="167" Type="Scene" Name="Man PAR 7 Azul" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="168" Type="Scene" Name="Man PAR 7 Roxo" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="169" Type="Scene" Name="Man PAR 7 Rosa" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="170" Type="Scene" Name="Man PAR 7 Strobo" Path="Manual/PAR 7">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="6">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="171" Type="Scene" Name="Man PAR 8 100%" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">0,255</FixtureVal>
+  </Function>
+  <Function ID="172" Type="Scene" Name="Man PAR 8 Branco" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,255,2,255,3,255,4,255</FixtureVal>
+  </Function>
+  <Function ID="173" Type="Scene" Name="Man PAR 8 Vermelho" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,255,2,0,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="174" Type="Scene" Name="Man PAR 8 Âmbar" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,255,2,106,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="175" Type="Scene" Name="Man PAR 8 Verde" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,0,2,255,3,0,4,0</FixtureVal>
+  </Function>
+  <Function ID="176" Type="Scene" Name="Man PAR 8 Ciano" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,0,2,255,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="177" Type="Scene" Name="Man PAR 8 Azul" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,0,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="178" Type="Scene" Name="Man PAR 8 Roxo" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,128,2,0,3,255,4,0</FixtureVal>
+  </Function>
+  <Function ID="179" Type="Scene" Name="Man PAR 8 Rosa" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">1,255,2,20,3,147,4,0</FixtureVal>
+  </Function>
+  <Function ID="180" Type="Scene" Name="Man PAR 8 Strobo" Path="Manual/PAR 8">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="7">0,255,5,230</FixtureVal>
+  </Function>
+  <Function ID="181" Type="RGBMatrix" Name="Efeito Arco-íris" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Gradient</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="presetIndex" Value="Rainbow"/>
+   <Property Name="presetSize" Value="8"/>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="182" Type="Collection" Name="Efeito Arco-íris (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">181</Step>
+  </Function>
+  <Function ID="183" Type="RGBMatrix" Name="Efeito Aurora" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Aurora</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="speed" Value="8"/>
+   <Property Name="scale" Value="20"/>
+   <Property Name="contrast" Value="60"/>
+  </Function>
+  <Function ID="184" Type="Collection" Name="Efeito Aurora (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">183</Step>
+  </Function>
+  <Function ID="185" Type="RGBMatrix" Name="Efeito Oceano" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Pacifica</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="speed" Value="8"/>
+   <Property Name="scale" Value="12"/>
+   <Property Name="depth" Value="50"/>
+  </Function>
+  <Function ID="186" Type="Collection" Name="Efeito Oceano (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">185</Step>
+  </Function>
+  <Function ID="187" Type="RGBMatrix" Name="Efeito Água" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Water Flow</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="speed" Value="8"/>
+   <Property Name="direction" Value="Right"/>
+   <Property Name="turbulence" Value="50"/>
+   <Property Name="caustics" Value="50"/>
+   <Property Name="scale" Value="10"/>
+  </Function>
+  <Function ID="188" Type="Collection" Name="Efeito Água (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">187</Step>
+  </Function>
+  <Function ID="189" Type="RGBMatrix" Name="Efeito Plasma" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Plasma</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="190" Type="Collection" Name="Efeito Plasma (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">189</Step>
+  </Function>
+  <Function ID="191" Type="RGBMatrix" Name="Efeito Confete" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Random Pixel Per Row Multicolor</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="192" Type="Collection" Name="Efeito Confete (com dimmers)" Path="Efeitos/Aba Efeitos">
+   <Step Number="0">42</Step>
+   <Step Number="1">191</Step>
+  </Function>
+  <Function ID="193" Type="RGBMatrix" Name="Efeito Pulso do centro" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Stage Pulse</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="speed" Value="4"/>
+   <Property Name="ringSpacing" Value="10"/>
+   <Property Name="ringWidth" Value="3"/>
+   <Property Name="impactX" Value="50"/>
+   <Property Name="impactY" Value="50"/>
+  </Function>
+  <Function ID="194" Type="RGBMatrix" Name="Efeito Cintilar" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">TwinkleFox</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="speed" Value="4"/>
+   <Property Name="density" Value="8"/>
+   <Property Name="bg" Value="0"/>
+   <Property Name="warmth" Value="0"/>
+  </Function>
+  <Function ID="195" Type="RGBMatrix" Name="Efeito Chama de vela" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Noise</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="noisePercentage" Value="Medium"/>
+  </Function>
+  <Function ID="196" Type="RGBMatrix" Name="Efeito Abre e fecha" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Fill Unfill From Center</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="197" Type="RGBMatrix" Name="Efeito Gota" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Ripple</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="198" Type="RGBMatrix" Name="Efeito Relâmpago" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Lightning</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="199" Type="RGBMatrix" Name="Efeito Strobo de cor" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Strobe</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="200" Type="RGBMatrix" Name="Efeito Fogos" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Fireworks</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="201" Type="RGBMatrix" Name="Efeito Enche aleatório" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Random Fill Single</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+  <Function ID="202" Type="RGBMatrix" Name="Efeito Explosão do centro" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="0" FadeOut="0" Duration="125"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Stripes From Center</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>Dimmer</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="203" Type="Scene" Name="Trans Azul" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="204" Type="Scene" Name="Trans Roxo" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="205" Type="Scene" Name="Trans Vermelho" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,0,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="206" Type="Scene" Name="Trans Âmbar" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,106,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="207" Type="Scene" Name="Trans Verde" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,255,3,0,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="208" Type="Scene" Name="Trans Ciano" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,255,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="209" Type="Scene" Name="Trans Rosa" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,255,2,20,3,147,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="210" Type="Scene" Name="Trans Azul/Roxo A" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="211" Type="Scene" Name="Trans Azul/Roxo B" Path="Efeitos/Aba Efeitos/Passos">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">0,255,1,128,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">0,255,1,0,2,0,3,255,4,0,5,0,6,0</FixtureVal>
+  </Function>
+  <Function ID="212" Type="Chaser" Name="Transição Céu" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="2000" FadeOut="0" Duration="4000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="2000" Hold="0" FadeOut="0">203</Step>
+   <Step Number="1" FadeIn="2000" Hold="0" FadeOut="0">204</Step>
+   <Step Number="2" FadeIn="2000" Hold="0" FadeOut="0">208</Step>
+  </Function>
+  <Function ID="213" Type="Chaser" Name="Transição Fogo" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="2000" FadeOut="0" Duration="4000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="2000" Hold="0" FadeOut="0">205</Step>
+   <Step Number="1" FadeIn="2000" Hold="0" FadeOut="0">206</Step>
+   <Step Number="2" FadeIn="2000" Hold="0" FadeOut="0">209</Step>
+  </Function>
+  <Function ID="214" Type="Chaser" Name="Transição Arco-íris lento" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="2000" FadeOut="0" Duration="4000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="2000" Hold="0" FadeOut="0">205</Step>
+   <Step Number="1" FadeIn="2000" Hold="0" FadeOut="0">206</Step>
+   <Step Number="2" FadeIn="2000" Hold="0" FadeOut="0">207</Step>
+   <Step Number="3" FadeIn="2000" Hold="0" FadeOut="0">208</Step>
+   <Step Number="4" FadeIn="2000" Hold="0" FadeOut="0">203</Step>
+   <Step Number="5" FadeIn="2000" Hold="0" FadeOut="0">204</Step>
+   <Step Number="6" FadeIn="2000" Hold="0" FadeOut="0">209</Step>
+  </Function>
+  <Function ID="215" Type="Chaser" Name="Transição Alterna PAR a PAR" Path="Efeitos/Aba Efeitos">
+   <Speed FadeIn="2000" FadeOut="0" Duration="4000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="2000" Hold="0" FadeOut="0">210</Step>
+   <Step Number="1" FadeIn="2000" Hold="0" FadeOut="0">211</Step>
+  </Function>
   <Monitor DisplayMode="0" ShowLabels="0">
    <Font>Arial,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
    <ChannelStyle>0</ChannelStyle>
@@ -1248,40 +1908,6 @@
    <ShowEnableButton>True</ShowEnableButton>
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
-   <Frame Caption="Geral" ID="15">
-    <WindowState Visible="True" X="1013" Y="0" Width="494" Height="353"/>
-    <AllowResize>True</AllowResize>
-    <ShowHeader>True</ShowHeader>
-    <ShowEnableButton>True</ShowEnableButton>
-    <Collapsed>False</Collapsed>
-    <Disabled>False</Disabled>
-    <Button Caption="Parar tudo" ID="17">
-     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="4294967295"/>
-     <Action>StopAll</Action>
-    </Button>
-    <Button Caption="BLACKOUT" ID="16">
-     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="4294967295"/>
-     <Action>Blackout</Action>
-    </Button>
-    <Slider Caption="Master" ID="18" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="329" Y="47" Width="141" Height="259"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">GrandMaster</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="255"/>
-    </Slider>
-   </Frame>
    <SoloFrame Caption="Cenas do culto" ID="4">
     <WindowState Visible="True" X="0" Y="0" Width="918" Height="282"/>
     <AllowResize>True</AllowResize>
@@ -1327,35 +1953,6 @@
      <Function ID="8"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Batismo" ID="12">
-     <WindowState Visible="True" X="400" Y="164" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="9"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Avisos" ID="6">
-     <WindowState Visible="True" X="235" Y="70" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="6"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Oração" ID="10">
-     <WindowState Visible="True" X="70" Y="164" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="7"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Pregação" ID="7">
      <WindowState Visible="True" X="400" Y="70" Width="150" Height="90"/>
      <Appearance>
@@ -1375,6 +1972,35 @@
      <Function ID="2"/>
      <Action>Toggle</Action>
     </Button>
+    <Button Caption="Avisos" ID="6">
+     <WindowState Visible="True" X="235" Y="70" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="6"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Batismo" ID="12">
+     <WindowState Visible="True" X="400" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="9"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Oração" ID="10">
+     <WindowState Visible="True" X="70" Y="164" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="7"/>
+     <Action>Toggle</Action>
+    </Button>
     <Button Caption="Recepção" ID="5">
      <WindowState Visible="True" X="70" Y="70" Width="150" Height="90"/>
      <Appearance>
@@ -1386,6 +2012,40 @@
      <Action>Toggle</Action>
     </Button>
    </SoloFrame>
+   <Frame Caption="Geral" ID="15">
+    <WindowState Visible="True" X="1013" Y="0" Width="494" Height="353"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Parar tudo" ID="17">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
+    <Button Caption="BLACKOUT" ID="16">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>Blackout</Action>
+    </Button>
+    <Slider Caption="Master" ID="18" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="329" Y="47" Width="141" Height="259"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">GrandMaster</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="255"/>
+    </Slider>
+   </Frame>
   </Frame>
   <Frame Caption="Louvor" ID="1">
    <Appearance>
@@ -1397,6 +2057,129 @@
    <ShowEnableButton>True</ShowEnableButton>
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
+   <SoloFrame Caption="Cor da animação" ID="101">
+    <WindowState Visible="True" X="10" Y="730" Width="970" Height="245"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Cor Vermelho – toda a fileira" ID="104">
+     <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="79"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Azul/Roxo – alterna PAR a PAR" ID="110">
+     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="97"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Branco – toda a fileira" ID="109">
+     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="84"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Rosa – toda a fileira" ID="108">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="83"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Azul – toda a fileira" ID="102">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="77"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Vermelho/Âmbar – alterna PAR a PAR" ID="111">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="98"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Arco-íris – uma cor em cada PAR" ID="113">
+     <WindowState Visible="True" X="810" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="100"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Âmbar – toda a fileira" ID="105">
+     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="80"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Azul/Branco – alterna PAR a PAR" ID="112">
+     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="99"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Verde – toda a fileira" ID="106">
+     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="81"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Roxo – toda a fileira" ID="103">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="78"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cor Ciano – toda a fileira" ID="107">
+     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="82"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
    <SoloFrame Caption="Louvor (um por vez)" ID="19">
     <WindowState Visible="True" X="10" Y="10" Width="810" Height="445"/>
     <AllowResize>True</AllowResize>
@@ -1404,25 +2187,6 @@
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
-    <Button Caption="Ping-pong" ID="36">
-     <WindowState Visible="True" X="170" Y="345" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="44"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Enche E→D" ID="37">
-     <WindowState Visible="True" X="330" Y="345" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="45"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Pulso Verm/Âmbar" ID="33">
      <WindowState Visible="True" X="490" Y="245" Width="150" Height="90"/>
      <Appearance>
@@ -1432,42 +2196,6 @@
      <Function ID="37"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Animado (cores)" ID="31">
-     <WindowState Visible="True" X="170" Y="245" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="35"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Azul + Roxo" ID="28">
-     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="18"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Vermelho + Âmbar" ID="29">
-     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="20"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Pulso Azul/Roxo" ID="32">
-     <WindowState Visible="True" X="330" Y="245" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="36"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Verde" ID="24">
      <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
      <Appearance>
@@ -1475,6 +2203,15 @@
       <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
      <Function ID="14"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Animado (cores)" ID="31">
+     <WindowState Visible="True" X="170" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="35"/>
      <Action>Toggle</Action>
     </Button>
     <Button Caption="Branco" ID="27">
@@ -1487,25 +2224,6 @@
      <Function ID="17"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Corrida E→D" ID="35">
-     <WindowState Visible="True" X="10" Y="345" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="43"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Âmbar" ID="23">
-     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="13"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Ciano" ID="25">
      <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
      <Appearance>
@@ -1516,22 +2234,23 @@
      <Function ID="15"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Lento (cores)" ID="30">
-     <WindowState Visible="True" X="10" Y="245" Width="150" Height="90"/>
+    <Button Caption="Enche E→D" ID="37">
+     <WindowState Visible="True" X="330" Y="345" Width="150" Height="90"/>
      <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
       <BackgroundColor>4282664004</BackgroundColor>
       <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
-     <Function ID="34"/>
+     <Function ID="45"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Azul" ID="20">
-     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+    <Button Caption="Vermelho + Âmbar" ID="29">
+     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
       <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
-     <Function ID="10"/>
+     <Function ID="20"/>
      <Action>Toggle</Action>
     </Button>
     <Button Caption="Respiração" ID="34">
@@ -1541,6 +2260,33 @@
       <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
      <Function ID="38"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pulso Azul/Roxo" ID="32">
+     <WindowState Visible="True" X="330" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="36"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Ping-pong" ID="36">
+     <WindowState Visible="True" X="170" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="44"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Corrida E→D" ID="35">
+     <WindowState Visible="True" X="10" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="43"/>
      <Action>Toggle</Action>
     </Button>
     <Button Caption="Vermelho" ID="22">
@@ -1561,6 +2307,24 @@
      <Function ID="11"/>
      <Action>Toggle</Action>
     </Button>
+    <Button Caption="Lento (cores)" ID="30">
+     <WindowState Visible="True" X="10" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="34"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul" ID="20">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="10"/>
+     <Action>Toggle</Action>
+    </Button>
     <Button Caption="Rosa" ID="26">
      <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
      <Appearance>
@@ -1568,6 +2332,25 @@
       <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
      <Function ID="16"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Azul + Roxo" ID="28">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="18"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Âmbar" ID="23">
+     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="13"/>
      <Action>Toggle</Action>
     </Button>
    </SoloFrame>
@@ -1578,6 +2361,16 @@
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
+    <Button Caption="Clímax" ID="40">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="33"/>
+     <Action>Toggle</Action>
+    </Button>
     <Button Caption="BLACKOUT louvor" ID="42">
      <WindowState Visible="True" X="320" Y="145" Width="150" Height="90"/>
      <Appearance>
@@ -1596,16 +2389,6 @@
      </Appearance>
      <Function ID="23"/>
      <Action Override="0" ForceLTP="0">Flash</Action>
-    </Button>
-    <Button Caption="Clímax" ID="40">
-     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="33"/>
-     <Action>Toggle</Action>
     </Button>
     <SpeedDial Caption="Velocidade dos efeitos" ID="41">
      <WindowState Visible="True" X="10" Y="145" Width="300" Height="180"/>
@@ -1655,6 +2438,51 @@
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
+    <Button Caption="Anim. Onda – luz corre com rastro suave" ID="91">
+     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="93"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Anim. Corrida D→E – uma luz anda p/ esquerda" ID="88">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="88"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Anim. Do centro – abre do meio p/ as pontas" ID="95">
+     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="89"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Anim. Cruzado – duas luzes se cruzam" ID="96">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="95"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Anim. Enche e esvazia – acende um a um e apaga" ID="94">
+     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="90"/>
+     <Action>Toggle</Action>
+    </Button>
     <Button Caption="Anim. Alternado – pares e ímpares se revezam" ID="97">
      <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
      <Appearance>
@@ -1664,13 +2492,22 @@
      <Function ID="91"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Anim. Onda – luz corre com rastro suave" ID="91">
-     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+    <Button Caption="Anim. Ondulação – ondas saindo do centro" ID="92">
+     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
       <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
-     <Function ID="93"/>
+     <Function ID="94"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Anim. Enche – acende um a um até encher" ID="93">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="87"/>
      <Action>Toggle</Action>
     </Button>
     <Button Caption="Anim. Aleatório – um PAR sorteado por vez" ID="98">
@@ -1691,24 +2528,6 @@
      <Function ID="96"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Anim. Do centro – abre do meio p/ as pontas" ID="95">
-     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="89"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Anim. Ondulação – ondas saindo do centro" ID="92">
-     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="94"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Anim. Ping-pong – uma luz vai e volta" ID="89">
      <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
      <Appearance>
@@ -1718,33 +2537,6 @@
      <Function ID="86"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Anim. Enche – acende um a um até encher" ID="93">
-     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="87"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Anim. Enche e esvazia – acende um a um e apaga" ID="94">
-     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="90"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Anim. Cruzado – duas luzes se cruzam" ID="96">
-     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="95"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="Anim. Corrida E→D – uma luz anda p/ direita" ID="87">
      <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
      <Appearance>
@@ -1752,138 +2544,6 @@
       <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
      </Appearance>
      <Function ID="85"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Anim. Corrida D→E – uma luz anda p/ esquerda" ID="88">
-     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="88"/>
-     <Action>Toggle</Action>
-    </Button>
-   </SoloFrame>
-   <SoloFrame Caption="Cor da animação" ID="101">
-    <WindowState Visible="True" X="10" Y="730" Width="970" Height="245"/>
-    <AllowResize>True</AllowResize>
-    <ShowHeader>True</ShowHeader>
-    <ShowEnableButton>True</ShowEnableButton>
-    <Collapsed>False</Collapsed>
-    <Disabled>False</Disabled>
-    <Button Caption="Cor Âmbar – toda a fileira" ID="105">
-     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="80"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Verde – toda a fileira" ID="106">
-     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="81"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Ciano – toda a fileira" ID="107">
-     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="82"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Azul/Branco – alterna PAR a PAR" ID="112">
-     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="99"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Roxo – toda a fileira" ID="103">
-     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="78"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Arco-íris – uma cor em cada PAR" ID="113">
-     <WindowState Visible="True" X="810" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="100"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Vermelho/Âmbar – alterna PAR a PAR" ID="111">
-     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="98"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Branco – toda a fileira" ID="109">
-     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="84"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Vermelho – toda a fileira" ID="104">
-     <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="79"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Azul/Roxo – alterna PAR a PAR" ID="110">
-     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="97"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Rosa – toda a fileira" ID="108">
-     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="83"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Cor Azul – toda a fileira" ID="102">
-     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="77"/>
      <Action>Toggle</Action>
     </Button>
    </SoloFrame>
@@ -1898,19 +2558,6 @@
    <ShowEnableButton>True</ShowEnableButton>
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
-   <CueList Caption="Louvor Lento" ID="48">
-    <WindowState Visible="True" X="871" Y="23" Width="1036" Height="447"/>
-    <Chaser>34</Chaser>
-    <SlidersMode>Crossfade</SlidersMode>
-   </CueList>
-   <CueList Caption="Louvor Animado" ID="49">
-    <WindowState Visible="True" X="0" Y="589" Width="871" Height="447"/>
-    <Chaser>35</Chaser>
-   </CueList>
-   <CueList Caption="Abertura - passos" ID="47">
-    <WindowState Visible="True" X="895" Y="494" Width="1013" Height="565"/>
-    <Chaser>32</Chaser>
-   </CueList>
    <Frame Caption="Abertura e momentos" ID="43">
     <WindowState Visible="True" X="0" Y="0" Width="730" Height="188"/>
     <AllowResize>True</AllowResize>
@@ -1928,6 +2575,15 @@
      <Function ID="33"/>
      <Action>Toggle</Action>
     </Button>
+    <Button Caption="Parar tudo (seq.)" ID="46">
+     <WindowState Visible="True" X="430" Y="45" Width="200" Height="110"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
     <Button Caption="ABERTURA" ID="44">
      <WindowState Visible="True" X="10" Y="45" Width="200" Height="110"/>
      <Appearance>
@@ -1938,16 +2594,20 @@
      <Function ID="32"/>
      <Action>Toggle</Action>
     </Button>
-    <Button Caption="Parar tudo (seq.)" ID="46">
-     <WindowState Visible="True" X="430" Y="45" Width="200" Height="110"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="4294967295"/>
-     <Action>StopAll</Action>
-    </Button>
    </Frame>
+   <CueList Caption="Louvor Animado" ID="49">
+    <WindowState Visible="True" X="0" Y="589" Width="871" Height="447"/>
+    <Chaser>35</Chaser>
+   </CueList>
+   <CueList Caption="Abertura - passos" ID="47">
+    <WindowState Visible="True" X="895" Y="494" Width="1013" Height="565"/>
+    <Chaser>32</Chaser>
+   </CueList>
+   <CueList Caption="Louvor Lento" ID="48">
+    <WindowState Visible="True" X="871" Y="23" Width="1036" Height="447"/>
+    <Chaser>34</Chaser>
+    <SlidersMode>Crossfade</SlidersMode>
+   </CueList>
   </Frame>
   <Frame Caption="Manual" ID="3">
    <Appearance>
@@ -1959,15 +2619,128 @@
    <ShowEnableButton>True</ShowEnableButton>
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
+   <Frame Caption="Cor manual (todos)" ID="60">
+    <WindowState Visible="True" X="672" Y="8" Width="296" Height="268"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Slider Caption="Mix Branco" ID="64" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="224" Y="36" Width="64" Height="224"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="0">
+      <Channel Fixture="0">4</Channel>
+      <Channel Fixture="1">4</Channel>
+      <Channel Fixture="2">4</Channel>
+      <Channel Fixture="3">4</Channel>
+      <Channel Fixture="4">4</Channel>
+      <Channel Fixture="5">4</Channel>
+      <Channel Fixture="6">4</Channel>
+      <Channel Fixture="7">4</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Azul" ID="63" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="152" Y="36" Width="64" Height="224"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="0">
+      <Channel Fixture="0">3</Channel>
+      <Channel Fixture="1">3</Channel>
+      <Channel Fixture="2">3</Channel>
+      <Channel Fixture="3">3</Channel>
+      <Channel Fixture="4">3</Channel>
+      <Channel Fixture="5">3</Channel>
+      <Channel Fixture="6">3</Channel>
+      <Channel Fixture="7">3</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Vermelho" ID="61" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="8" Y="36" Width="64" Height="224"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="0">
+      <Channel Fixture="0">1</Channel>
+      <Channel Fixture="1">1</Channel>
+      <Channel Fixture="2">1</Channel>
+      <Channel Fixture="3">1</Channel>
+      <Channel Fixture="4">1</Channel>
+      <Channel Fixture="5">1</Channel>
+      <Channel Fixture="6">1</Channel>
+      <Channel Fixture="7">1</Channel>
+     </Level>
+    </Slider>
+    <Slider Caption="Mix Verde" ID="62" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="80" Y="36" Width="64" Height="224"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="0">
+      <Channel Fixture="0">2</Channel>
+      <Channel Fixture="1">2</Channel>
+      <Channel Fixture="2">2</Channel>
+      <Channel Fixture="3">2</Channel>
+      <Channel Fixture="4">2</Channel>
+      <Channel Fixture="5">2</Channel>
+      <Channel Fixture="6">2</Channel>
+      <Channel Fixture="7">2</Channel>
+     </Level>
+    </Slider>
+   </Frame>
+   <Frame Caption="Pastor (PAR 8)" ID="65">
+    <WindowState Visible="True" X="976" Y="8" Width="240" Height="364"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Pastor sozinho" ID="66">
+     <WindowState Visible="True" X="8" Y="36" Width="120" Height="72"/>
+     <Appearance>
+      <ForegroundColor>4278190080</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="1"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pastor com ambiente" ID="67">
+     <WindowState Visible="True" X="8" Y="116" Width="120" Height="72"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="2"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Slider Caption="Intensidade Pastor" ID="68" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="8" Y="196" Width="120" Height="160"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+     </Appearance>
+     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
+     <Level LowLimit="0" HighLimit="255" Value="0">
+      <Channel Fixture="7">0</Channel>
+     </Level>
+    </Slider>
+   </Frame>
    <Frame Caption="Intensidade por PAR (esquerda → direita)" ID="50">
-    <WindowState Visible="True" X="10" Y="10" Width="820" Height="335"/>
+    <WindowState Visible="True" X="8" Y="8" Width="656" Height="268"/>
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Slider Caption="PAR 2" ID="52" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="100" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="80" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -1976,18 +2749,8 @@
       <Channel Fixture="1">0</Channel>
      </Level>
     </Slider>
-    <Slider Caption="PAR 3" ID="54" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="280" Y="45" Width="80" Height="280"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="2">0</Channel>
-     </Level>
-    </Slider>
     <Slider Caption="TODOS" ID="59" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="730" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="584" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2004,7 +2767,7 @@
      </Level>
     </Slider>
     <Slider Caption="PAR 6" ID="58" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="640" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="512" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2014,7 +2777,7 @@
      </Level>
     </Slider>
     <Slider Caption="PAR 4" ID="56" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="460" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="368" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2024,7 +2787,7 @@
      </Level>
     </Slider>
     <Slider Caption="PAR 5" ID="57" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="550" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="440" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2034,7 +2797,7 @@
      </Level>
     </Slider>
     <Slider Caption="PAR 7" ID="53" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="190" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="152" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2043,18 +2806,18 @@
       <Channel Fixture="6">0</Channel>
      </Level>
     </Slider>
-    <Slider Caption="PAR 8 Pastor" ID="55" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="370" Y="45" Width="80" Height="280"/>
+    <Slider Caption="PAR 3" ID="54" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="224" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
      <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
      <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="7">0</Channel>
+      <Channel Fixture="2">0</Channel>
      </Level>
     </Slider>
     <Slider Caption="PAR 1" ID="51" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="10" Y="45" Width="80" Height="280"/>
+     <WindowState Visible="True" X="8" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2063,35 +2826,8 @@
       <Channel Fixture="0">0</Channel>
      </Level>
     </Slider>
-   </Frame>
-   <Frame Caption="Pastor (PAR 8)" ID="65">
-    <WindowState Visible="True" X="1220" Y="10" Width="300" Height="455"/>
-    <AllowResize>True</AllowResize>
-    <ShowHeader>True</ShowHeader>
-    <ShowEnableButton>True</ShowEnableButton>
-    <Collapsed>False</Collapsed>
-    <Disabled>False</Disabled>
-    <Button Caption="Pastor sozinho" ID="66">
-     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
-     <Appearance>
-      <ForegroundColor>4278190080</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="1"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Button Caption="Pastor com ambiente" ID="67">
-     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="2"/>
-     <Action>Toggle</Action>
-    </Button>
-    <Slider Caption="Intensidade Pastor" ID="68" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="10" Y="245" Width="150" Height="200"/>
+    <Slider Caption="PAR 8 Pastor" ID="55" WidgetStyle="Slider" InvertedAppearance="false">
+     <WindowState Visible="True" X="296" Y="36" Width="64" Height="224"/>
      <Appearance>
       <BackgroundColor>4282664004</BackgroundColor>
      </Appearance>
@@ -2101,81 +2837,925 @@
      </Level>
     </Slider>
    </Frame>
-   <Frame Caption="Cor manual (todos)" ID="60">
-    <WindowState Visible="True" X="840" Y="10" Width="370" Height="335"/>
+   <Frame Caption="PAR por PAR (esquerda → direita): 100% · cor · strobo" ID="114">
+    <WindowState Visible="True" X="8" Y="380" Width="1192" Height="284"/>
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
-    <Slider Caption="Mix Azul" ID="63" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="190" Y="45" Width="80" Height="280"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="0">3</Channel>
-      <Channel Fixture="1">3</Channel>
-      <Channel Fixture="2">3</Channel>
-      <Channel Fixture="3">3</Channel>
-      <Channel Fixture="4">3</Channel>
-      <Channel Fixture="5">3</Channel>
-      <Channel Fixture="6">3</Channel>
-      <Channel Fixture="7">3</Channel>
-     </Level>
-    </Slider>
-    <Slider Caption="Mix Verde" ID="62" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="100" Y="45" Width="80" Height="280"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="0">2</Channel>
-      <Channel Fixture="1">2</Channel>
-      <Channel Fixture="2">2</Channel>
-      <Channel Fixture="3">2</Channel>
-      <Channel Fixture="4">2</Channel>
-      <Channel Fixture="5">2</Channel>
-      <Channel Fixture="6">2</Channel>
-      <Channel Fixture="7">2</Channel>
-     </Level>
-    </Slider>
-    <Slider Caption="Mix Branco" ID="64" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="280" Y="45" Width="80" Height="280"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="0">4</Channel>
-      <Channel Fixture="1">4</Channel>
-      <Channel Fixture="2">4</Channel>
-      <Channel Fixture="3">4</Channel>
-      <Channel Fixture="4">4</Channel>
-      <Channel Fixture="5">4</Channel>
-      <Channel Fixture="6">4</Channel>
-      <Channel Fixture="7">4</Channel>
-     </Level>
-    </Slider>
-    <Slider Caption="Mix Vermelho" ID="61" WidgetStyle="Slider" InvertedAppearance="false">
-     <WindowState Visible="True" X="10" Y="45" Width="80" Height="280"/>
-     <Appearance>
-      <BackgroundColor>4282664004</BackgroundColor>
-     </Appearance>
-     <SliderMode ValueDisplayStyle="Percentage">Level</SliderMode>
-     <Level LowLimit="0" HighLimit="255" Value="0">
-      <Channel Fixture="0">1</Channel>
-      <Channel Fixture="1">1</Channel>
-      <Channel Fixture="2">1</Channel>
-      <Channel Fixture="3">1</Channel>
-      <Channel Fixture="4">1</Channel>
-      <Channel Fixture="5">1</Channel>
-      <Channel Fixture="6">1</Channel>
-      <Channel Fixture="7">1</Channel>
-     </Level>
-    </Slider>
+    <Frame Caption="Pos 4 · PAR 3" ID="151">
+     <WindowState Visible="True" X="448" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <Button Caption="Strobo PAR 3" ID="162">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="130"/>
+      <Action>Toggle</Action>
+     </Button>
+     <SoloFrame Caption="Cor PAR 3" ID="153">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P3 Rosa" ID="161">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="129"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Roxo" ID="160">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="128"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Vermelho" ID="155">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="123"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Âmbar" ID="156">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="124"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Verde" ID="157">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="125"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Ciano" ID="158">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="126"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Azul" ID="159">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="127"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P3 Branco" ID="154">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="122"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="PAR 3 100%" ID="152">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="121"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 3 · PAR 7" ID="139">
+     <WindowState Visible="True" X="300" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 7" ID="141">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P7 Ciano" ID="146">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="166"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Roxo" ID="148">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="168"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Âmbar" ID="144">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="164"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Verde" ID="145">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="165"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Azul" ID="147">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="167"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Rosa" ID="149">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="169"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Branco" ID="142">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="162"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P7 Vermelho" ID="143">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="163"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="Strobo PAR 7" ID="150">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="170"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="PAR 7 100%" ID="140">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="161"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 7 · PAR 5" ID="187">
+     <WindowState Visible="True" X="892" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 5" ID="189">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P5 Vermelho" ID="191">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="143"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Verde" ID="193">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="145"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Âmbar" ID="192">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="144"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Rosa" ID="197">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="149"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Ciano" ID="194">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="146"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Azul" ID="195">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="147"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Roxo" ID="196">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="148"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P5 Branco" ID="190">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="142"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="PAR 5 100%" ID="188">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="141"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="Strobo PAR 5" ID="198">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="150"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 1 · PAR 1" ID="115">
+     <WindowState Visible="True" X="4" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 1" ID="117">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P1 Branco" ID="118">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="102"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Ciano" ID="122">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="106"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Verde" ID="121">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="105"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Âmbar" ID="120">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="104"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Roxo" ID="124">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="108"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Vermelho" ID="119">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="103"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Azul" ID="123">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="107"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P1 Rosa" ID="125">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="109"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="PAR 1 100%" ID="116">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="101"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="Strobo PAR 1" ID="126">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="110"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 2 · PAR 2" ID="127">
+     <WindowState Visible="True" X="152" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 2" ID="129">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P2 Branco" ID="130">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="112"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Vermelho" ID="131">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="113"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Âmbar" ID="132">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="114"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Ciano" ID="134">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="116"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Verde" ID="133">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="115"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Roxo" ID="136">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="118"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Rosa" ID="137">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="119"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P2 Azul" ID="135">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="117"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="PAR 2 100%" ID="128">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="111"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="Strobo PAR 2" ID="138">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="120"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 5 · PAR 8 (pastor)" ID="163">
+     <WindowState Visible="True" X="596" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <Button Caption="PAR 8 100%" ID="164">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="171"/>
+      <Action>Toggle</Action>
+     </Button>
+     <SoloFrame Caption="Cor PAR 8" ID="165">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P8 Verde" ID="169">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="175"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Âmbar" ID="168">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="174"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Branco" ID="166">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="172"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Vermelho" ID="167">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="173"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Ciano" ID="170">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="176"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Azul" ID="171">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="177"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Roxo" ID="172">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="178"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P8 Rosa" ID="173">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="179"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="Strobo PAR 8" ID="174">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="180"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 6 · PAR 4" ID="175">
+     <WindowState Visible="True" X="744" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 4" ID="177">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P4 Ciano" ID="182">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="136"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Azul" ID="183">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="137"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Roxo" ID="184">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="138"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Rosa" ID="185">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="139"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Branco" ID="178">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="132"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Vermelho" ID="179">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="133"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Verde" ID="181">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="135"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P4 Âmbar" ID="180">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="134"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="Strobo PAR 4" ID="186">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="140"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="PAR 4 100%" ID="176">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="131"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
+    <Frame Caption="Pos 8 · PAR 6" ID="199">
+     <WindowState Visible="True" X="1040" Y="36" Width="144" Height="240"/>
+     <AllowResize>True</AllowResize>
+     <ShowHeader>True</ShowHeader>
+     <ShowEnableButton>True</ShowEnableButton>
+     <Collapsed>False</Collapsed>
+     <Disabled>False</Disabled>
+     <SoloFrame Caption="Cor PAR 6" ID="201">
+      <WindowState Visible="True" X="4" Y="97" Width="136" Height="76"/>
+      <AllowResize>True</AllowResize>
+      <ShowHeader>False</ShowHeader>
+      <ShowEnableButton>True</ShowEnableButton>
+      <Collapsed>False</Collapsed>
+      <Disabled>False</Disabled>
+      <Button Caption="P6 Verde" ID="205">
+       <WindowState Visible="True" X="100" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255360</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="155"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Azul" ID="207">
+       <WindowState Visible="True" X="36" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278190335</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="157"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Ciano" ID="206">
+       <WindowState Visible="True" X="4" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4278255615</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="156"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Vermelho" ID="203">
+       <WindowState Visible="True" X="36" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294901760</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="153"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Rosa" ID="209">
+       <WindowState Visible="True" X="100" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294907027</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="159"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Âmbar" ID="204">
+       <WindowState Visible="True" X="68" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4294928896</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="154"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Branco" ID="202">
+       <WindowState Visible="True" X="4" Y="4" Width="28" Height="32"/>
+       <Appearance>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="152"/>
+       <Action>Toggle</Action>
+      </Button>
+      <Button Caption="P6 Roxo" ID="208">
+       <WindowState Visible="True" X="68" Y="40" Width="28" Height="32"/>
+       <Appearance>
+        <ForegroundColor>4286578943</ForegroundColor>
+        <BackgroundColor>4282664004</BackgroundColor>
+        <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+       </Appearance>
+       <Function ID="158"/>
+       <Action>Toggle</Action>
+      </Button>
+     </SoloFrame>
+     <Button Caption="Strobo PAR 6" ID="210">
+      <WindowState Visible="True" X="5" Y="180" Width="132" Height="52"/>
+      <Appearance>
+       <ForegroundColor>4294956800</ForegroundColor>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="160"/>
+      <Action>Toggle</Action>
+     </Button>
+     <Button Caption="PAR 6 100%" ID="200">
+      <WindowState Visible="True" X="5" Y="36" Width="132" Height="56"/>
+      <Appearance>
+       <BackgroundColor>4282664004</BackgroundColor>
+       <Font>Arial,-1,13,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+      </Appearance>
+      <Function ID="151"/>
+      <Action>Toggle</Action>
+     </Button>
+    </Frame>
    </Frame>
   </Frame>
   <Frame Caption="Aniversário 27" ID="69">
@@ -2188,23 +3768,6 @@
    <ShowEnableButton>True</ShowEnableButton>
    <Collapsed>False</Collapsed>
    <Disabled>False</Disabled>
-   <CueList Caption="Narração 27 - passos" ID="84">
-    <WindowState Visible="True" X="942" Y="141" Width="989" Height="918"/>
-    <Chaser>75</Chaser>
-   </CueList>
-   <CueList Caption="Vídeo 27 - passos" ID="85">
-    <WindowState Visible="True" X="23" Y="188" Width="918" Height="871"/>
-    <Chaser>76</Chaser>
-   </CueList>
-   <Button Caption="BLACKOUT 27" ID="83">
-    <WindowState Visible="True" X="824" Y="23" Width="190" Height="110"/>
-    <Appearance>
-     <BackgroundColor>4282664004</BackgroundColor>
-     <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-    </Appearance>
-    <Function ID="4294967295"/>
-    <Action>Blackout</Action>
-   </Button>
    <SoloFrame Caption="27 anos (aperte junto com o play)" ID="78">
     <WindowState Visible="True" X="10" Y="10" Width="810" Height="165"/>
     <AllowResize>True</AllowResize>
@@ -2212,6 +3775,16 @@
     <ShowEnableButton>True</ShowEnableButton>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
+    <Button Caption="2. ▶ Narração 27" ID="80">
+     <WindowState Visible="True" X="210" Y="45" Width="190" Height="110"/>
+     <Appearance>
+      <ForegroundColor>4294955136</ForegroundColor>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="75"/>
+     <Action>Toggle</Action>
+    </Button>
     <Button Caption="3. ▶ Vídeo 27" ID="81">
      <WindowState Visible="True" X="410" Y="45" Width="190" Height="110"/>
      <Appearance>
@@ -2230,16 +3803,6 @@
      <Function ID="4294967295"/>
      <Action>StopAll</Action>
     </Button>
-    <Button Caption="2. ▶ Narração 27" ID="80">
-     <WindowState Visible="True" X="210" Y="45" Width="190" Height="110"/>
-     <Appearance>
-      <ForegroundColor>4294955136</ForegroundColor>
-      <BackgroundColor>4282664004</BackgroundColor>
-      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
-     </Appearance>
-     <Function ID="75"/>
-     <Action>Toggle</Action>
-    </Button>
     <Button Caption="4. Dourado final 27" ID="82">
      <WindowState Visible="True" X="610" Y="45" Width="190" Height="110"/>
      <Appearance>
@@ -2251,6 +3814,390 @@
      <Action>Toggle</Action>
     </Button>
    </SoloFrame>
+   <Button Caption="BLACKOUT 27" ID="83">
+    <WindowState Visible="True" X="824" Y="23" Width="190" Height="110"/>
+    <Appearance>
+     <BackgroundColor>4282664004</BackgroundColor>
+     <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+    </Appearance>
+    <Function ID="4294967295"/>
+    <Action>Blackout</Action>
+   </Button>
+   <CueList Caption="Narração 27 - passos" ID="84">
+    <WindowState Visible="True" X="942" Y="141" Width="989" Height="918"/>
+    <Chaser>75</Chaser>
+   </CueList>
+   <CueList Caption="Vídeo 27 - passos" ID="85">
+    <WindowState Visible="True" X="23" Y="188" Width="918" Height="871"/>
+    <Chaser>76</Chaser>
+   </CueList>
+  </Frame>
+  <Frame Caption="Efeitos" ID="211">
+   <Appearance>
+    <Font>Roboto Condensed,16,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+   </Appearance>
+   <WindowState Visible="True" X="0" Y="0" Width="1920" Height="1080"/>
+   <AllowResize>False</AllowResize>
+   <ShowHeader>False</ShowHeader>
+   <ShowEnableButton>True</ShowEnableButton>
+   <Collapsed>False</Collapsed>
+   <Disabled>False</Disabled>
+   <SoloFrame Caption="Efeitos (um por vez) – roxo: cor própria · azul: suave · vermelho: impacto · verde: transição" ID="212">
+    <WindowState Visible="True" X="10" Y="10" Width="970" Height="445"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Arco-íris correndo – as cores andam pela fileira" ID="213">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="182"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Aurora – verde e azul que ondulam" ID="214">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="184"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Oceano – azuis em movimento" ID="215">
+     <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="186"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Água corrente – azuis que escorrem" ID="216">
+     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="188"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Plasma – cores que se misturam" ID="217">
+     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="190"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Confete – um PAR por vez, cor sorteada" ID="218">
+     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282004078</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="192"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Pulso do centro – anéis de luz saem do meio" ID="219">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4280241759</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="193"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Cintilar – PARs acendem e somem devagar" ID="220">
+     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4280241759</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="194"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Chama de vela – brilho tremulando" ID="221">
+     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4280241759</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="195"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Abre e fecha do centro – suave" ID="222">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4280241759</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="196"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Gota d'água – onda saindo do meio" ID="223">
+     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4280241759</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="197"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Relâmpago – flashes em toda a fileira" ID="224">
+     <WindowState Visible="True" X="10" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4286197278</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="198"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Strobo de cor – pisca na cor escolhida" ID="225">
+     <WindowState Visible="True" X="170" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4286197278</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="199"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Fogos de artifício – explosões que se apagam" ID="226">
+     <WindowState Visible="True" X="330" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4286197278</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="200"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Enche aleatório – PARs acendem sorteados" ID="227">
+     <WindowState Visible="True" X="490" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4286197278</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="201"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Explosão do centro – luz sai do meio p/ as pontas" ID="228">
+     <WindowState Visible="True" X="650" Y="245" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4286197278</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="202"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Céu – azul → roxo → ciano (fade)" ID="229">
+     <WindowState Visible="True" X="10" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4281227822</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="212"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Fogo – vermelho → âmbar → rosa (fade)" ID="230">
+     <WindowState Visible="True" X="170" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4281227822</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="213"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Arco-íris lento – troca de cor em fade" ID="231">
+     <WindowState Visible="True" X="330" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4281227822</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="214"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Alterna PAR a PAR – azul/roxo se trocam" ID="232">
+     <WindowState Visible="True" X="490" Y="345" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4281227822</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="215"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+   <SoloFrame Caption="Cor dos efeitos de 1 cor (azul e vermelho)" ID="233">
+    <WindowState Visible="True" X="10" Y="470" Width="970" Height="245"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Efeitos: Azul" ID="234">
+     <WindowState Visible="True" X="10" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="77"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Roxo" ID="235">
+     <WindowState Visible="True" X="170" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="78"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Vermelho" ID="236">
+     <WindowState Visible="True" X="330" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="79"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Âmbar" ID="237">
+     <WindowState Visible="True" X="490" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="80"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Verde" ID="238">
+     <WindowState Visible="True" X="650" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="81"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Ciano" ID="239">
+     <WindowState Visible="True" X="810" Y="45" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="82"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Rosa" ID="240">
+     <WindowState Visible="True" X="10" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="83"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Branco" ID="241">
+     <WindowState Visible="True" X="170" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="84"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Azul/Roxo" ID="242">
+     <WindowState Visible="True" X="330" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="97"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Vermelho/Âmbar" ID="243">
+     <WindowState Visible="True" X="490" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="98"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Azul/Branco" ID="244">
+     <WindowState Visible="True" X="650" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="99"/>
+     <Action>Toggle</Action>
+    </Button>
+    <Button Caption="Efeitos: Arco-íris" ID="245">
+     <WindowState Visible="True" X="810" Y="145" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,13,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="100"/>
+     <Action>Toggle</Action>
+    </Button>
+   </SoloFrame>
+   <Frame Caption="Controle Efeitos" ID="246">
+    <WindowState Visible="True" X="1000" Y="10" Width="320" Height="345"/>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <SpeedDial Caption="Velocidade (aba Efeitos)" ID="247">
+     <WindowState Visible="True" X="10" Y="45" Width="300" Height="180"/>
+     <Visibility>644</Visibility>
+     <Time>1000</Time>
+     <AbsoluteValue Minimum="0" Maximum="10000"/>
+     <Function FadeIn="0" FadeOut="0" Duration="3">181</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">183</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">185</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">187</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">189</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="4">191</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">193</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">194</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="3">195</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="4">196</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">197</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">198</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">199</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="2">200</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="4">201</Function>
+     <Function FadeIn="0" FadeOut="0" Duration="4">202</Function>
+     <Function FadeIn="7" FadeOut="0" Duration="8">212</Function>
+     <Function FadeIn="7" FadeOut="0" Duration="8">213</Function>
+     <Function FadeIn="7" FadeOut="0" Duration="8">214</Function>
+     <Function FadeIn="7" FadeOut="0" Duration="8">215</Function>
+    </SpeedDial>
+    <Button Caption="Parar tudo (Efeitos)" ID="248">
+     <WindowState Visible="True" X="10" Y="240" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>StopAll</Action>
+    </Button>
+    <Button Caption="BLACKOUT Efeitos" ID="249">
+     <WindowState Visible="True" X="170" Y="240" Width="150" Height="90"/>
+     <Appearance>
+      <BackgroundColor>4282664004</BackgroundColor>
+      <Font>Arial,-1,21,5,700,0,0,0,0,0,0,0,0,0,0,1,,0,0</Font>
+     </Appearance>
+     <Function ID="4294967295"/>
+     <Action>Blackout</Action>
+    </Button>
+   </Frame>
   </Frame>
  </VirtualConsole>
 </Workspace>

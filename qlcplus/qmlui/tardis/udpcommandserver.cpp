@@ -253,18 +253,18 @@ QVariantList UdpCommandServer::actionsModel() const
     static const QList<QPair<MappingAction, QString>> actions = {
         { StartFunction,   tr("Iniciar função") },
         { StopFunction,    tr("Parar função") },
-        { ToggleFunction,  tr("Liga/desliga função") },
+        { ToggleFunction,  tr("Alternar função") },
         { ClickButton,     tr("Clicar botão do VC") },
         { PressButton,     tr("Segurar botão do VC") },
         { ReleaseButton,   tr("Soltar botão do VC") },
-        { SetSlider,       tr("Ajustar slider (valor após o comando)") },
+        { SetSlider,       tr("Ajustar slider") },
         { CueListPlay,     tr("Cue list: play") },
         { CueListStop,     tr("Cue list: parar") },
         { CueListNext,     tr("Cue list: próximo passo") },
         { CueListPrevious, tr("Cue list: passo anterior") },
         { BlackoutOn,      tr("Blackout liga") },
         { BlackoutOff,     tr("Blackout desliga") },
-        { BlackoutToggle,  tr("Blackout liga/desliga") },
+        { BlackoutToggle,  tr("Blackout alternar") },
         { StopAll,         tr("Parar tudo") },
     };
 

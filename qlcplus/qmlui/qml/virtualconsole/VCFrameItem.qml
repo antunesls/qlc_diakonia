@@ -34,6 +34,28 @@ VCWidgetItem
     color: dropActive ? UISettings.activeDropArea : (frameObj ? frameObj.backgroundColor : "darkgray")
     clip: true
 
+    /* A page is rendered straight into the content item of the page Flickable */
+    readonly property bool isPage: parent !== null && parent.parent !== null &&
+                                   String(parent.parent.objectName).startsWith("vcPage")
+
+    // Diakonia watermark, below the widgets, kept in the visible corner of the page
+    Image
+    {
+        readonly property var pageView: frameRoot.isPage ? frameRoot.parent.parent : null
+        readonly property real margin: UISettings.bigItemHeight * 0.4
+
+        visible: frameRoot.isPage
+        source: visible ? "qrc:/diakonia-logo.png" : ""
+        x: pageView ? Math.min(frameRoot.width, pageView.contentX + pageView.width) - width - margin : 0
+        y: pageView ? Math.min(frameRoot.height, pageView.contentY + pageView.height) - height - margin : 0
+        width: Math.min(frameRoot.width * 0.3, UISettings.bigItemHeight * 6)
+        height: width * sourceSize.height / Math.max(1, sourceSize.width)
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+        mipmap: true
+        opacity: 0.14
+    }
+
     onFrameObjChanged:
     {
         setCommonProperties(frameObj)
