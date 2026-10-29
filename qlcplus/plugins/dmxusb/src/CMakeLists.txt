@@ -29,10 +29,15 @@ add_library(${module_name}
 if(WIN32)
     target_link_libraries(${module_name} PRIVATE winmm)
     set(FTD2XXDIR "C:/projects/D2XXSDK")
-    # Prefer libFTDI (over WinUSB) to D2XX: the FTDI kernel driver crashes
-    # (bugcheck 0x139) on recent Windows builds when D2XX opens the device
-    option(DMXUSB_D2XX "Use FTDI D2XX instead of libFTDI on Windows" OFF)
-    if(NOT DMXUSB_D2XX)
+    # D2XX (stock FTDI driver, same as upstream QLC+ and FreeStyler) by default.
+    # Turn it off to use libFTDI (WinUSB driver via Zadig): the FTDI kernel driver
+    # crashes (bugcheck 0x139) on Windows Insider build 26300 when D2XX opens the device
+    option(DMXUSB_D2XX "Use FTDI D2XX instead of libFTDI on Windows" ON)
+    if(DMXUSB_D2XX)
+        # drop results cached by an earlier libFTDI configuration
+        unset(LIBFTDI1_FOUND CACHE)
+        unset(LIBFTDI1_FOUND)
+    else()
         pkg_check_modules(LIBFTDI1 IMPORTED_TARGET libftdi1 libusb-1.0)
     endif()
 endif()

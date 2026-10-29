@@ -293,9 +293,10 @@ void App::startup()
             rect.moveCenter(available.center());
         }
 
-        restoreWindowGeometry = true;
+        // the saved rect is only the size of the window when it is restored;
+        // the Diakonia setup always starts maximized
         setGeometry(rect);
-        show();
+        showMaximized();
     }
     else
     {

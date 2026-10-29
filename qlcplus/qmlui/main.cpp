@@ -136,6 +136,11 @@ int main(int argc, char *argv[])
         "Automatically grant full access to every native TCP client (unsafe on untrusted networks)");
     parser.addOption(allowAllNativeOption);
 
+    QCommandLineOption connectOption(QStringList() << "connect",
+        "Start as a client of the native server at the given IP address, reconnecting if the link drops",
+        "ip", "");
+    parser.addOption(connectOption);
+
     QCommandLineOption udpCommandsOption(QStringList() << "u" << "udp-commands",
         "Accept plain text commands over UDP on every interface (no authentication)");
     parser.addOption(udpCommandsOption);
@@ -260,6 +265,14 @@ int main(int argc, char *argv[])
 
         netMgr->setForcedServerTypes(forcedTypes);
         netMgr->startServer();
+    }
+
+    if (parser.isSet(connectOption) && qlcplusApp.networkManager() != nullptr)
+    {
+        if (enableWebAccess || enableNativeServer)
+            qCritical().noquote() << "--connect makes this instance a client: ignoring the server options";
+        else
+            qlcplusApp.networkManager()->startAutoConnect(parser.value(connectOption));
     }
 
     if (parser.isSet(udpCommandsOption) || parser.isSet(udpPortOption))

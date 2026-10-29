@@ -1093,7 +1093,7 @@ bool NetworkManager::initializeClient()
     return true;
 }
 
-bool NetworkManager::connectClient(QString ipAddress)
+bool NetworkManager::connectClient(QString ipAddress, int timeoutMs)
 {
     QHostAddress serverAddr(ipAddress);
 
@@ -1108,7 +1108,7 @@ bool NetworkManager::connectClient(QString ipAddress)
     m_tcpSocket = new QTcpSocket();
     m_tcpSocket->connectToHost(serverAddr, DEFAULT_TCP_PORT);
 
-    if (m_tcpSocket->waitForConnected(10000) == false)
+    if (m_tcpSocket->waitForConnected(timeoutMs) == false)
     {
         qDebug() << "Error in connecting to TCP host:" << ipAddress;
         delete m_tcpSocket;
@@ -1126,6 +1126,27 @@ bool NetworkManager::connectClient(QString ipAddress)
     setClientStatus(WaitAuthentication);
 
     return sendTCPPacket(m_tcpSocket, packet, m_encryptPackets);
+}
+
+void NetworkManager::startAutoConnect(const QString &ipAddress)
+{
+    m_autoConnectAddress = ipAddress;
+
+    if (m_autoConnectTimer == nullptr)
+    {
+        m_autoConnectTimer = new QTimer(this);
+        m_autoConnectTimer->setInterval(10000);
+        connect(m_autoConnectTimer, &QTimer::timeout, this, [this]()
+        {
+            if (m_clientStatus == Disconnected)
+                connectClient(m_autoConnectAddress, 1500); // short: this blocks the UI thread
+        });
+    }
+
+    // the server announces itself through the UDP socket of a client
+    initializeClient();
+    connectClient(m_autoConnectAddress);
+    m_autoConnectTimer->start();
 }
 
 bool NetworkManager::disconnectClient()

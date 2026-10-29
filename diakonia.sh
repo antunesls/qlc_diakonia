@@ -31,8 +31,6 @@ MSYS2_ROOT="${MSYS2_ROOT:-/c/msys64}"
 # Fixo no CMake do QLC+ (variables.cmake: INSTALLROOT = $SystemDrive/qlcplus)
 QLC_INSTALL="/c/qlcplus"
 QLC_EXE="$QLC_INSTALL/qlcplus5.exe"
-# libFTDI do MSYS2: backend do plugin DMX USB para adaptadores FTDI
-LIBFTDI_PC="$MSYS2_ROOT/ucrt64/lib/pkgconfig/libftdi1.pc"
 ANDROID_SDK="${ANDROID_SDK:-${ANDROID_HOME:-$HOME/AppData/Local/Android/Sdk}}"
 ADB="$ANDROID_SDK/platform-tools/adb.exe"
 APP_ID="com.diakonia.qlccockpit"
@@ -130,7 +128,7 @@ github_repo() {
 
 _qlc_build() {
     cd "$QLC_SRC"
-    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dqmlui=ON
+    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Dqmlui=ON -DDMXUSB_D2XX=ON
     ninja -C build
 }
 
@@ -146,6 +144,8 @@ _qlc_deploy() {
     printf '[Paths]\nPrefix = .\nPlugins = .\nQmlImports = qml\n' > qt.conf
     rm -f sceneparsers/gltfsceneexport.dll
     rm -rf generic networkinformation qmltooling renderplugins tls
+    # Plataforma sem janela: qlcplus5.exe -platform offscreen (modo servidor)
+    cp "$MSYS2_ROOT/ucrt64/share/qt6/plugins/platforms/qoffscreen.dll" platforms/
     # Dependências do MSYS2 (ICU, libusb, fftw, ...) que o windeployqt não copia
     find . -iname '*.exe' -o -iname '*.dll' \
         | xargs ldd 2>/dev/null \
@@ -166,11 +166,6 @@ _qlc_installer() {
     mv "$exe" "$out/"
 }
 
-# libFTDI para o plugin DMX USB. Sem ela o plugin ignora adaptadores FTDI (a
-# interface QtSerialPort os descarta) ou cai no D2XX, que derruba o Windows
-# (bugcheck 0x139 no driver da FTDI). O adaptador precisa do driver WinUSB (Zadig).
-_pacman_libftdi() { pacman -S --needed --noconfirm mingw-w64-ucrt-x86_64-libftdi; }
-
 _has_makensis() { command -v makensis >/dev/null; }
 
 _pacman_nsis() { pacman -S --needed --noconfirm mingw-w64-ucrt-x86_64-nsis; }
@@ -182,13 +177,6 @@ build_qlcplus() {
     if tasklist //FI "IMAGENAME eq qlcplus5.exe" 2>/dev/null | grep -qi qlcplus5.exe; then
         warn "O QLC+ está aberto: a instalação em $QLC_INSTALL vai falhar ao sobrescrever os arquivos."
         confirm "Feche o QLC+ e confirme para continuar" s || return 1
-    fi
-    if [[ ! -f "$LIBFTDI_PC" ]]; then
-        warn "libFTDI não instalada no MSYS2: sem ela adaptadores DMX USB FTDI não aparecem no QLC+."
-        if confirm "Instalar agora com pacman?" s; then
-            step "QLC+: instalando libFTDI"
-            msys _pacman_libftdi
-        fi
     fi
     step "QLC+: compilando (MSYS2 UCRT64, Release, qmlui)"
     msys _qlc_build
@@ -442,7 +430,7 @@ doctor() {
     check "windeployqt6"                  "[[ -x '$MSYS2_ROOT/ucrt64/bin/windeployqt6.exe' ]]"
     check "assimp (modelos da visão 3D)"  "[[ -f '$MSYS2_ROOT/ucrt64/bin/libassimp-6.dll' ]]" "pacman -S mingw-w64-ucrt-x86_64-assimp"
     check "NSIS (makensis, p/ instalador)" "[[ -x '$MSYS2_ROOT/ucrt64/bin/makensis.exe' ]]" "pacman -S mingw-w64-ucrt-x86_64-nsis"
-    check "libFTDI (DMX USB FTDI)"        "[[ -f '$LIBFTDI_PC' ]]" "pacman -S mingw-w64-ucrt-x86_64-libftdi"
+    check "D2XX SDK (DMX USB FTDI)"       "[[ -f /c/projects/D2XXSDK/ftd2xx.h ]]" "https://ftdichip.com/drivers/d2xx-drivers/ em C:\\projects\\D2XXSDK"
     check "Node.js $(node -v 2>/dev/null)" "command -v node"
     check "npm"                           "command -v npm"
     if jdk="$(find_jdk)"; then ok "JDK p/ Gradle: $jdk"; else warn "JDK 17-21 NÃO encontrado (defina QLC_JDK)"; fi

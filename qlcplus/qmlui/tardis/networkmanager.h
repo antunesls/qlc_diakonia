@@ -40,6 +40,7 @@ class NetworkPacketizer;
 class VirtualConsole;
 class SimpleDesk;
 class WebAccessQml;
+class QTimer;
 
 typedef struct
 {
@@ -351,11 +352,15 @@ public:
     Q_ENUM(ConnectionStatus)
 
     Q_INVOKABLE bool initializeClient();
-    Q_INVOKABLE bool connectClient(QString ipAddress);
+    Q_INVOKABLE bool connectClient(QString ipAddress, int timeoutMs = 10000);
     Q_INVOKABLE bool disconnectClient();
 
     /** Ask the connected server to send its current workspace */
     Q_INVOKABLE bool requestProjectFromServer();
+
+    /** Act as a client of the server at $ipAddress: connect now and keep
+     *  retrying while disconnected (command line --connect) */
+    void startAutoConnect(const QString &ipAddress);
 
     QVariant serverList() const;
 
@@ -387,6 +392,10 @@ private:
     /** Project transfer variables */
     QByteArray m_projectData;
     int m_projectSize;
+
+    /** Server to reach again whenever the client gets disconnected */
+    QString m_autoConnectAddress;
+    QTimer *m_autoConnectTimer = nullptr;
 };
 
 #endif /* NETWORKMANAGER_H */

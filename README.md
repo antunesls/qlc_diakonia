@@ -33,7 +33,7 @@ Também funciona sem menu: `./diakonia.sh build all`, `./diakonia.sh run qlcplus
 
 Pré-requisitos (o item 5 do menu confere todos):
 - **MSYS2 UCRT64** com `cmake`, `ninja`, `qt6`, `assimp` (sem ele a visão 3D fica vazia) e, para o instalador, `nsis`.
-- **libFTDI** (`mingw-w64-ucrt-x86_64-libftdi`) para adaptadores DMX USB FTDI; o build do QLC+ oferece instalar. O adaptador precisa usar o driver **WinUSB** (troque uma vez com o [Zadig](https://zadig.akeo.ie/)): com o driver da FTDI e o D2XX o Windows trava (tela azul).
+- **D2XX SDK** da FTDI em `C:\projects\D2XXSDK` para adaptadores DMX USB FTDI. O plugin usa o driver padrão da FTDI, o mesmo do QLC+ oficial e do FreeStyler, sem Zadig. Na build Insider 26300 do Windows o D2XX derruba o sistema (tela azul): nesse PC compile com `-DDMXUSB_D2XX=OFF` (usa libFTDI, `mingw-w64-ucrt-x86_64-libftdi`) e troque o driver do adaptador para WinUSB com o [Zadig](https://zadig.akeo.ie/).
 - **Node.js**.
 - **JDK 17–21**, detectado em `~/.jdks`, no `jbr` do Android Studio ou pela variável `QLC_JDK`.
 - **Android SDK** com `adb`.
@@ -41,6 +41,8 @@ Pré-requisitos (o item 5 do menu confere todos):
 Detalhes da Cockpit API em `qlcplus/COCKPIT_API.md`.
 
 ## Comandos UDP
+
+Servidor e cliente: `qlcplus5.exe -w -s --server-allow-all -o igreja.qxw` sobe o Web Access (9999) e o servidor nativo (9998) já com os clientes autorizados; `qlcplus5.exe --connect <ip-do-servidor>` inicia como cliente desse servidor, recebe o projeto dele e tenta reconectar a cada 10 s se a conexão cair (não combine com `-o`, `-s` nem `-w`). `-platform offscreen` roda sem janela.
 
 O QLC+ do fork aceita comandos em texto por UDP (porta padrão 7799), vindos de qualquer aparelho da rede. Configure em **menu → Rede → Comandos UDP**: liga/desliga, porta, tabela "comando recebido → ação" (salva no `.qxw`), teste e log ao vivo. Também dá para ligar só nesta execução com `--udp-commands [--udp-port N]` (o `diakonia.sh run qlcplus` pergunta).
 
