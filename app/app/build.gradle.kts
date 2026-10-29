@@ -13,8 +13,8 @@ android {
         applicationId = "com.diakonia.qlccockpit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "2026.10.25"
+        versionCode = 5
+        versionName = "2026.10.29"
     }
 
     buildTypes {
