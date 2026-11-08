@@ -1,5 +1,7 @@
 package com.diakonia.qlccockpit.ui.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +43,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -48,11 +52,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,12 +68,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.diakonia.qlccockpit.data.CockpitRepository
 import com.diakonia.qlccockpit.data.CockpitState
+import com.diakonia.qlccockpit.model.TapTempo
 import com.diakonia.qlccockpit.model.VcWidget
 import com.diakonia.qlccockpit.model.VcWidgetState
 import com.diakonia.qlccockpit.model.VcWidgetType
 import com.diakonia.qlccockpit.ui.components.XYPad
 import com.diakonia.qlccockpit.ui.theme.CockpitColors
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
+import kotlinx.coroutines.delay
 
 /** Renders the QLC+ Virtual Console (/vc.json) scaled to the tablet width. */
 @Composable
@@ -187,18 +198,36 @@ private fun VcWidgetView(
             val flash = w.int("actionType") == 1
             val accent = widgetBg(w, MaterialTheme.colorScheme.surfaceVariant)
             val currentDisabled by rememberUpdatedState(disabled)
+            val palette = w.stringList("palette").map { parseHexColor(it) ?: Color.Gray }
+            val selectable = palette.size > 1
+            val selected = live.paletteIndex ?: w.int("paletteIndex")
+            val density = LocalDensity.current
+            val chipPx = with(density) { PALETTE_CHIP.toPx() }
+            val gapPx = with(density) { PALETTE_GAP.toPx() }
+            val stripPx = chipPx + 2 * gapPx
+            val sizePx = remember { mutableStateOf(androidx.compose.ui.unit.IntSize.Zero) }
             Box(
                 baseModifier
+                    .onSizeChanged { sizePx.value = it }
                     .background(accent)
                     .border(
                         if (value > 0) 3.dp else 1.dp,
                         when (value) { 255 -> CockpitColors.Running; 127 -> CockpitColors.Paused; else -> MaterialTheme.colorScheme.outline },
                         shape,
                     )
-                    .pointerInput(w.id, flash) {
+                    .pointerInput(w.id, flash, selectable, stripPx, gapPx, chipPx) {
                         awaitEachGesture {
-                            awaitFirstDown()
+                            val down = awaitFirstDown()
                             if (currentDisabled) return@awaitEachGesture
+                            // a tap on a palette chip only picks the color, it never switches the button
+                            if (selectable && down.position.y >= sizePx.value.height - stripPx - gapPx) {
+                                val idx = ((down.position.x - gapPx) / (chipPx + gapPx)).toInt()
+                                if (idx in palette.indices) repository.vcButtonColor(w.id, idx)
+                                do {
+                                    val ev = awaitPointerEvent()
+                                } while (ev.changes.any { it.pressed })
+                                return@awaitEachGesture
+                            }
                             repository.vcButton(w.id, true)
                             // flash buttons are held; toggle buttons react to the press only
                             do {
@@ -218,6 +247,20 @@ private fun VcWidgetView(
                 if (value == 255) {
                     Box(Modifier.fillMaxSize().background(CockpitColors.Running.copy(alpha = 0.18f)))
                 }
+                if (palette.isNotEmpty()) {
+                    Row(
+                        Modifier.align(Alignment.BottomStart).padding(start = PALETTE_GAP, bottom = PALETTE_GAP),
+                        horizontalArrangement = Arrangement.spacedBy(PALETTE_GAP),
+                    ) {
+                        palette.forEachIndexed { i, c ->
+                            val on = selectable && i == selected
+                            Box(
+                                Modifier.size(PALETTE_CHIP).clip(CircleShape).background(c)
+                                    .border(if (on) 2.dp else 1.dp, if (on) Color.White else Color(0x80000000), CircleShape),
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -230,6 +273,13 @@ private fun VcWidgetView(
                 Text(live.displayValue ?: "$value", style = MaterialTheme.typography.labelSmall)
                 VcSliderBar(value, enabled = !disabled, modifier = Modifier.weight(1f).fillMaxWidth()) {
                     repository.vcSlider(w.id, it)
+                }
+                if (w.bool("monitor")) {
+                    // follows the real DMX channel; touching the slider overrides it until released
+                    val overriding = live.overriding ?: w.bool("isOverriding")
+                    TextButton(onClick = { repository.vcSliderFollow(w.id) }, enabled = overriding && !disabled) {
+                        Text(if (overriding) "SEGUIR" else "AUTO", style = MaterialTheme.typography.labelSmall)
+                    }
                 }
                 Text(w.caption, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelSmall, color = widgetFg(w, MaterialTheme.colorScheme.onSurface))
@@ -282,18 +332,34 @@ private fun VcWidgetView(
 
         VcWidgetType.Speed -> {
             val time = live.speedTime ?: w.long("currentTime")
+            val factor = live.speedFactor ?: w.int("currentFactor", SPEED_ONE)
+            val mult = SPEED_MULT.getOrNull(factor) ?: 1.0
+            val effective = (time * mult).roundToLong()
             Column(
                 baseModifier.background(widgetBg(w, surface)).border(1.dp, MaterialTheme.colorScheme.outline, shape),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(w.caption, style = MaterialTheme.typography.labelSmall, maxLines = 1)
-                Text(formatMs(time), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    formatMs(effective) + if (effective > 0) "  ·  ${(60000.0 / effective).roundToInt()} BPM" else "",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    "tap ${formatMs(time)}  ×  ${SPEED_LABEL.getOrElse(factor) { "1" }}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 Row {
                     TextButton(onClick = { repository.vcSpeed(w.id, "SPEED_DOWN") }) { Text("÷2") }
                     TextButton(onClick = { repository.vcSpeed(w.id, "SPEED_APPLY") }) { Text("Aplicar") }
                     TextButton(onClick = { repository.vcSpeed(w.id, "SPEED_UP") }) { Text("×2") }
                 }
+                TapPad(
+                    enabled = !disabled,
+                    onPeriod = { repository.vcSpeed(w.id, "SPEED_TIME", it) },
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp),
+                )
             }
         }
 
@@ -436,3 +502,63 @@ private fun VcCueListView(
         }
     }
 }
+
+/**
+ * Tap tempo pad of a speed dial. Taps are timed on finger down (not on release)
+ * and the measured period is sent as SPEED_TIME, which QLC+ applies at once.
+ */
+@Composable
+private fun TapPad(enabled: Boolean, onPeriod: (Long) -> Unit, modifier: Modifier = Modifier) {
+    val tempo = remember { TapTempo() }
+    val haptics = LocalHapticFeedback.current
+    val send by rememberUpdatedState(onPeriod)
+    var taps by remember { mutableIntStateOf(0) }
+    var tick by remember { mutableIntStateOf(0) }
+    var flash by remember { mutableStateOf(false) }
+    val bg by animateColorAsState(
+        if (flash) CockpitColors.Accent else CockpitColors.Accent.copy(alpha = 0.18f),
+        animationSpec = tween(if (flash) 0 else 250),
+        label = "tap",
+    )
+    LaunchedEffect(tick) {
+        if (tick == 0) return@LaunchedEffect
+        flash = true
+        delay(60)
+        flash = false
+        delay(1500)
+        tempo.reset()
+        taps = 0
+    }
+    Box(
+        modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(bg)
+            .border(1.dp, CockpitColors.Accent, RoundedCornerShape(6.dp))
+            .pointerInput(enabled) {
+                if (!enabled) return@pointerInput
+                awaitEachGesture {
+                    val down = awaitFirstDown()
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    tempo.tap(down.uptimeMillis)?.let(send)
+                    taps = tempo.tapCount
+                    tick++
+                }
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            if (taps < 2) "TAP" else "TAP  ($taps)",
+            style = MaterialTheme.typography.titleMedium,
+            color = if (flash) Color.Black else MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+/** QLC+ VCSpeedDial::SpeedMultiplier indexes: None, Zero, 1/16 .. 1/2, 1, 2 .. 16. */
+private val SPEED_MULT = listOf(1.0, 0.0, 1.0 / 16, 1.0 / 8, 1.0 / 4, 1.0 / 2, 1.0, 2.0, 4.0, 8.0, 16.0)
+private val SPEED_LABEL = listOf("1", "0", "1/16", "1/8", "1/4", "1/2", "1", "2", "4", "8", "16")
+private const val SPEED_ONE = 6
+
+private val PALETTE_CHIP = 22.dp
+private val PALETTE_GAP = 6.dp
+

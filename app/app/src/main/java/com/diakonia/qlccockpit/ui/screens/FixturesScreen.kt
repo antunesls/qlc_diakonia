@@ -193,7 +193,7 @@ private fun FixtureSwatch(fx: Fixture, values: UniverseValues) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FixtureControl(
+internal fun FixtureControl(
     primary: Fixture,
     selected: List<Fixture>,
     universes: Map<Int, UniverseValues>,

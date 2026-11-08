@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Highlight
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,6 +54,7 @@ import com.diakonia.qlccockpit.ui.screens.FixturesScreen
 import com.diakonia.qlccockpit.ui.screens.FunctionsScreen
 import com.diakonia.qlccockpit.ui.screens.PlayerScreen
 import com.diakonia.qlccockpit.ui.screens.SimpleDeskScreen
+import com.diakonia.qlccockpit.ui.screens.Stage3DScreen
 import com.diakonia.qlccockpit.ui.screens.VirtualConsoleScreen
 import com.diakonia.qlccockpit.ui.theme.CockpitColors
 import kotlin.math.roundToInt
@@ -62,6 +64,7 @@ enum class Destination(val label: String, val icon: ImageVector) {
     Player("Player", Icons.Filled.PlayCircle),
     Fixtures("Fixtures", Icons.Filled.Highlight),
     Desk("Mesa DMX", Icons.Filled.Tune),
+    Stage3D("3D", Icons.Filled.ViewInAr),
     Console("Console", Icons.Filled.Dashboard),
     Connection("Conexão", Icons.Filled.Settings),
 }
@@ -112,7 +115,7 @@ fun CockpitContent(
             ) {
                 Spacer(Modifier.height(8.dp))
                 Destination.entries.forEach { d ->
-                    val available = d != Destination.Fixtures || state.mode != ApiMode.Compat
+                    val available = (d != Destination.Fixtures && d != Destination.Stage3D) || state.mode != ApiMode.Compat
                     NavigationRailItem(
                         selected = dest == d,
                         onClick = { dest = d },
@@ -138,6 +141,7 @@ fun CockpitContent(
                         )
                         Destination.Fixtures -> FixturesScreen(state, repository)
                         Destination.Desk -> SimpleDeskScreen(state, repository)
+                        Destination.Stage3D -> Stage3DScreen(state, repository)
                         Destination.Console -> VirtualConsoleScreen(state, repository)
                         Destination.Connection -> ConnectScreen(
                             state, repository, settings,

@@ -288,6 +288,8 @@ class CockpitRepository(
             val cur = s.widgets[e.widgetId] ?: VcWidgetState()
             val next = when (e.kind) {
                 "BUTTON" -> cur.copy(value = a.int(0))
+                "SLIDER_OVERRIDE" -> cur.copy(overriding = QlcProtocol.parseBool(a.getOrNull(0)))
+                "BUTTON_COLOR" -> cur.copy(paletteIndex = a.int(0))
                 "SLIDER" -> cur.copy(value = a.int(0), displayValue = a.getOrNull(1))
                 "AUDIOTRIGGERS" -> cur.copy(value = if (QlcProtocol.parseBool(a.getOrNull(0))) 255 else 0)
                 "AUDIO_VOLUME" -> cur.copy(sideFader = a.int(0))
@@ -392,6 +394,24 @@ class CockpitRepository(
     fun vcSelectPage(page: Int) = connection.send(QlcCommands.vcPage(page))
 
     fun vcButton(widgetId: Int, pressed: Boolean) = connection.send(QlcCommands.widget(widgetId, if (pressed) 255 else 0))
+
+    /** Picks the color of a palette button; the server never starts the button for this. */
+    fun vcButtonColor(widgetId: Int, index: Int) {
+        _state.update { s ->
+            val cur = s.widgets[widgetId] ?: VcWidgetState()
+            s.copy(widgets = s.widgets + (widgetId to cur.copy(paletteIndex = index)))
+        }
+        connection.send(QlcCommands.widget(widgetId, "BUTTON_COLOR", index))
+    }
+
+    /** Monitoring level slider: stop overriding and follow the real channel value again. */
+    fun vcSliderFollow(widgetId: Int) {
+        _state.update { s ->
+            val cur = s.widgets[widgetId] ?: VcWidgetState()
+            s.copy(widgets = s.widgets + (widgetId to cur.copy(overriding = false)))
+        }
+        connection.send(QlcCommands.widget(widgetId, "SLIDER_OVERRIDE", 0))
+    }
 
     fun vcSlider(widgetId: Int, value: Int) {
         _state.update { s ->

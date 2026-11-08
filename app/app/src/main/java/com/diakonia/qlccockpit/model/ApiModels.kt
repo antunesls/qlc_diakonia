@@ -35,10 +35,16 @@ data class Fixture(
     val model: String = "",
     val mode: String = "",
     val channels: List<FixtureChannel> = emptyList(),
+    /** placement from the QLC+ Monitor / 3D view, in millimeters and degrees (null if never placed) */
+    val position: Vec3? = null,
+    val rotation: Vec3? = null,
 ) {
     /** 1-based address, as shown to lighting operators */
     val displayAddress: Int get() = address + 1
 }
+
+@Serializable
+data class Vec3(val x: Double = 0.0, val y: Double = 0.0, val z: Double = 0.0)
 
 @Serializable
 data class FixtureChannel(

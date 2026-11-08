@@ -1,6 +1,9 @@
 package com.diakonia.qlccockpit.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import com.diakonia.qlccockpit.data.ApiMode
@@ -104,7 +107,7 @@ class ScreenshotTest {
           "geometry":{"x":0,"y":0,"w":1200,"h":700},"visible":true,
           "children":[
             {"id":11,"typeId":1,"caption":"Azul","page":0,"geometry":{"x":10,"y":10,"w":120,"h":90},"bgColor":"#1e3a8a","state":2,"actionType":0,"visible":true},
-            {"id":12,"typeId":1,"caption":"Âmbar","page":0,"geometry":{"x":140,"y":10,"w":120,"h":90},"bgColor":"#92400e","state":0,"visible":true},
+            {"id":12,"typeId":1,"caption":"Âmbar","page":0,"geometry":{"x":140,"y":10,"w":120,"h":90},"bgColor":"#92400e","state":0,"palette":["#ff0000","#ffbf00","#ffffff","#0000ff"],"paletteIndex":1,"visible":true},
             {"id":13,"typeId":1,"caption":"Strobe (flash)","page":0,"geometry":{"x":270,"y":10,"w":120,"h":90},"state":0,"actionType":1,"visible":true},
             {"id":14,"typeId":2,"caption":"Palco","page":0,"geometry":{"x":10,"y":110,"w":70,"h":260},"value":200,"visible":true},
             {"id":15,"typeId":2,"caption":"Plateia","page":0,"geometry":{"x":90,"y":110,"w":70,"h":260},"value":90,"visible":true},
@@ -118,7 +121,8 @@ class ScreenshotTest {
                          {"id":19,"typeId":1,"caption":"Círculo","page":0,"geometry":{"x":130,"y":40,"w":110,"h":80},"visible":true},
                          {"id":20,"typeId":3,"caption":"Spots","page":0,"geometry":{"x":10,"y":130,"w":220,"h":220},
                           "position":{"x":128,"y":64},"visible":true}]},
-            {"id":21,"typeId":11,"caption":"","page":0,"geometry":{"x":180,"y":110,"w":220,"h":100},"clockType":1,"currentTime":754000,"visible":true}
+            {"id":21,"typeId":11,"caption":"","page":0,"geometry":{"x":180,"y":110,"w":220,"h":100},"clockType":1,"currentTime":754000,"visible":true},
+            {"id":22,"typeId":6,"caption":"Velocidade dos efeitos","page":0,"geometry":{"x":180,"y":220,"w":230,"h":150},"currentTime":500,"visible":true}
           ]}]}
     """.trimIndent()
 
@@ -166,4 +170,20 @@ class ScreenshotTest {
     @Test fun desk() = render(Destination.Desk, "05_mesa_dmx")
     @Test fun console() = render(Destination.Console, "06_console")
     @Test fun connection() = render(Destination.Connection, "07_conexao")
+    @Test fun stage3d() = render(Destination.Stage3D, "08_3d")
+
+    @Test fun stage3dChannels() {
+        val repo = CockpitRepository()
+        val frame = ByteArray(512)
+        frame[0] = 20; frame[1] = 60; frame[2] = 255.toByte(); frame[4] = 255.toByte(); frame[5] = 140.toByte()
+        repo.universes.applyFrame(0, frame)
+        compose.setContent {
+            CockpitTheme {
+                androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.fillMaxSize().padding(12.dp)) {
+                    com.diakonia.qlccockpit.ui.screens.Stage3DScreen(state, repo, initialSelection = listOf(1))
+                }
+            }
+        }
+        compose.onRoot().captureRoboImage("build/outputs/roborazzi/09_3d_canais.png")
+    }
 }

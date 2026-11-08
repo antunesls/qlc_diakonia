@@ -145,6 +145,8 @@ data class VcWidgetState(
     val cueStatus: Int? = null,
     val cueNextIndex: Int? = null,
     val sideFader: Int? = null,
+    /** Level slider with channel monitoring: true while the user's value overrides the real DMX value */
+    val overriding: Boolean? = null,
     /** Frames */
     val framePage: Int? = null,
     /** Clock: milliseconds (or seconds of day for Clock type) */
@@ -156,6 +158,8 @@ data class VcWidgetState(
     /** Speed dial */
     val speedTime: Long? = null,
     val speedFactor: Int? = null,
+    /** Button color palette: selected chip */
+    val paletteIndex: Int? = null,
     /** Animation */
     val algorithmIndex: Int? = null,
     val colors: List<String>? = null,
