@@ -11,7 +11,7 @@ Start QLC+ 5 with web access enabled: `qlcplus-qml -w` (port 9999) or
 | Path | Content |
 |---|---|
 | `/api/info.json` | `apiVersion`, `appName`, `appVersion`, `workspace`, `blackout`, `grandMaster`, `universes[{id,name}]` |
-| `/api/fixtures.json` | `fixtures[{id,name,type,universe,address(0-based),channelsCount,heads,manufacturer,model,mode,channels[{index,name,group,groupId,colour,controlByte,default,capabilities[{min,max,name,presetType,color1?,color2?}]}]}]` |
+| `/api/fixtures.json` | `fixtures[{id,name,type,universe,address(0-based),channelsCount,heads,manufacturer,model,mode,position?{x,y,z},rotation?{x,y,z},channels[{index,name,group,groupId,colour,controlByte,default,capabilities[{min,max,name,presetType,color1?,color2?}]}]}]` |
 | `/api/groups.json` | `fixtureGroups[{id,name,width,height,heads[{x,y,fixtureId,head}]}]`, `channelsGroups[{id,name,channels[{fixtureId,channel}]}]` |
 | `/api/functions.json` | `functions[{id,name,type,typeId,path,running,paused,fadeIn,fadeOut,duration,totalDuration, ...}]`. Chaser/Sequence add `currentStep`, `steps[{index,functionId,functionName,fadeIn,hold,fadeOut,duration,note}]` (Sequence: `boundSceneId`). Collection adds `functions[]`. Show adds `elapsed`, `tracks[{id,name,functions[{functionId,functionName,startTime,duration}]}]` |
 | `/vc.json` | upstream: full Virtual Console tree. **Request it once per session**: it also enables the widget push messages |

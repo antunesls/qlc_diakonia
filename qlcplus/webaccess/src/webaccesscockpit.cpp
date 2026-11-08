@@ -47,6 +47,7 @@
 #include "track.h"
 #include "showfunction.h"
 #include "simpledesk.h"
+#include "monitorproperties.h"
 
 #define UNIVERSE_PUSH_INTERVAL_MS   40   // 25 Hz
 #define SHOW_PUSH_INTERVAL_MS       250  // 4 Hz
@@ -206,6 +207,16 @@ QByteArray WebAccessCockpit::fixturesJson() const
             channels.append(chObj);
         }
         fx["channels"] = channels;
+
+        /* Monitor / 3D view placement (mm, degrees); absent if the fixture was never placed */
+        MonitorProperties *props = m_doc->monitorProperties();
+        if (props != nullptr && props->containsFixture(fxi->id()))
+        {
+            QVector3D pos = props->fixturePosition(fxi->id(), 0, 0);
+            QVector3D rot = props->fixtureRotation(fxi->id(), 0, 0);
+            fx["position"] = QJsonObject{{"x", pos.x()}, {"y", pos.y()}, {"z", pos.z()}};
+            fx["rotation"] = QJsonObject{{"x", rot.x()}, {"y", rot.y()}, {"z", rot.z()}};
+        }
         fixtures.append(fx);
     }
 
