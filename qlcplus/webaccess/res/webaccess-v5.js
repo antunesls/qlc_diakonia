@@ -59,6 +59,7 @@ const SPEED_VIS = {
 };
 
 const SPEED_LABELS = ["", "", "1/16", "1/8", "1/4", "1/2", "1", "2", "4", "8", "16"];
+const SPEED_MULTIPLIERS = [1, 0, 1 / 16, 1 / 8, 1 / 4, 1 / 2, 1, 2, 4, 8, 16];
 
 const FUNCTION_TYPE_ICONS = {
   Scene: "scene",
@@ -483,6 +484,31 @@ function renderButton(widget) {
     btn.addEventListener("touchcancel", onRelease);
   }
 
+  // color palette: a chip only selects the color, it never toggles the button
+  const palette = Array.isArray(widget.palette) ? widget.palette : [];
+  let chipEls = [];
+  if (palette.length && !isFlash) {
+    const strip = document.createElement("div");
+    strip.className = "vc-button-palette";
+    palette.forEach((color, index) => {
+      const chip = document.createElement("span");
+      chip.className = "vc-chip";
+      chip.style.background = color;
+      if (palette.length > 1) {
+        chip.classList.add("selectable");
+        chip.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          sendWidgetCommand(widget.id, "BUTTON_COLOR", index);
+        });
+      }
+      chipEls.push(chip);
+      strip.appendChild(chip);
+    });
+    btn.appendChild(strip);
+    btn.classList.add("has-palette");
+  }
+
   btn.addEventListener("click", (ev) => {
     if (isFlash) return;
     ev.preventDefault();
@@ -495,9 +521,17 @@ function renderButton(widget) {
     }
   });
 
-  state.widgets[widget.id] = { type: "button", el: btn, data: widget };
+  state.widgets[widget.id] = { type: "button", el: btn, data: widget, chips: chipEls };
   updateButtonState(widget.id, widget.state);
+  updateButtonColor(widget.id, widget.paletteIndex ?? 0);
   return btn;
+}
+
+function updateButtonColor(id, index) {
+  const w = state.widgets[id];
+  if (!w || !w.chips || w.chips.length < 2) return;
+  const sel = parseInt(index, 10);
+  w.chips.forEach((chip, i) => chip.classList.toggle("is-selected", i === sel));
 }
 
 function renderLabel(widget) {
@@ -2883,8 +2917,11 @@ function updateSpeedState(id, time, factor) {
 
   if (widget.multiplierLabel) {
     const label = SPEED_LABELS[widget.data.currentFactor] || "";
-    widget.multiplierLabel.top.textContent = `${label}x`;
-    widget.multiplierLabel.bottom.textContent = timeToQlcString(widget.data.currentTime, 0);
+    const mult = SPEED_MULTIPLIERS[widget.data.currentFactor] ?? 1;
+    const effective = Math.round(widget.data.currentTime * mult);
+    const bpm = effective > 0 ? ` · ${Math.round(60000 / effective)} BPM` : "";
+    widget.multiplierLabel.top.textContent = `${timeToQlcString(effective, 0)}${bpm}`;
+    widget.multiplierLabel.bottom.textContent = `${timeToQlcString(widget.data.currentTime, 0)} × ${label || "1"}`;
   }
 
   if (Array.isArray(widget.presets)) {
@@ -3034,6 +3071,9 @@ function handleSocketMessage(ev) {
   switch (cmd) {
     case "BUTTON":
       updateButtonState(id, msg[2]);
+      break;
+    case "BUTTON_COLOR":
+      updateButtonColor(id, msg[2]);
       break;
     case "BUTTON_DISABLE":
     case "SLIDER_DISABLE":

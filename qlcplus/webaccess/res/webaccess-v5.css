@@ -2042,3 +2042,24 @@ a,
     width: min(72vw, calc(var(--big-item-height) * 2.1));
   }
 }
+
+/* button color palette */
+.vc-button.has-palette { padding-bottom: 26px; }
+.vc-button-palette {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 6px;
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+.vc-chip {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  flex: none;
+}
+.vc-chip.selectable { cursor: pointer; }
+.vc-chip.selectable.is-selected { outline: 2px solid #fff; outline-offset: 1px; }

@@ -38,6 +38,8 @@ class VCButton : public VCWidget
     Q_PROPERTY(int stopAllFadeOutTime READ stopAllFadeOutTime WRITE setStopAllFadeOutTime NOTIFY stopAllFadeOutTimeChanged)
     Q_PROPERTY(bool flashOverrides READ flashOverrides WRITE setFlashOverride NOTIFY flashOverrideChanged)
     Q_PROPERTY(bool flashForceLTP READ flashForceLTP WRITE setFlashForceLTP NOTIFY flashForceLTPChanged)
+    Q_PROPERTY(QStringList paletteColors READ paletteColors NOTIFY paletteChanged)
+    Q_PROPERTY(int paletteIndex READ paletteIndex WRITE setPaletteIndex NOTIFY paletteIndexChanged)
 
     /*********************************************************************
      * Initialization
@@ -223,6 +225,45 @@ signals:
 protected:
     bool m_startupIntensityEnabled;
     qreal m_startupIntensity;
+
+    /*********************************************************************
+     * Color palette
+     *
+     * A button can carry a list of colors, each optionally bound to a Scene.
+     * When the button is switched on, the Scene of the selected color is
+     * started together with the button Function and stopped with it.
+     * Selecting another color never starts the button: it only changes the
+     * color (live, if the button is already active).
+     * A palette with a single entry is a fixed color indicator.
+     *********************************************************************/
+public:
+    typedef QPair<QColor, quint32> PaletteEntry;
+
+    /** Palette colors as #rrggbb strings */
+    QStringList paletteColors() const;
+    QList<PaletteEntry> palette() const;
+
+    /** Index of the selected palette color (-1 if there is no palette) */
+    int paletteIndex() const;
+    Q_INVOKABLE void setPaletteIndex(int index);
+
+    /** True if the user can choose among several colors */
+    Q_INVOKABLE bool paletteSelectable() const;
+
+    void clearPalette();
+    void addPaletteEntry(const QColor &color, quint32 fid = Function::invalidId());
+
+signals:
+    void paletteChanged();
+    void paletteIndexChanged();
+
+private:
+    void startPaletteFunction();
+    void stopPaletteFunction();
+    FunctionParent paletteParent() const;
+
+    QList<PaletteEntry> m_palette;
+    int m_paletteIndex;
 
     /*********************************************************************
      * External input

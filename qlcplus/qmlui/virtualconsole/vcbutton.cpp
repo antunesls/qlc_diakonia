@@ -46,6 +46,12 @@
 #define KXMLQLCVCButtonIntensity        QStringLiteral("Intensity")
 #define KXMLQLCVCButtonIntensityAdjust  QStringLiteral("Adjust")
 
+#define KXMLQLCVCButtonPalette          QStringLiteral("Palette")
+#define KXMLQLCVCButtonPaletteSelected  QStringLiteral("Selected")
+#define KXMLQLCVCButtonPaletteColor     QStringLiteral("Color")
+#define KXMLQLCVCButtonPaletteRGB       QStringLiteral("RGB")
+#define KXMLQLCVCButtonPaletteFunction  QStringLiteral("Function")
+
 /** **************** External Control IDs ***************** */
 
 #define INPUT_PRESSURE_ID   0
@@ -60,6 +66,7 @@ VCButton::VCButton(Doc *doc, QObject *parent)
     , m_stopAllFadeOutTime(0)
     , m_startupIntensityEnabled(false)
     , m_startupIntensity(1.0)
+    , m_paletteIndex(-1)
 {
     setType(VCWidget::ButtonWidget);
 
@@ -145,6 +152,11 @@ bool VCButton::copyFrom(const VCWidget* widget)
 
     setFlashForceLTP(button->flashForceLTP());
     setFlashOverride(button->flashOverrides());
+
+    clearPalette();
+    for (const PaletteEntry &e : button->palette())
+        addPaletteEntry(e.first, e.second);
+    setPaletteIndex(button->paletteIndex());
 
     /* Copy common stuff */
     return VCWidget::copyFrom(widget);
@@ -286,6 +298,7 @@ void VCButton::slotFunctionStopped(quint32 fid)
     if (fid == m_functionID && actionType() == Toggle)
     {
         resetIntensityOverrideAttribute();
+        stopPaletteFunction();
         setState(Inactive);
     }
 }
@@ -397,6 +410,7 @@ void VCButton::requestStateChange(bool pressed)
             {
                 f->stop(functionParent());
                 resetIntensityOverrideAttribute();
+                stopPaletteFunction();
                 setState(Inactive);
             }
             else
@@ -420,6 +434,7 @@ void VCButton::requestStateChange(bool pressed)
                 }
 
                 f->start(m_doc->masterTimer(), functionParent());
+                startPaletteFunction();
                 setState(Active);
                 emit functionStarting(this, m_functionID);
             }
@@ -464,6 +479,99 @@ void VCButton::requestStateChange(bool pressed)
     Tardis::instance()->enqueueAction(Tardis::VCButtonSetPressed, id(), false, pressed);
 }
 
+
+/*********************************************************************
+ * Color palette
+ *********************************************************************/
+
+QStringList VCButton::paletteColors() const
+{
+    QStringList list;
+    for (const PaletteEntry &e : m_palette)
+        list << e.first.name();
+    return list;
+}
+
+QList<VCButton::PaletteEntry> VCButton::palette() const
+{
+    return m_palette;
+}
+
+int VCButton::paletteIndex() const
+{
+    return m_paletteIndex;
+}
+
+bool VCButton::paletteSelectable() const
+{
+    return m_palette.count() > 1;
+}
+
+void VCButton::clearPalette()
+{
+    if (m_palette.isEmpty())
+        return;
+    stopPaletteFunction();
+    m_palette.clear();
+    m_paletteIndex = -1;
+    emit paletteChanged();
+    emit paletteIndexChanged();
+}
+
+void VCButton::addPaletteEntry(const QColor &color, quint32 fid)
+{
+    m_palette.append(PaletteEntry(color, fid));
+    if (m_paletteIndex < 0)
+        m_paletteIndex = 0;
+    emit paletteChanged();
+    emit paletteIndexChanged();
+}
+
+void VCButton::setPaletteIndex(int index)
+{
+    if (m_palette.isEmpty() || index < 0 || index >= m_palette.count() || index == m_paletteIndex)
+        return;
+
+    /* Only a button that is really running owns a color Scene */
+    bool live = (state() == Active);
+    if (live)
+        stopPaletteFunction();
+
+    m_paletteIndex = index;
+
+    if (live)
+        startPaletteFunction();
+
+    emit paletteIndexChanged();
+}
+
+FunctionParent VCButton::paletteParent() const
+{
+    /* A Function parent (not the widget): stopping a ManualVCWidget parent
+     * clears every source of the Scene, while this one only removes its own,
+     * so buttons sharing a color Scene do not switch it off for each other */
+    return FunctionParent(FunctionParent::Function, m_functionID);
+}
+
+void VCButton::startPaletteFunction()
+{
+    if (m_paletteIndex < 0 || m_paletteIndex >= m_palette.count())
+        return;
+
+    Function *f = m_doc->function(m_palette.at(m_paletteIndex).second);
+    if (f != nullptr)
+        f->start(m_doc->masterTimer(), paletteParent());
+}
+
+void VCButton::stopPaletteFunction()
+{
+    if (m_paletteIndex < 0 || m_paletteIndex >= m_palette.count())
+        return;
+
+    Function *f = m_doc->function(m_palette.at(m_paletteIndex).second);
+    if (f != nullptr)
+        f->stop(paletteParent());
+}
 
 /*********************************************************************
  * Button action
@@ -654,6 +762,25 @@ bool VCButton::loadXML(QXmlStreamReader &root)
             setStartupIntensity(qreal(root.readElementText().toInt()) / qreal(100));
             setStartupIntensityEnabled(adjust);
         }
+        else if (root.name() == KXMLQLCVCButtonPalette)
+        {
+            int selected = root.attributes().value(KXMLQLCVCButtonPaletteSelected).toInt();
+            clearPalette();
+            while (root.readNextStartElement())
+            {
+                if (root.name() == KXMLQLCVCButtonPaletteColor)
+                {
+                    QXmlStreamAttributes attrs = root.attributes();
+                    QColor col(attrs.value(KXMLQLCVCButtonPaletteRGB).toString());
+                    quint32 fid = attrs.hasAttribute(KXMLQLCVCButtonPaletteFunction) ?
+                                  attrs.value(KXMLQLCVCButtonPaletteFunction).toUInt() : Function::invalidId();
+                    if (col.isValid())
+                        addPaletteEntry(col, fid);
+                }
+                root.skipCurrentElement();
+            }
+            setPaletteIndex(selected);
+        }
         else if (root.name() == KXMLQLCVCWidgetInput)
         {
             loadXMLInputSource(root, INPUT_PRESSURE_ID);
@@ -716,6 +843,22 @@ bool VCButton::saveXML(QXmlStreamWriter *doc) const
     {
         doc->writeStartElement(KXMLQLCVCButtonIntensity);
         doc->writeCharacters(QString::number(int(startupIntensity() * 100)));
+        doc->writeEndElement();
+    }
+
+    /* Color palette */
+    if (!m_palette.isEmpty())
+    {
+        doc->writeStartElement(KXMLQLCVCButtonPalette);
+        doc->writeAttribute(KXMLQLCVCButtonPaletteSelected, QString::number(qMax(0, m_paletteIndex)));
+        for (const PaletteEntry &e : m_palette)
+        {
+            doc->writeStartElement(KXMLQLCVCButtonPaletteColor);
+            doc->writeAttribute(KXMLQLCVCButtonPaletteRGB, e.first.name());
+            if (e.second != Function::invalidId())
+                doc->writeAttribute(KXMLQLCVCButtonPaletteFunction, QString::number(e.second));
+            doc->writeEndElement();
+        }
         doc->writeEndElement();
     }
 

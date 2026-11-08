@@ -40,6 +40,35 @@ VCWidgetItem
         GradientStop { position: 1 ; color: buttonRoot.color }
     }
 
+    // color palette strip (bottom of the button)
+    property var palette: buttonObj ? buttonObj.paletteColors : []
+    property int paletteIdx: buttonObj ? buttonObj.paletteIndex : -1
+    property bool hasPalette: palette.length > 0
+    property bool selectable: palette.length > 1
+    property real chipSize: Math.max(12, Math.min(22, height * 0.22))
+    property real chipGap: chipSize * 0.35
+    property real stripHeight: hasPalette ? chipSize + chipGap * 2 : 0
+
+    // returns the chip index under (px, py), -1 if the point is not on a chip
+    function chipAt(px, py)
+    {
+        if (!selectable || py < height - stripHeight - 8)
+            return -1
+        var idx = Math.floor((px - chipGap - 4) / (chipSize + chipGap))
+        return (idx >= 0 && idx < palette.length) ? idx : -1
+    }
+
+    // true if the tap was used to pick a color instead of toggling the button
+    function handlePaletteTap(px, py)
+    {
+        if (!hasPalette || py < height - stripHeight - 8)
+            return false
+        var idx = chipAt(px, py)
+        if (idx >= 0)
+            buttonObj.paletteIndex = idx
+        return true
+    }
+
     function checkActionType()
     {
         if (btnAction === VCButton.Flash)
@@ -106,7 +135,7 @@ VCWidgetItem
                 x: 2
                 z: 2
                 width: parent.width - 4
-                height: parent.height
+                height: parent.height - buttonRoot.stripHeight
                 font: buttonObj ? buttonObj.font : Qt.font({ family: UISettings.robotoFontName })
                 text: buttonObj ? buttonObj.caption : ""
                 verticalAlignment: Text.AlignVCenter
@@ -114,6 +143,32 @@ VCWidgetItem
                 wrapMode: Text.Wrap
                 lineHeight: 0.8
                 color: buttonObj ? buttonObj.foregroundColor : "#111"
+            }
+
+            Row
+            {
+                id: chipsRow
+                visible: buttonRoot.hasPalette
+                z: 3
+                x: buttonRoot.chipGap
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: buttonRoot.chipGap
+                spacing: buttonRoot.chipGap
+
+                Repeater
+                {
+                    model: buttonRoot.palette
+
+                    Rectangle
+                    {
+                        width: buttonRoot.chipSize
+                        height: width
+                        radius: width / 2
+                        color: modelData
+                        border.width: index === buttonRoot.paletteIdx && buttonRoot.selectable ? 2 : 1
+                        border.color: index === buttonRoot.paletteIdx && buttonRoot.selectable ? "white" : "#80000000"
+                    }
+                }
             }
 
             Image
@@ -135,9 +190,12 @@ VCWidgetItem
     {
         anchors.fill: parent
         enabled: buttonObj && !buttonObj.isDisabled
-        onClicked:
+        onClicked: (mouse) =>
         {
             if (virtualConsole.editMode)
+                return;
+
+            if (buttonRoot.handlePaletteTap(mouse.x, mouse.y))
                 return;
 
             if (buttonObj.actionType === VCButton.Toggle || buttonObj.actionType === VCButton.Blackout)
@@ -183,9 +241,12 @@ VCWidgetItem
             if (buttonObj.actionType === VCButton.Flash)
                 buttonObj.requestStateChange(true)
         }
-        onReleased:
+        onReleased: (touchPoints) =>
         {
             if (virtualConsole.editMode)
+                return;
+
+            if (touchPoints.length && buttonRoot.handlePaletteTap(touchPoints[0].x, touchPoints[0].y))
                 return;
 
             if (buttonObj.actionType === VCButton.Flash)

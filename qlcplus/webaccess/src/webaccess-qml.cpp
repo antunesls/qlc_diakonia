@@ -826,7 +826,12 @@ void WebAccessQml::slotHandleWebSocketRequest(QHttpConnection *conn, QString dat
         {
             VCButton *button = qobject_cast<VCButton*>(widget);
             if (button != nullptr)
-                button->requestStateChange(value > 0);
+            {
+                if (cmdList.count() > 2 && cmdList[1] == "BUTTON_COLOR")
+                    button->setPaletteIndex(cmdList[2].toInt());
+                else
+                    button->requestStateChange(value > 0);
+            }
         }
         break;
         case VCWidget::SliderWidget:
@@ -1223,6 +1228,14 @@ QJsonObject WebAccessQml::widgetToJson(const VCWidget *widget)
             obj["state"] = button->state();
             obj["actionType"] = button->actionType();
             obj["functionId"] = int(button->functionID());
+            if (!button->palette().isEmpty())
+            {
+                QJsonArray palette;
+                for (const VCButton::PaletteEntry &e : button->palette())
+                    palette.append(e.first.name());
+                obj["palette"] = palette;
+                obj["paletteIndex"] = button->paletteIndex();
+            }
         }
         break;
         case VCWidget::SliderWidget:
@@ -1429,6 +1442,8 @@ void WebAccessQml::setupWidgetConnections(const VCWidget *widget)
             const VCButton *button = qobject_cast<const VCButton*>(widget);
             connect(button, SIGNAL(stateChanged(int)),
                     this, SLOT(slotButtonStateChanged(int)));
+            connect(button, SIGNAL(paletteIndexChanged()),
+                    this, SLOT(slotButtonPaletteChanged()));
             connect(button, SIGNAL(disabledStateChanged(bool)),
                     this, SLOT(slotButtonDisableStateChanged(bool)));
         }
@@ -1563,6 +1578,15 @@ void WebAccessQml::slotButtonStateChanged(int state)
     QString wsMessage = QString("%1|BUTTON|%2").arg(btn->id()).arg(state == VCButton::Active ? 255 :
                                                                   state == VCButton::Monitoring ? 127 : 0);
     sendWebSocketMessage(wsMessage);
+}
+
+void WebAccessQml::slotButtonPaletteChanged()
+{
+    VCButton *btn = qobject_cast<VCButton *>(sender());
+    if (btn == nullptr)
+        return;
+
+    sendWebSocketMessage(QString("%1|BUTTON_COLOR|%2").arg(btn->id()).arg(btn->paletteIndex()));
 }
 
 void WebAccessQml::slotButtonDisableStateChanged(bool disable)
