@@ -143,6 +143,44 @@ VCWidgetItem
                 onToggled: if (frameObj) frameObj.isDisabled = !checked
             }
 
+            // scene transition selector: fade in/out time used by the buttons of this frame
+            RowLayout
+            {
+                id: transitionRow
+                visible: frameObj ? frameObj.transitionIndex >= 0 : false
+                height: parent.height
+                spacing: 2
+
+                Repeater
+                {
+                    model: frameObj ? frameObj.transitionTimes : []
+
+                    Rectangle
+                    {
+                        Layout.preferredWidth: Math.max(UISettings.listItemHeight * 1.5, chipText.implicitWidth + 12)
+                        Layout.fillHeight: true
+                        color: frameObj && index === frameObj.transitionIndex ? "#FFC107" : "#33000000"
+                        border.width: 1
+                        border.color: "#80FFFFFF"
+
+                        Text
+                        {
+                            id: chipText
+                            anchors.centerIn: parent
+                            text: modelData === 0 ? qsTr("Cut") : (modelData / 1000).toString().replace(".", ",") + "s"
+                            font.pixelSize: parent.height * 0.5
+                            color: frameObj && index === frameObj.transitionIndex ? "black" : "white"
+                        }
+
+                        MouseArea
+                        {
+                            anchors.fill: parent
+                            onClicked: if (frameObj) frameObj.transitionIndex = index
+                        }
+                    }
+                }
+            }
+
             // multi page controls
             RowLayout
             {

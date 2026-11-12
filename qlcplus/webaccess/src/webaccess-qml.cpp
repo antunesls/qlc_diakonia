@@ -942,6 +942,8 @@ void WebAccessQml::slotHandleWebSocketRequest(QHttpConnection *conn, QString dat
                 setFramePageCompat(frame, cmdList[2].toInt());
             else if (cmdList[1] == "FRAME_DISABLE" && cmdList.count() > 2)
                 frame->setDisabled(cmdList[2] == "1");
+            else if (cmdList[1] == "FRAME_TRANSITION" && cmdList.count() > 2)
+                frame->setTransitionIndex(cmdList[2].toInt());
             else if (cmdList[1] == "COLLAPSE" && cmdList.count() > 2)
                 frame->setCollapsed(cmdList[2].toInt() == 1);
         }
@@ -1204,6 +1206,11 @@ QJsonObject WebAccessQml::frameToJson(const VCFrame *frame)
     for (const QString &label : frame->pageLabels())
         labels.append(label);
     obj["pageLabels"] = labels;
+    if (frame->transitionIndex() >= 0)
+    {
+        obj["transitionTimes"] = QJsonArray::fromVariantList(frame->transitionTimes());
+        obj["transitionIndex"] = frame->transitionIndex();
+    }
 
     QJsonArray children;
     QList<VCWidget *> childList = frame->children(false);
@@ -1504,6 +1511,8 @@ void WebAccessQml::setupWidgetConnections(const VCWidget *widget)
                     this, SLOT(slotFramePageChanged(int)));
             connect(frame, SIGNAL(disabledStateChanged(bool)),
                     this, SLOT(slotFrameDisableStateChanged(bool)));
+            connect(frame, SIGNAL(transitionIndexChanged()),
+                    this, SLOT(slotFrameTransitionChanged()));
 
             QList<VCWidget *> children = frame->children(false);
             for (VCWidget *child : children)
@@ -1746,6 +1755,15 @@ void WebAccessQml::slotFramePageChanged(int pageNum)
 
     QString wsMessage = QString("%1|FRAME|%2").arg(frame->id()).arg(pageNum);
     sendWebSocketMessage(wsMessage);
+}
+
+void WebAccessQml::slotFrameTransitionChanged()
+{
+    VCFrame *frame = qobject_cast<VCFrame *>(sender());
+    if (frame == nullptr)
+        return;
+
+    sendWebSocketMessage(QString("%1|FRAME_TRANSITION|%2").arg(frame->id()).arg(frame->transitionIndex()));
 }
 
 void WebAccessQml::slotFrameDisableStateChanged(bool disable)

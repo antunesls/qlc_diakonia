@@ -49,6 +49,8 @@ VCFrame::VCFrame(Doc *doc, VirtualConsole *vc, QObject *parent)
     , m_currentPage(0)
     , m_totalPagesNumber(1)
     , m_pagesLoop(false)
+    , m_transitionTimes({0, 500, 1000, 3000, 6000})
+    , m_transitionIndex(-1)
     , m_PIN(0)
     , m_validatedPIN(false)
     , m_submasterValue(1)
@@ -59,6 +61,59 @@ VCFrame::VCFrame(Doc *doc, VirtualConsole *vc, QObject *parent)
     registerExternalControl(INPUT_PREVIOUS_PAGE_ID, tr("Previous Page"), true);
     registerExternalControl(INPUT_ENABLE_ID, tr("Enable"), true);
     registerExternalControl(INPUT_COLLAPSE_ID, tr("Collapse"), true);
+}
+
+QVariantList VCFrame::transitionTimes() const
+{
+    QVariantList list;
+    for (int t : m_transitionTimes)
+        list << t;
+    return list;
+}
+
+void VCFrame::setTransitionTimes(const QList<int> &times)
+{
+    if (times.isEmpty())
+        return;
+    m_transitionTimes = times;
+    if (m_transitionIndex >= times.count())
+        m_transitionIndex = times.count() - 1;
+}
+
+int VCFrame::transitionIndex() const
+{
+    return m_transitionIndex;
+}
+
+void VCFrame::setTransitionIndex(int index)
+{
+    if (index < -1 || index >= m_transitionTimes.count() || index == m_transitionIndex)
+        return;
+
+    m_transitionIndex = index;
+    emit transitionIndexChanged();
+}
+
+QString VCFrame::exclusiveGroup() const
+{
+    return m_exclusiveGroup;
+}
+
+void VCFrame::setExclusiveGroup(const QString &group)
+{
+    if (group == m_exclusiveGroup)
+        return;
+
+    m_exclusiveGroup = group;
+    setDocModified();
+    emit exclusiveGroupChanged();
+}
+
+int VCFrame::transitionMs() const
+{
+    if (m_transitionIndex < 0 || m_transitionIndex >= m_transitionTimes.count())
+        return -1;
+    return m_transitionTimes.at(m_transitionIndex);
 }
 
 VCFrame::~VCFrame()
@@ -1354,6 +1409,23 @@ bool VCFrame::loadXML(QXmlStreamReader &root)
             else
                 reinterpret_cast<VCSoloFrame*>(this)->setExcludeMonitoredFunctions(false);
         }
+        else if (root.name() == QStringLiteral("ExclusiveGroup"))
+        {
+            setExclusiveGroup(root.readElementText());
+        }
+        else if (root.name() == QStringLiteral("Transition"))
+        {
+            QXmlStreamAttributes attrs = root.attributes();
+            if (attrs.hasAttribute(QStringLiteral("Times")))
+            {
+                QList<int> times;
+                for (const QString &t : attrs.value(QStringLiteral("Times")).toString().split(','))
+                    times << t.trimmed().toInt();
+                setTransitionTimes(times);
+            }
+            setTransitionIndex(attrs.value(QStringLiteral("Selected")).toInt());
+            root.skipCurrentElement();
+        }
         else if (root.name() == KXMLQLCVCFramePIN)
         {
             SimpleCrypt crypter(encKey);
@@ -1470,6 +1542,22 @@ bool VCFrame::saveXML(QXmlStreamWriter *doc) const
 
         if (solo->excludeMonitoredFunctions())
             doc->writeTextElement(KXMLQLCVCSoloFrameExclude, KXMLQLCTrue);
+    }
+
+    /* Console-wide exclusive group */
+    if (!m_exclusiveGroup.isEmpty())
+        doc->writeTextElement(QStringLiteral("ExclusiveGroup"), m_exclusiveGroup);
+
+    /* Scene transition selector */
+    if (m_transitionIndex >= 0)
+    {
+        QStringList times;
+        for (int t : m_transitionTimes)
+            times << QString::number(t);
+        doc->writeStartElement(QStringLiteral("Transition"));
+        doc->writeAttribute(QStringLiteral("Selected"), QString::number(m_transitionIndex));
+        doc->writeAttribute(QStringLiteral("Times"), times.join(','));
+        doc->writeEndElement();
     }
 
     /* Collapsed */

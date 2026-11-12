@@ -72,6 +72,7 @@ protected slots:
 
     void slotButtonStateChanged(int state);
     void slotButtonPaletteChanged();
+    void slotFrameTransitionChanged();
     void slotButtonDisableStateChanged(bool disable);
     void slotLabelDisableStateChanged(bool disable);
     void slotWidgetVisibilityChanged(bool isVisible);

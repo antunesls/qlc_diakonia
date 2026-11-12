@@ -64,6 +64,9 @@ class VCFrame : public VCWidget
     Q_PROPERTY(int totalPagesNumber READ totalPagesNumber WRITE setTotalPagesNumber NOTIFY totalPagesNumberChanged)
     Q_PROPERTY(int PIN READ PIN WRITE setPIN NOTIFY PINChanged)
     Q_PROPERTY(QStringList pageLabels READ pageLabels NOTIFY pageLabelsChanged)
+    Q_PROPERTY(QVariantList transitionTimes READ transitionTimes CONSTANT)
+    Q_PROPERTY(int transitionIndex READ transitionIndex WRITE setTransitionIndex NOTIFY transitionIndexChanged)
+    Q_PROPERTY(QString exclusiveGroup READ exclusiveGroup WRITE setExclusiveGroup NOTIFY exclusiveGroupChanged)
 
     /*********************************************************************
      * Initialization
@@ -256,6 +259,42 @@ protected:
     ushort m_totalPagesNumber;
     /** Flag to cycle through pages when reaching the end */
     bool m_pagesLoop;
+
+    /*********************************************************************
+     * Scene transition
+     *
+     * A frame can offer a list of transition times (cut, 0.5 s, 1 s...).
+     * The selected one is used as fade in / fade out of every Button below
+     * this frame, so switching what plays is smooth (or a cut) on demand.
+     *********************************************************************/
+public:
+    /** Selectable transition times, in milliseconds */
+    QVariantList transitionTimes() const;
+    void setTransitionTimes(const QList<int> &times);
+
+    /** Selected time (index in transitionTimes), -1 if the frame has no transition control */
+    int transitionIndex() const;
+    void setTransitionIndex(int index);
+
+    /** Selected time in ms, -1 when the frame has no transition control */
+    int transitionMs() const;
+
+    /**
+     * Name of a console-wide exclusive group. Buttons below frames of the same group
+     * switch each other off wherever they are (other frames, other pages): starting one
+     * stops the others, using the transition time of the frame of the one that starts.
+     */
+    QString exclusiveGroup() const;
+    void setExclusiveGroup(const QString &group);
+
+signals:
+    void transitionIndexChanged();
+    void exclusiveGroupChanged();
+
+protected:
+    QList<int> m_transitionTimes;
+    int m_transitionIndex;
+    QString m_exclusiveGroup;
     /** Map of the page index/label */
     QMap<int, QString> m_pageLabels;
 

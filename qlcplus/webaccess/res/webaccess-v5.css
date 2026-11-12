@@ -2063,3 +2063,8 @@ a,
 }
 .vc-chip.selectable { cursor: pointer; }
 .vc-chip.selectable.is-selected { outline: 2px solid #fff; outline-offset: 1px; }
+
+/* frame transition selector */
+.frame-transition { display: flex; gap: 3px; margin-right: 6px; }
+.transition-chip { min-width: 34px; padding: 0 6px; font-size: 12px; }
+.transition-chip.is-selected { background: #ffc107; color: #111; }

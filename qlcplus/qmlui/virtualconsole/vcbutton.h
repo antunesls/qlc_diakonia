@@ -20,6 +20,9 @@
 #ifndef VCBUTTON_H
 #define VCBUTTON_H
 
+#include <QTimer>
+#include <QElapsedTimer>
+
 #include "vcwidget.h"
 
 #define KXMLQLCVCButton QStringLiteral("Button")
@@ -257,7 +260,40 @@ signals:
     void paletteChanged();
     void paletteIndexChanged();
 
+public:
+    /** Exclusive group of this button (from the closest frame that declares one), empty if none */
+    QString exclusiveGroup() const;
+
+    /** Transition time (ms) of the closest frame above [widget] that has a transition selector, -1 if none */
+    static int transitionFor(const VCWidget *widget);
+
 private:
+    /**
+     * Stops [f] with the transition time [ms]: Scenes fade out with the given time,
+     * any other Function (chaser, matrix, collection...) has its intensity ramped
+     * down and is stopped at the end, so its own step timing is left untouched.
+     */
+    void stopWithTransition(Function *f, int ms);
+
+    /** Stops every other active Toggle button of the same exclusive group, anywhere in the console */
+    void stopGroupMates();
+
+    /** Starts [f] with the transition time [ms] (fade in for Scenes, intensity ramp otherwise) */
+    void startWithTransition(Function *f, int ms);
+
+    /** Ramps the intensity of the Function [fid] from [from] to [to] in [ms] (optionally stopping it at the end) */
+    void startRamp(quint32 fid, qreal from, qreal to, int ms, bool stopAtEnd);
+
+protected slots:
+    void slotRampTick();
+
+private:
+    QTimer *m_rampTimer;
+    QElapsedTimer m_rampClock;
+    quint32 m_rampFid;
+    qreal m_rampFrom, m_rampTo, m_rampCurrent;
+    int m_rampMs;
+    bool m_rampStopAtEnd;
     void startPaletteFunction();
     void stopPaletteFunction();
     FunctionParent paletteParent() const;

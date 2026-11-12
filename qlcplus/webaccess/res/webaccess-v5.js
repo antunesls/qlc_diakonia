@@ -2413,6 +2413,7 @@ function renderFrame(widget, isSolo) {
   let pageSelect = null;
   let enableBtn = null;
   let collapseBtn = null;
+  const transitionChips = [];
 
   if (widget.showHeader) {
     const header = document.createElement("div");
@@ -2453,6 +2454,22 @@ function renderFrame(widget, isSolo) {
         sendWidgetCommand(widget.id, "FRAME_DISABLE", nextDisabled ? 1 : 0);
       });
       controls.append(enableBtn);
+    }
+
+    // transition selector: the chosen time is the fade in/out of every button of this frame
+    if (Array.isArray(widget.transitionTimes) && widget.transitionTimes.length) {
+      const strip = document.createElement("div");
+      strip.className = "frame-transition";
+      strip.title = "Transição entre cenas";
+      widget.transitionTimes.forEach((ms, index) => {
+        const chip = document.createElement("button");
+        chip.className = "frame-btn transition-chip";
+        chip.textContent = ms === 0 ? "Corte" : `${ms / 1000}s`.replace(".", ",");
+        chip.addEventListener("click", () => sendWidgetCommand(widget.id, "FRAME_TRANSITION", index));
+        transitionChips.push(chip);
+        strip.appendChild(chip);
+      });
+      controls.append(strip);
     }
 
     if (widget.multiPageMode) {
@@ -2533,14 +2550,23 @@ function renderFrame(widget, isSolo) {
     pageSelect,
     enableBtn,
     collapseBtn,
+    transitionChips,
     data: widget,
   };
+  updateFrameTransition(widget.id, widget.transitionIndex);
 
   if (widget.multiPageMode) {
     applyFramePage(widget.id, widget.currentPage);
   }
 
   return root;
+}
+
+function updateFrameTransition(id, index) {
+  const w = state.widgets[id];
+  if (!w || !w.transitionChips) return;
+  const sel = parseInt(index, 10);
+  w.transitionChips.forEach((chip, i) => chip.classList.toggle("is-selected", i === sel));
 }
 
 function renderWidget(widget) {
@@ -3152,6 +3178,9 @@ function handleSocketMessage(ev) {
       }
       break;
     }
+    case "FRAME_TRANSITION":
+      updateFrameTransition(id, msg[2]);
+      break;
     case "FRAME": {
       const pageIndex = parseInt(msg[2], 10);
       if (Number.isNaN(pageIndex)) break;

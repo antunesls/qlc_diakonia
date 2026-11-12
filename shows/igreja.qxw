@@ -1913,6 +1913,8 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="2" Times="0,500,1000,3000,6000"/>
+    <ExclusiveGroup>cena</ExclusiveGroup>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="Luz Pastor" ID="8">
@@ -2062,6 +2064,8 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="3" Times="0,500,1000,3000,6000"/>
+    <ExclusiveGroup>cena</ExclusiveGroup>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="Pulso Verm/Âmbar" ID="33">
@@ -2313,6 +2317,7 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="2" Times="0,500,1000,3000,6000"/>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="Anim. Onda – luz corre com rastro suave" ID="91">
@@ -2608,6 +2613,8 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="2" Times="0,500,1000,3000,6000"/>
+    <ExclusiveGroup>cena</ExclusiveGroup>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="Clímax (seq.)" ID="45">
@@ -3818,6 +3825,8 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="2" Times="0,500,1000,3000,6000"/>
+    <ExclusiveGroup>cena</ExclusiveGroup>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="2. ▶ Narração 27" ID="80">
@@ -3892,6 +3901,7 @@
     <AllowResize>True</AllowResize>
     <ShowHeader>True</ShowHeader>
     <ShowEnableButton>True</ShowEnableButton>
+    <Transition Selected="2" Times="0,500,1000,3000,6000"/>
     <Collapsed>False</Collapsed>
     <Disabled>False</Disabled>
     <Button Caption="Arco-íris correndo – as cores andam pela fileira" ID="213">

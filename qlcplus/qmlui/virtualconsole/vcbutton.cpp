@@ -23,6 +23,8 @@
 #include "chaseraction.h"
 #include "qlcmacros.h"
 #include "vcbutton.h"
+#include "vcframe.h"
+#include "collection.h"
 #include "chaser.h"
 #include "tardis.h"
 #include "doc.h"
@@ -56,6 +58,9 @@
 
 #define INPUT_PRESSURE_ID   0
 
+/** Every live button, to find the members of an exclusive group across frames and pages */
+static QList<VCButton *> s_buttons;
+
 VCButton::VCButton(Doc *doc, QObject *parent)
     : VCWidget(doc, parent)
     , m_functionID(Function::invalidId())
@@ -66,15 +71,24 @@ VCButton::VCButton(Doc *doc, QObject *parent)
     , m_stopAllFadeOutTime(0)
     , m_startupIntensityEnabled(false)
     , m_startupIntensity(1.0)
+    , m_rampTimer(nullptr)
+    , m_rampFid(Function::invalidId())
+    , m_rampFrom(0)
+    , m_rampTo(0)
+    , m_rampCurrent(1)
+    , m_rampMs(0)
+    , m_rampStopAtEnd(false)
     , m_paletteIndex(-1)
 {
     setType(VCWidget::ButtonWidget);
+    s_buttons.append(this);
 
     registerExternalControl(INPUT_PRESSURE_ID, tr("Pressure"), true);
 }
 
 VCButton::~VCButton()
 {
+    s_buttons.removeAll(this);
     if (m_item)
         delete m_item;
 }
@@ -277,8 +291,7 @@ void VCButton::notifyFunctionStarting(VCWidget *widget, quint32 fid, qreal fInte
         Function *f = m_doc->function(m_functionID);
         if (f != NULL)
         {
-            f->stop(functionParent());
-            resetIntensityOverrideAttribute();
+            stopWithTransition(f, transitionFor(widget));
         }
     }
 }
@@ -408,8 +421,7 @@ void VCButton::requestStateChange(bool pressed)
             // functions off and start this one.
             if (state() == Active && !(hasSoloParent() && f->startedAsChild()))
             {
-                f->stop(functionParent());
-                resetIntensityOverrideAttribute();
+                stopWithTransition(f, transitionFor(this));
                 stopPaletteFunction();
                 setState(Inactive);
             }
@@ -433,10 +445,11 @@ void VCButton::requestStateChange(bool pressed)
                     chaser->setAction(action);
                 }
 
-                f->start(m_doc->masterTimer(), functionParent());
+                startWithTransition(f, transitionFor(this));
                 startPaletteFunction();
                 setState(Active);
                 emit functionStarting(this, m_functionID);
+                stopGroupMates();
             }
         }
         break;
@@ -545,6 +558,168 @@ void VCButton::setPaletteIndex(int index)
     emit paletteIndexChanged();
 }
 
+QString VCButton::exclusiveGroup() const
+{
+    const VCWidget *w = this;
+    while (w != nullptr)
+    {
+        w = qobject_cast<const VCWidget*>(w->parent());
+        if (w == nullptr)
+            break;
+        if (w->type() == VCWidget::FrameWidget || w->type() == VCWidget::SoloFrameWidget)
+        {
+            QString group = static_cast<const VCFrame*>(w)->exclusiveGroup();
+            if (!group.isEmpty())
+                return group;
+        }
+    }
+    return QString();
+}
+
+void VCButton::stopGroupMates()
+{
+    const QString group = exclusiveGroup();
+    if (group.isEmpty())
+        return;
+
+    for (VCButton *other : s_buttons)
+    {
+        if (other == this || other->actionType() != Toggle || other->state() == Inactive)
+            continue;
+        if (other->functionID() == m_functionID || other->exclusiveGroup() != group)
+            continue;
+
+        other->notifyFunctionStarting(this, m_functionID, 1.0, false);
+    }
+}
+
+int VCButton::transitionFor(const VCWidget *widget)
+{
+    const VCWidget *w = widget;
+    while (w != nullptr)
+    {
+        w = qobject_cast<const VCWidget*>(w->parent());
+        if (w == nullptr)
+            break;
+        if (w->type() == VCWidget::FrameWidget || w->type() == VCWidget::SoloFrameWidget)
+        {
+            int ms = static_cast<const VCFrame*>(w)->transitionMs();
+            if (ms >= 0)
+                return ms;
+        }
+    }
+    return -1;
+}
+
+void VCButton::startRamp(quint32 fid, qreal from, qreal to, int ms, bool stopAtEnd)
+{
+    m_rampFid = fid;
+    m_rampFrom = from;
+    m_rampTo = to;
+    m_rampCurrent = from;
+    m_rampMs = qMax(1, ms);
+    m_rampStopAtEnd = stopAtEnd;
+    m_rampClock.start();
+
+    if (m_rampTimer == nullptr)
+    {
+        m_rampTimer = new QTimer(this);
+        m_rampTimer->setInterval(30);
+        connect(m_rampTimer, SIGNAL(timeout()), this, SLOT(slotRampTick()));
+    }
+    m_rampTimer->start();
+}
+
+void VCButton::slotRampTick()
+{
+    Function *f = m_doc->function(m_rampFid);
+    if (f == nullptr || f->isRunning() == false)
+    {
+        m_rampTimer->stop();
+        return;
+    }
+
+    qreal k = qMin(qreal(1), qreal(m_rampClock.elapsed()) / qreal(m_rampMs));
+    m_rampCurrent = m_rampFrom + (m_rampTo - m_rampFrom) * k;
+    adjustFunctionIntensity(f, m_rampCurrent);
+
+    if (k >= 1)
+    {
+        m_rampTimer->stop();
+        if (m_rampStopAtEnd)
+        {
+            f->stop(functionParent());
+            resetIntensityOverrideAttribute();
+        }
+    }
+}
+
+void VCButton::startWithTransition(Function *f, int ms)
+{
+    if (m_rampTimer != nullptr)
+        m_rampTimer->stop();
+
+    if (ms < 0)
+    {
+        f->start(m_doc->masterTimer(), functionParent());
+        return;
+    }
+
+    if (f->type() == Function::SceneType)
+    {
+        f->start(m_doc->masterTimer(), functionParent(), 0, uint(ms), uint(ms));
+        return;
+    }
+
+    /* the Function was still fading out: just ramp it back up from where it is */
+    if (m_rampStopAtEnd && f->isRunning())
+    {
+        m_rampStopAtEnd = false;
+        if (ms > 0)
+            startRamp(f->id(), m_rampCurrent, intensity(), ms, false);
+        else
+            adjustFunctionIntensity(f, intensity());
+        return;
+    }
+
+    if (ms > 0)
+        adjustFunctionIntensity(f, 0);
+    f->start(m_doc->masterTimer(), functionParent());
+    if (ms > 0)
+        startRamp(f->id(), 0, intensity(), ms, false);
+}
+
+void VCButton::stopWithTransition(Function *f, int ms)
+{
+    m_rampStopAtEnd = false;
+    if (m_rampTimer != nullptr)
+        m_rampTimer->stop();
+
+    if (ms < 0)
+    {
+        f->stop(functionParent());
+        resetIntensityOverrideAttribute();
+        return;
+    }
+
+    if (f->type() == Function::SceneType)
+    {
+        f->setOverrideFadeOutSpeed(uint(ms));
+        f->stop(functionParent());
+        resetIntensityOverrideAttribute();
+        return;
+    }
+
+    if (ms == 0 || f->isRunning() == false)
+    {
+        f->stop(functionParent());
+        resetIntensityOverrideAttribute();
+        return;
+    }
+
+    startRamp(f->id(), m_rampCurrent < 1 && m_rampFid == f->id() ? m_rampCurrent : intensity(), 0, ms, true);
+}
+
 FunctionParent VCButton::paletteParent() const
 {
     /* A Function parent (not the widget): stopping a ManualVCWidget parent
@@ -560,7 +735,13 @@ void VCButton::startPaletteFunction()
 
     Function *f = m_doc->function(m_palette.at(m_paletteIndex).second);
     if (f != nullptr)
-        f->start(m_doc->masterTimer(), paletteParent());
+    {
+        int ms = transitionFor(this);
+        if (ms >= 0)
+            f->start(m_doc->masterTimer(), paletteParent(), 0, uint(ms), uint(ms));
+        else
+            f->start(m_doc->masterTimer(), paletteParent());
+    }
 }
 
 void VCButton::stopPaletteFunction()
@@ -570,7 +751,12 @@ void VCButton::stopPaletteFunction()
 
     Function *f = m_doc->function(m_palette.at(m_paletteIndex).second);
     if (f != nullptr)
+    {
+        int ms = transitionFor(this);
+        if (ms >= 0)
+            f->setOverrideFadeOutSpeed(uint(ms));
         f->stop(paletteParent());
+    }
 }
 
 /*********************************************************************
