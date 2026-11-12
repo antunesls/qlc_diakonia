@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.model
+package com.diakolight.model
 
 import kotlin.math.floor
 

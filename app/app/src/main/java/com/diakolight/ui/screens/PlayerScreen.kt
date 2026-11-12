@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -52,15 +52,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.diakonia.qlccockpit.data.ApiMode
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.model.FunctionKind
-import com.diakonia.qlccockpit.model.QlcFunction
-import com.diakonia.qlccockpit.ui.components.HorizontalFader
-import com.diakonia.qlccockpit.ui.components.LabeledHorizontalFader
-import com.diakonia.qlccockpit.ui.components.StatusDot
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.ApiMode
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.model.FunctionKind
+import com.diakolight.model.QlcFunction
+import com.diakolight.ui.components.HorizontalFader
+import com.diakolight.ui.components.LabeledHorizontalFader
+import com.diakolight.ui.components.StatusDot
+import com.diakolight.ui.theme.CockpitColors
 
 fun formatMs(ms: Long): String {
     if (ms < 0 || ms == UInt.MAX_VALUE.toLong()) return "∞"

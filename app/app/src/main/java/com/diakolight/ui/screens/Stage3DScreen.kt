@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,18 +40,18 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.UniverseValues
-import com.diakonia.qlccockpit.model.Fixture
-import com.diakonia.qlccockpit.model.FixtureLight
-import com.diakonia.qlccockpit.model.OrbitCamera
-import com.diakonia.qlccockpit.model.P3
-import com.diakonia.qlccockpit.model.Projector
-import com.diakonia.qlccockpit.model.fixtureLight
-import com.diakonia.qlccockpit.model.framingCamera
-import com.diakonia.qlccockpit.model.layoutBounds
-import com.diakonia.qlccockpit.model.stageLayout
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.UniverseValues
+import com.diakolight.model.Fixture
+import com.diakolight.model.FixtureLight
+import com.diakolight.model.OrbitCamera
+import com.diakolight.model.P3
+import com.diakolight.model.Projector
+import com.diakolight.model.fixtureLight
+import com.diakolight.model.framingCamera
+import com.diakolight.model.layoutBounds
+import com.diakolight.model.stageLayout
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.max

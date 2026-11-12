@@ -1,7 +1,7 @@
-package com.diakonia.qlccockpit.data
+package com.diakolight.data
 
 import android.content.Context
-import com.diakonia.qlccockpit.net.ServerConfig
+import com.diakolight.net.ServerConfig
 
 /** Remembers the last servers used (most recent first) and UI preferences */
 class SettingsStore(context: Context) {

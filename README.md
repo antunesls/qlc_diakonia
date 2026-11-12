@@ -1,17 +1,17 @@
-# qlc_diakonia
+# DiakoLight
 
-Monorepo do ecossistema QLC+ da Diakonia.
+Monorepo do ecossistema QLC+ do DiakoLight.
 
 | Pasta | Conteúdo |
 |-------|----------|
 | [`qlcplus/`](qlcplus) | Fork do [QLC+](https://github.com/mcallegari/qlcplus) com as extensões **Cockpit API** (`webaccess/`, usada pelo app) e **Native API** (`qmlui/tardis/`, usada pelo MCP) |
 | [`mcp/`](mcp) | Fork do [QLCPlus-MCP](https://github.com/infrafast/QLCPlus-MCP) (servidor MCP em Node/TypeScript) |
-| [`app/`](app) | QLC+ Cockpit — controlador Android nativo para tablet |
+| [`app/`](app) | DiakoLight — controlador Android nativo para tablet (pacote `com.diakolight`) |
 | [`shows/`](shows) | Workspaces `.qxw` de teste/palco |
 
 ## Compilar, executar e gerar release
 
-Tudo pelo script interativo `diakonia.sh`. Abra pelo Git Bash (`./diakonia.sh`) ou com duplo clique em `diakonia.cmd`.
+Tudo pelo script interativo `diakolight.sh` (o `diakolight.cmd` só o abre pelo Git Bash). Abra pelo Git Bash (`./diakolight.sh`) ou com duplo clique em `diakolight.cmd`.
 
 ```
 Menu principal
@@ -23,13 +23,13 @@ Menu principal
   6) Limpar builds
 ```
 
-Também funciona sem menu: `./diakonia.sh build all`, `./diakonia.sh run qlcplus`, `./diakonia.sh release`, `./diakonia.sh doctor`.
+Também funciona sem menu: `./diakolight.sh build all`, `./diakolight.sh run qlcplus`, `./diakolight.sh release`, `./diakolight.sh doctor`.
 
 | Componente | Saída do build | Release (`dist/vX/`) |
 |------------|----------------|----------------------|
-| QLC+ | `C:\qlcplus\qlcplus5.exe` (o CMake do QLC+ instala sempre aí) | `QLCplus-diakonia-X-setup.exe` + `...-win64-portable.zip` |
+| QLC+ | `C:\qlcplus\qlcplus5.exe` (o CMake do QLC+ instala sempre aí) | `DiakoLight-X-setup.exe` + `...-win64-portable.zip` |
 | MCP | `mcp/dist/src/index.js` | `qlcplus-mcp-X.zip` (no destino: `npm ci --omit=dev`) |
-| App | `app/app/build/outputs/apk/<debug\|release>/` | `qlc-cockpit-X.apk` |
+| App | `app/app/build/outputs/apk/<debug\|release>/` | `DiakoLight-X.apk` |
 
 Pré-requisitos (o item 5 do menu confere todos):
 - **MSYS2 UCRT64** com `cmake`, `ninja`, `qt6`, `assimp` (sem ele a visão 3D fica vazia) e, para o instalador, `nsis`.
@@ -44,7 +44,7 @@ Detalhes da Cockpit API em `qlcplus/COCKPIT_API.md`.
 
 Servidor e cliente: `qlcplus5.exe -w -s --server-allow-all -o igreja.qxw` sobe o Web Access (9999) e o servidor nativo (9998) já com os clientes autorizados; `qlcplus5.exe --connect <ip-do-servidor>` inicia como cliente desse servidor, recebe o projeto dele e tenta reconectar a cada 10 s se a conexão cair (não combine com `-o`, `-s` nem `-w`). `-platform offscreen` roda sem janela.
 
-O QLC+ do fork aceita comandos em texto por UDP (porta padrão 7799), vindos de qualquer aparelho da rede. Configure em **menu → Rede → Comandos UDP**: liga/desliga, porta, tabela "comando recebido → ação" (salva no `.qxw`), teste e log ao vivo. Também dá para ligar só nesta execução com `--udp-commands [--udp-port N]` (o `diakonia.sh run qlcplus` pergunta).
+O QLC+ do fork aceita comandos em texto por UDP (porta padrão 7799), vindos de qualquer aparelho da rede. Configure em **menu → Rede → Comandos UDP**: liga/desliga, porta, tabela "comando recebido → ação" (salva no `.qxw`), teste e log ao vivo. Também dá para ligar só nesta execução com `--udp-commands [--udp-port N]` (o `diakolight.sh run qlcplus` pergunta).
 
 Cada linha recebida é respondida ao remetente com `OK …` ou `ERR …`. Primeiro vale a tabela da tela; um comando de slider aceita o valor no fim (`volume 50%`). Com "Comandos diretos" ligado também valem, pelo nome completo (maiúsculas não importam) ou ID:
 

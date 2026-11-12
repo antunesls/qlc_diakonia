@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# diakonia.sh - compila, executa e gera releases do monorepo qlc_diakonia
+# diakolight.sh - compila, executa e gera releases do monorepo DiakoLight
 #
-#   ./diakonia.sh                      menu interativo
-#   ./diakonia.sh build  [qlcplus|mcp|app|app-release|all]
-#   ./diakonia.sh run    [qlcplus|mcp|app]
-#   ./diakonia.sh release
-#   ./diakonia.sh doctor
+#   ./diakolight.sh                      menu interativo
+#   ./diakolight.sh build  [qlcplus|mcp|app|app-release|all]
+#   ./diakolight.sh run    [qlcplus|mcp|app]
+#   ./diakolight.sh release
+#   ./diakolight.sh doctor
 #
 # Roda no Git Bash (ou no próprio MSYS2). As etapas do QLC+ são executadas
 # dentro do MSYS2 UCRT64, onde estão o Qt6, o CMake e o Ninja.
@@ -33,7 +33,7 @@ QLC_INSTALL="/c/qlcplus"
 QLC_EXE="$QLC_INSTALL/qlcplus5.exe"
 ANDROID_SDK="${ANDROID_SDK:-${ANDROID_HOME:-$HOME/AppData/Local/Android/Sdk}}"
 ADB="$ANDROID_SDK/platform-tools/adb.exe"
-APP_ID="com.diakonia.qlccockpit"
+APP_ID="com.diakolight"
 APP_GRADLE="$APP_DIR/app/build.gradle.kts"
 
 # ---------------------------------------------------------------- helpers
@@ -154,7 +154,7 @@ _qlc_deploy() {
 }
 
 _qlc_installer() {
-    local ver="$1" out="$2" nsi="qlcplus5-diakonia.nsi" exe="QLCplus-diakonia-$1-setup.exe"
+    local ver="$1" out="$2" nsi="qlcplus5-diakonia.nsi" exe="DiakoLight-$1-setup.exe"
     # Barras normais: com -w o sed leria \U, \a... do caminho como escapes
     local home; home=$(cygpath -m "$QLC_SRC")
     cd "$QLC_INSTALL"
@@ -349,7 +349,7 @@ release() {
             warn "Sem NSIS: só o zip portátil será gerado"
         fi
         step "QLC+: zip portátil"
-        /c/Windows/System32/tar.exe -a -c -f "$out/QLCplus-diakonia-$ver-win64-portable.zip" -C "$QLC_INSTALL" .
+        /c/Windows/System32/tar.exe -a -c -f "$out/DiakoLight-$ver-win64-portable.zip" -C "$QLC_INSTALL" .
     fi
 
     if (( do_mcp )); then
@@ -364,7 +364,7 @@ release() {
 
     if (( do_app )); then
         build_app release
-        cp "$APP_DIR/app/build/outputs/apk/release/app-release.apk" "$out/qlc-cockpit-$ver.apk"
+        cp "$APP_DIR/app/build/outputs/apk/release/app-release.apk" "$out/DiakoLight-$ver.apk"
     fi
 
     (cd "$out" && sha256sum * > SHA256SUMS.txt)
@@ -484,7 +484,7 @@ menu_run() {
 main_menu() {
     while true; do
         echo
-        echo "${C_B}${C_C}qlc_diakonia${C_0}  QLC+ $(qlc_version) · app $(app_version) · $(git -C "$ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+        echo "${C_B}${C_C}DiakoLight${C_0}  QLC+ $(qlc_version) · app $(app_version) · $(git -C "$ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null)"
         menu "Menu principal" "Compilar" "Executar" "Gerar release" "Testes do MCP" "Verificar ambiente" "Limpar builds"
         case "$(ask "Opção" "")" in
             1) menu_build ;;

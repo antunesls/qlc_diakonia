@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.net
+package com.diakolight.net
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope

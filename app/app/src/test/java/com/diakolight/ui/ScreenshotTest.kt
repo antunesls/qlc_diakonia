@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui
+package com.diakolight.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -6,25 +6,25 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
-import com.diakonia.qlccockpit.data.ApiMode
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.SettingsStore
-import com.diakonia.qlccockpit.model.ApiInfo
-import com.diakonia.qlccockpit.model.Capability
-import com.diakonia.qlccockpit.model.ChaserStep
-import com.diakonia.qlccockpit.model.Fixture
-import com.diakonia.qlccockpit.model.FixtureChannel
-import com.diakonia.qlccockpit.model.FixtureGroup
-import com.diakonia.qlccockpit.model.GroupHead
-import com.diakonia.qlccockpit.model.GroupsResponse
-import com.diakonia.qlccockpit.model.QlcFunction
-import com.diakonia.qlccockpit.model.ShowItem
-import com.diakonia.qlccockpit.model.ShowTrack
-import com.diakonia.qlccockpit.model.UniverseInfo
-import com.diakonia.qlccockpit.model.VcRoot
-import com.diakonia.qlccockpit.net.ConnectionState
-import com.diakonia.qlccockpit.ui.theme.CockpitTheme
+import com.diakolight.data.ApiMode
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.SettingsStore
+import com.diakolight.model.ApiInfo
+import com.diakolight.model.Capability
+import com.diakolight.model.ChaserStep
+import com.diakolight.model.Fixture
+import com.diakolight.model.FixtureChannel
+import com.diakolight.model.FixtureGroup
+import com.diakolight.model.GroupHead
+import com.diakolight.model.GroupsResponse
+import com.diakolight.model.QlcFunction
+import com.diakolight.model.ShowItem
+import com.diakolight.model.ShowTrack
+import com.diakolight.model.UniverseInfo
+import com.diakolight.model.VcRoot
+import com.diakolight.net.ConnectionState
+import com.diakolight.ui.theme.CockpitTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -115,7 +115,7 @@ class ScreenshotTest {
              "playbackStatus":1,"playbackIndex":1,"visible":true,
              "steps":[{"funcID":3,"funcName":"Branco Geral","note":"Entrada"},{"funcID":1,"funcName":"Azul Louvor","note":"1ª música"},
                       {"funcID":2,"funcName":"Âmbar Pregação","note":"Palavra"}]},
-            {"id":17,"typeId":4,"caption":"Efeitos","page":0,"geometry":{"x":820,"y":10,"w":370,"h":360},"multiPageMode":true,
+            {"id":17,"typeId":4,"caption":"Efeitos","page":0,"geometry":{"x":820,"y":10,"w":370,"h":360},"multiPageMode":true,"transitionTimes":[0,500,1000,3000,6000],"transitionIndex":2,
              "currentPage":0,"totalPages":2,"showHeader":true,"visible":true,
              "children":[{"id":18,"typeId":1,"caption":"Arco-íris","page":0,"geometry":{"x":10,"y":40,"w":110,"h":80},"visible":true},
                          {"id":19,"typeId":1,"caption":"Círculo","page":0,"geometry":{"x":130,"y":40,"w":110,"h":80},"visible":true},
@@ -180,7 +180,7 @@ class ScreenshotTest {
         compose.setContent {
             CockpitTheme {
                 androidx.compose.foundation.layout.Box(androidx.compose.ui.Modifier.fillMaxSize().padding(12.dp)) {
-                    com.diakonia.qlccockpit.ui.screens.Stage3DScreen(state, repo, initialSelection = listOf(1))
+                    com.diakolight.ui.screens.Stage3DScreen(state, repo, initialSelection = listOf(1))
                 }
             }
         }

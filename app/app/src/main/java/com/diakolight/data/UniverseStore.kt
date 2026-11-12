@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.data
+package com.diakolight.data
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.components
+package com.diakolight.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background

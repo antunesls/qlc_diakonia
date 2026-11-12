@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.diakonia.qlccockpit"
+    namespace = "com.diakolight"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.diakonia.qlccockpit"
+        applicationId = "com.diakolight"
         minSdk = 26
         targetSdk = 35
         versionCode = 6

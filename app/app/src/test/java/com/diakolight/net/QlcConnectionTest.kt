@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.net
+package com.diakolight.net
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

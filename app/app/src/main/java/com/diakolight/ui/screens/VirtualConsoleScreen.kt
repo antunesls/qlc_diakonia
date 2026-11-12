@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -66,14 +66,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.model.TapTempo
-import com.diakonia.qlccockpit.model.VcWidget
-import com.diakonia.qlccockpit.model.VcWidgetState
-import com.diakonia.qlccockpit.model.VcWidgetType
-import com.diakonia.qlccockpit.ui.components.XYPad
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.model.TapTempo
+import com.diakolight.model.VcWidget
+import com.diakolight.model.VcWidgetState
+import com.diakolight.model.VcWidgetType
+import com.diakolight.ui.components.XYPad
+import com.diakolight.ui.theme.CockpitColors
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlinx.coroutines.delay
@@ -160,6 +160,9 @@ private fun VcWidgetView(
             val total = w.int("totalPages", 1)
             val labels = w.stringList("pageLabels")
             val collapsed = w.bool("isCollapsed")
+            val transitionTimes = (w.raw["transitionTimes"] as? kotlinx.serialization.json.JsonArray)
+                ?.mapNotNull { (it as? kotlinx.serialization.json.JsonPrimitive)?.content?.toLongOrNull() } ?: emptyList()
+            val transitionIndex = live.transitionIndex ?: w.int("transitionIndex", -1)
             Box(
                 baseModifier
                     .background(widgetBg(w, surface.copy(alpha = 0.6f)))
@@ -171,13 +174,30 @@ private fun VcWidgetView(
                         .filter { !multi || it.page == current }
                         .forEach { child -> PositionedWidget(child, scale, state, repository) }
                 }
-                if (w.bool("showHeader", true) && (w.caption.isNotEmpty() || multi)) {
+                if (w.bool("showHeader", true) && (w.caption.isNotEmpty() || multi || transitionTimes.isNotEmpty())) {
                     Row(
-                        Modifier.fillMaxWidth().height(28.dp).background(Color.Black.copy(alpha = 0.35f)).padding(horizontal = 4.dp),
+                        Modifier.fillMaxWidth().height(if (transitionTimes.isEmpty()) 28.dp else 34.dp).background(Color.Black.copy(alpha = 0.35f)).padding(horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(w.caption, Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium, color = widgetFg(w, MaterialTheme.colorScheme.onSurface))
+                        // transition: fade in/out time applied to the buttons of this frame
+                        transitionTimes.forEachIndexed { i, ms ->
+                            val on = i == transitionIndex
+                            Box(
+                                Modifier.padding(start = 3.dp).height(28.dp).clip(RoundedCornerShape(4.dp))
+                                    .background(if (on) CockpitColors.Accent else Color.White.copy(alpha = 0.10f))
+                                    .clickable { repository.vcFrameTransition(w.id, i) }
+                                    .padding(horizontal = 9.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    if (ms == 0L) "Corte" else (ms / 1000.0).toString().trimEnd('0').trimEnd('.').replace('.', ',') + "s",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (on) Color.Black else MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        }
                         if (multi && total > 1) {
                             IconButton(onClick = { repository.vcFrame(w.id, "PREV_PG") }, Modifier.size(28.dp)) {
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Página anterior")

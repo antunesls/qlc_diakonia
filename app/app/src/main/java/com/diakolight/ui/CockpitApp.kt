@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui
+package com.diakolight.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,21 +42,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.diakonia.qlccockpit.data.ApiMode
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.SettingsStore
-import com.diakonia.qlccockpit.net.ConnectionState
-import com.diakonia.qlccockpit.ui.components.HorizontalFader
-import com.diakonia.qlccockpit.ui.components.StatusDot
-import com.diakonia.qlccockpit.ui.screens.ConnectScreen
-import com.diakonia.qlccockpit.ui.screens.FixturesScreen
-import com.diakonia.qlccockpit.ui.screens.FunctionsScreen
-import com.diakonia.qlccockpit.ui.screens.PlayerScreen
-import com.diakonia.qlccockpit.ui.screens.SimpleDeskScreen
-import com.diakonia.qlccockpit.ui.screens.Stage3DScreen
-import com.diakonia.qlccockpit.ui.screens.VirtualConsoleScreen
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.ApiMode
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.SettingsStore
+import com.diakolight.net.ConnectionState
+import com.diakolight.ui.components.HorizontalFader
+import com.diakolight.ui.components.StatusDot
+import com.diakolight.ui.screens.ConnectScreen
+import com.diakolight.ui.screens.FixturesScreen
+import com.diakolight.ui.screens.FunctionsScreen
+import com.diakolight.ui.screens.PlayerScreen
+import com.diakolight.ui.screens.SimpleDeskScreen
+import com.diakolight.ui.screens.Stage3DScreen
+import com.diakolight.ui.screens.VirtualConsoleScreen
+import com.diakolight.ui.theme.CockpitColors
 import kotlin.math.roundToInt
 
 enum class Destination(val label: String, val icon: ImageVector) {

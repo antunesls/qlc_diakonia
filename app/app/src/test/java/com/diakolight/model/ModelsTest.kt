@@ -1,6 +1,6 @@
-package com.diakonia.qlccockpit.model
+package com.diakolight.model
 
-import com.diakonia.qlccockpit.data.UniverseStore
+import com.diakolight.data.UniverseStore
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test

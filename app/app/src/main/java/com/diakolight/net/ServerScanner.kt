@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.net
+package com.diakolight.net
 
 import android.content.Context
 import android.net.ConnectivityManager

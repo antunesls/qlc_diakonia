@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -31,13 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.UniverseValues
-import com.diakonia.qlccockpit.model.Fixture
-import com.diakonia.qlccockpit.model.FixtureChannel
-import com.diakonia.qlccockpit.ui.components.VerticalFader
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.UniverseValues
+import com.diakolight.model.Fixture
+import com.diakolight.model.FixtureChannel
+import com.diakolight.ui.components.VerticalFader
+import com.diakolight.ui.theme.CockpitColors
 import kotlinx.coroutines.launch
 
 @Composable

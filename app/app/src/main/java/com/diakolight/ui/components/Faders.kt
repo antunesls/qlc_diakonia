@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.components
+package com.diakolight.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.ui.theme.CockpitColors
 import kotlin.math.roundToInt
 
 /**

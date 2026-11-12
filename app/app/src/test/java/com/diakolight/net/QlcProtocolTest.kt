@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.net
+package com.diakolight.net
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals

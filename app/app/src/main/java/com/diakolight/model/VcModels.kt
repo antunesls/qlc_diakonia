@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.model
+package com.diakolight.model
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -149,6 +149,8 @@ data class VcWidgetState(
     val overriding: Boolean? = null,
     /** Frames */
     val framePage: Int? = null,
+    /** Frame transition selector: selected time index */
+    val transitionIndex: Int? = null,
     /** Clock: milliseconds (or seconds of day for Clock type) */
     val clockTime: Long? = null,
     val clockRunning: Boolean? = null,

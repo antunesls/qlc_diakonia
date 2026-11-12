@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,16 +47,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.UniverseValues
-import com.diakonia.qlccockpit.model.ChannelGroup
-import com.diakonia.qlccockpit.model.Fixture
-import com.diakonia.qlccockpit.model.FixtureChannel
-import com.diakonia.qlccockpit.ui.components.ColorPad
-import com.diakonia.qlccockpit.ui.components.VerticalFader
-import com.diakonia.qlccockpit.ui.components.XYPad
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.UniverseValues
+import com.diakolight.model.ChannelGroup
+import com.diakolight.model.Fixture
+import com.diakolight.model.FixtureChannel
+import com.diakolight.ui.components.ColorPad
+import com.diakolight.ui.components.VerticalFader
+import com.diakolight.ui.components.XYPad
+import com.diakolight.ui.theme.CockpitColors
 import kotlin.math.roundToInt
 
 /** Fixture channels that make a colour mixer */

@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,12 +39,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.diakonia.qlccockpit.data.ApiMode
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.data.SettingsStore
-import com.diakonia.qlccockpit.net.ServerConfig
-import com.diakonia.qlccockpit.net.ServerScanner
+import com.diakolight.data.ApiMode
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.data.SettingsStore
+import com.diakolight.net.ServerConfig
+import com.diakolight.net.ServerScanner
 import kotlinx.coroutines.launch
 
 @Composable

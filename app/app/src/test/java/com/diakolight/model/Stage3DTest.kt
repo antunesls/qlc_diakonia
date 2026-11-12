@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.model
+package com.diakolight.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

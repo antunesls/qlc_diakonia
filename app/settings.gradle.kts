@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "QLCCockpit"
+rootProject.name = "DiakoLight"
 include(":app")

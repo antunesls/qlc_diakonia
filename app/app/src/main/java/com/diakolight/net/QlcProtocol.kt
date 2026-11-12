@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.net
+package com.diakolight.net
 
 import java.util.Base64
 

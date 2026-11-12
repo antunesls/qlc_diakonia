@@ -1,21 +1,21 @@
-package com.diakonia.qlccockpit.data
+package com.diakolight.data
 
-import com.diakonia.qlccockpit.model.ApiInfo
-import com.diakonia.qlccockpit.model.Fixture
-import com.diakonia.qlccockpit.model.FixturesResponse
-import com.diakonia.qlccockpit.model.FunctionsResponse
-import com.diakonia.qlccockpit.model.GroupsResponse
-import com.diakonia.qlccockpit.model.QlcFunction
-import com.diakonia.qlccockpit.model.UniverseInfo
-import com.diakonia.qlccockpit.model.VcRoot
-import com.diakonia.qlccockpit.model.VcWidgetState
-import com.diakonia.qlccockpit.net.ConnectionState
-import com.diakonia.qlccockpit.net.QlcCommands
-import com.diakonia.qlccockpit.net.QlcConnection
-import com.diakonia.qlccockpit.net.QlcEvent
-import com.diakonia.qlccockpit.net.QlcHttpApi
-import com.diakonia.qlccockpit.net.QlcProtocol
-import com.diakonia.qlccockpit.net.ServerConfig
+import com.diakolight.model.ApiInfo
+import com.diakolight.model.Fixture
+import com.diakolight.model.FixturesResponse
+import com.diakolight.model.FunctionsResponse
+import com.diakolight.model.GroupsResponse
+import com.diakolight.model.QlcFunction
+import com.diakolight.model.UniverseInfo
+import com.diakolight.model.VcRoot
+import com.diakolight.model.VcWidgetState
+import com.diakolight.net.ConnectionState
+import com.diakolight.net.QlcCommands
+import com.diakolight.net.QlcConnection
+import com.diakolight.net.QlcEvent
+import com.diakolight.net.QlcHttpApi
+import com.diakolight.net.QlcProtocol
+import com.diakolight.net.ServerConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -289,6 +289,7 @@ class CockpitRepository(
             val next = when (e.kind) {
                 "BUTTON" -> cur.copy(value = a.int(0))
                 "SLIDER_OVERRIDE" -> cur.copy(overriding = QlcProtocol.parseBool(a.getOrNull(0)))
+                "FRAME_TRANSITION" -> cur.copy(transitionIndex = a.int(0))
                 "BUTTON_COLOR" -> cur.copy(paletteIndex = a.int(0))
                 "SLIDER" -> cur.copy(value = a.int(0), displayValue = a.getOrNull(1))
                 "AUDIOTRIGGERS" -> cur.copy(value = if (QlcProtocol.parseBool(a.getOrNull(0))) 255 else 0)
@@ -394,6 +395,15 @@ class CockpitRepository(
     fun vcSelectPage(page: Int) = connection.send(QlcCommands.vcPage(page))
 
     fun vcButton(widgetId: Int, pressed: Boolean) = connection.send(QlcCommands.widget(widgetId, if (pressed) 255 else 0))
+
+    /** Chooses the transition time of a frame (index into its transitionTimes). */
+    fun vcFrameTransition(widgetId: Int, index: Int) {
+        _state.update { s ->
+            val cur = s.widgets[widgetId] ?: VcWidgetState()
+            s.copy(widgets = s.widgets + (widgetId to cur.copy(transitionIndex = index)))
+        }
+        connection.send(QlcCommands.widget(widgetId, "FRAME_TRANSITION", index))
+    }
 
     /** Picks the color of a palette button; the server never starts the button for this. */
     fun vcButtonColor(widgetId: Int, index: Int) {

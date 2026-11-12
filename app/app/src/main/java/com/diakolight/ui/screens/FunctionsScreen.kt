@@ -1,4 +1,4 @@
-package com.diakonia.qlccockpit.ui.screens
+package com.diakolight.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -47,14 +47,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.diakonia.qlccockpit.data.ApiMode
-import com.diakonia.qlccockpit.data.CockpitRepository
-import com.diakonia.qlccockpit.data.CockpitState
-import com.diakonia.qlccockpit.model.FunctionKind
-import com.diakonia.qlccockpit.model.QlcFunction
-import com.diakonia.qlccockpit.ui.components.LabeledHorizontalFader
-import com.diakonia.qlccockpit.ui.components.StatusDot
-import com.diakonia.qlccockpit.ui.theme.CockpitColors
+import com.diakolight.data.ApiMode
+import com.diakolight.data.CockpitRepository
+import com.diakolight.data.CockpitState
+import com.diakolight.model.FunctionKind
+import com.diakolight.model.QlcFunction
+import com.diakolight.ui.components.LabeledHorizontalFader
+import com.diakolight.ui.components.StatusDot
+import com.diakolight.ui.theme.CockpitColors
 
 fun kindColor(kind: FunctionKind): Color = when (kind) {
     FunctionKind.Scene -> Color(0xFF4FC3F7)

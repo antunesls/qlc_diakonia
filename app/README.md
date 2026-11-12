@@ -1,4 +1,4 @@
-# QLC+ Cockpit (Android)
+# DiakoLight (Android)
 
 App Android nativo (Kotlin + Jetpack Compose) para controlar o **QLC+ 5** de um tablet de 10" na horizontal.
 Ele conversa com a Web Access do QLC+ (WebSocket `ws://<pc>:9999/qlcplusWS` + HTTP).
@@ -10,11 +10,16 @@ Ele conversa com a Web Access do QLC+ (WebSocket `ws://<pc>:9999/qlcplusWS` + HT
 | **Funções** | Grade com todas as Scenes, Chasers, Sequences, Shows, EFX, RGB Matrix, Collections, Scripts e Audio. Toque executa ou para; toque longo abre intensidade, pausa e "Abrir no Player". Filtros por tipo, pasta, busca e "Ativas". |
 | **Player** | Shows: play/pause/stop, tempo, seek e linha do tempo das tracks. Chasers/Sequences: lista de steps com o step atual, GO/anterior/pausa, toque no step para pular, intensidade. |
 | **Fixtures** | Lista de fixtures (filtro por grupo, seleção múltipla). Faders por canal coloridos por tipo, seletor de cor RGB/CMY, XY pad de Pan/Tilt (16 bits), funções (capabilities) do canal com um toque, Localizar e Liberar. |
+| **3D** | Palco em 3D com os fixtures nas posições e rotações informadas pela API Cockpit (arrastar, zoom e toque para selecionar). |
 | **Mesa DMX** | Os 512 canais de cada universo, nomeados pelo fixture. Toque duplo devolve o canal às funções. Resetar universo. |
-| **Console** | Espelha o Virtual Console do QLC+ (`/vc.json`): botões (toggle/flash), sliders, cue lists, frames com páginas, XY pad, speed dial, relógio, animation e audio triggers. |
+| **Console** | Espelha o Virtual Console do QLC+ (`/vc.json`): botões (toggle/flash), sliders, cue lists, frames com páginas, XY pad, speed dial, relógio, animation e audio triggers. Botões mostram a paleta de cores configurada no QLC+, sliders têm o modo **SEGUIR** e o speed dial tem **TAP tempo** e BPM. |
 | **Conexão** | IP/porta/usuário, busca automática na rede Wi-Fi, servidores recentes, auto-conexão, tema de palco (vermelho). |
 
 Barra fixa no topo: estado da conexão e latência, **Grand Master**, **Blackout** e **Parar tudo**.
+
+### Speed dial: multiplicador
+
+O multiplicador (1/16 … 1 … 16) é aplicado direto sobre o tempo: `duração = tempo do dial × multiplicador`. Portanto **1/16 é o mais rápido**; para desacelerar, suba o multiplicador (1/8, 1/4, 1/2, 1, 2 … 16) ou aumente o tempo base (TAP mais lento).
 
 ## Servidor: QLC+ com a API Cockpit
 
@@ -36,7 +41,7 @@ Tablet e PC precisam estar na mesma rede. Libere a porta TCP 9999 no firewall do
 
 ## Build
 
-Requisitos: JDK 17+ (testado com o 21) e Android SDK 35 (`local.properties` com `sdk.dir`).
+Requisitos: JDK 17+ com compilador (testado com o 21; um JRE não serve, use `JAVA_HOME` ou `QLC_JDK`) e Android SDK 35 (`local.properties` com `sdk.dir`).
 
 ```
 ./gradlew testDebugUnitTest      # protocolo, conexão (WebSocket fake), modelos e screenshots das telas
@@ -49,10 +54,12 @@ Os screenshots gerados pelos testes (Robolectric/Roborazzi, 1920x1200) ficam em 
 
 ## Estrutura
 
+Pacote Kotlin: `com.diakolight` (`app/app/src/main/java/com/diakolight/`).
+
 ```
 net/       QlcProtocol (parser/serializador do protocolo "|"), QlcConnection (WebSocket com
            reconexão, coalescência de faders a 25 ms, request/response), QlcHttpApi, ServerScanner
-model/     modelos da API Cockpit e do /vc.json
+model/     modelos da API Cockpit e do /vc.json, Stage3D (cena 3D), TapTempo
 data/      CockpitRepository (estado único + ações), UniverseStore (valores DMX), SettingsStore
 ui/        CockpitApp (navegação + barra global), screens/*, components/ (faders multitoque, XY pad, cor)
 ```
